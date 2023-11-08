@@ -13,15 +13,17 @@ return new class extends Migration
     {
         Schema::create('media', function (Blueprint $table) {
             $table->id('_id');
-            $table->integer('client_id')->nullable();
-            $table->integer('screen_id')->nullable();
+            $table->string('name');
+            $table->integer('client_id');
+            $table->integer('screen_id');
             $table->time('time');
             $table->date('date');
             $table->integer('duration');
-            $table->string('url_video');
-            $table->string('path_slideshow');
+            $table->text('files_name');
+            $table->string('path');
             $table->tinyInteger('type')->default(0);
             $table->tinyInteger('approved')->default(0);
+            $table->tinyInteger('downloaded')->default(0);
             $table->boolean('isActive')->default(0);
             $table->timestamps();
         });

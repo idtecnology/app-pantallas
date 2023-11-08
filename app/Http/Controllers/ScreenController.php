@@ -7,6 +7,14 @@ use Illuminate\Http\Request;
 
 class ScreenController extends Controller
 {
+    function __construct()
+
+    {
+        $this->middleware('permission:admin-list|admin-create|admin-edit|admin-delete', ['only' => ['index', 'show']]);
+        $this->middleware('permission:admin-create', ['only' => ['create', 'store']]);
+        $this->middleware('permission:admin-edit', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:admin-delete', ['only' => ['destroy']]);
+    }
 
     public function index()
     {

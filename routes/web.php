@@ -32,6 +32,7 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::get('/', [HomeController::class, 'index'])->name('home');
     Route::resource('/sale', MediaController::class);
+    Route::get('/sale/programar/{id}', [MediaController::class, 'programar'])->name('sale.programar');
 
 
     // Mantenimientos

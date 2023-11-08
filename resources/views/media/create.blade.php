@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('content')
     <div class="col-12">
-        {!! Form::open(['route' => 'sale.store', 'method' => 'POST']) !!}
+        {!! Form::open(['route' => 'sale.store', 'method' => 'POST', 'enctype' => 'multipart/form-data']) !!}
         <div class="row">
             <div class="col-8 mb-3">
                 <div class="form-group">
@@ -33,14 +33,32 @@
                     {!! Form::select('screen_id', $pos, ['placeholder' => 'Seleccione', 'class' => 'form-select']) !!}
                 </div>
             </div>
-
-            <div class="col-8 mb-3">
+            <div class="col-4 mb-3">
                 <div class="form-group">
                     <strong>Hora:</strong>
-                    <input type="time" max='23:00' min="7:00" step="0" class="form-control">
+                    <input type="date" min='today' name='date' class="form-control">
                 </div>
             </div>
 
+            <div class="col-4 mb-3">
+                <div class="form-group">
+                    <strong>Hora:</strong>
+                    <input type="time" required max='23:00' min='07:00' name='time' class="form-control">
+                </div>
+            </div>
+            <div class="col-3 mb-3">
+                <div class="form-group">
+                    <strong>Duracion en segundos:</strong>
+                    <input type="number" max='60' step="15" min='0' name='duration' class="form-control">
+                </div>
+            </div>
+
+            <div class="col-12 mb-3">
+                <div class="form-group">
+                    <strong>Ficheros:</strong>
+                    <input type="file" name='files[]' multiple class="form-control">
+                </div>
+            </div>
 
             <div class="col-xs-12 col-sm-12 col-md-12 text-center mt-4">
                 <button type="submit" class="btn btn-primary">Guardar</button>

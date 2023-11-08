@@ -19,18 +19,31 @@
                 @foreach ($data as $dato)
                     <tr class="align-middle">
                         <td>{{ $dato->name }}</td>
-                        <td>{{ $dato->duration }}</td>
-                        <td>{{ $dato->date }}</td>
-                        <td>{{ $dato->type }}</td>
-                        <td>{{ $dato->approved }}</td>
-                        <td>
-                            <div class="btn-group" role="group" aria-label="Basic example">
-                                <a href="{{ route('media.show', $dato->_id) }}" type="button"
-                                    class="btn btn-primary btn-sm">Ver</a>
-                                <a href="{{ route('media.edit', $dato->_id) }}" type="button"
-                                    class="btn btn-warning btn-sm">Editar</a>
-                            </div>
-                        </td>
+                        <td>{{ $dato->duration }} segundos</td>
+                        <td>{{ date('d-m-Y', strtotime($dato->date)) }}</td>
+                        <td>{{ $dato->type == 1 ? 'Video' : 'Slideshow' }}</td>
+                        <td>{{ $dato->approved == 1 ? 'Aprovado' : 'Sin aprobar' }}</td>
+
+                        @can('admin-list')
+                            <td>
+                                <div class="btn-group" role="group" aria-label="Basic example">
+                                    <a href="{{ route('sale.show', $dato->_id) }}" type="button"
+                                        class="btn btn-primary btn-sm">Ver</a>
+                                    <a href="" type="button" class="btn btn-success btn-sm">Aprobar</a>
+                                </div>
+                            </td>
+                        @else
+                            <td>
+                                <div class="btn-group" role="group" aria-label="Basic example">
+                                    <a href="{{ route('sale.show', $dato->_id) }}" type="button"
+                                        class="btn btn-primary btn-sm">Ver</a>
+                                    <a href="{{ route('sale.edit', $dato->_id) }}" type="button"
+                                        class="btn btn-warning btn-sm">Editar</a>
+                                    <a href="{{ route('sale.programar', $dato->_id) }}" type="button"
+                                        class="btn btn-success btn-sm">Programar</a>
+                                </div>
+                            </td>
+                        @endcan
                     </tr>
                 @endforeach
             </tbody>
