@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('phone', 11)->nullable();
             $table->text('avatar')->nullable();
             $table->boolean('isActive')->default(1);
+            $table->boolean('isUser');
             $table->timestamps();
         });
     }

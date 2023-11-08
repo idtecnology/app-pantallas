@@ -30,7 +30,8 @@ class CreateAdminUserSeeder extends Seeder
             'last_name' => 'Admin',
             'dni' => '0000',
             'email' => 'admin@1.com',
-            'password' => bcrypt('123')
+            'password' => bcrypt('123'),
+            'isUser' => 1
         ]);
 
 
