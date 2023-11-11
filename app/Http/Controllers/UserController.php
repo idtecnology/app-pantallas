@@ -21,7 +21,7 @@ class UserController extends Controller
      */
     public function index(Request $request): View
     {
-        $data = User::latest()->paginate(5);
+        $data = User::where('isUser', '=', 1)->paginate(5);
 
         return view('users.index', compact('data'))
             ->with('i', ($request->input('page', 1) - 1) * 5);
@@ -101,28 +101,28 @@ class UserController extends Controller
      */
     public function update(Request $request, $id): RedirectResponse
     {
-        $this->validate($request, [
-            'name' => 'required',
-            'email' => 'required|email|unique:users,email,' . $id,
-            'password' => 'same:confirm-password',
-            'roles' => 'required'
-        ]);
-
-        $input = $request->all();
-        if (!empty($input['password'])) {
-            $input['password'] = Hash::make($input['password']);
+        if ($request->birth) {
+            $user = User::find($id);
+            $input = $request->all();
+            $user->update($input);
+            return redirect()->route('users.profile', $id)
+                ->with('success', 'User updated successfully');
         } else {
-            $input = Arr::except($input, array('password'));
+            $input = $request->all();
+            if (!empty($input['password'])) {
+                $input['password'] = Hash::make($input['password']);
+            } else {
+                $input = Arr::except($input, array('password'));
+            }
+
+            $user = User::find($id);
+            $user->update($input);
+            DB::table('model_has_roles')->where('model_id', $id)->delete();
+
+            $user->assignRole($request->input('roles'));
+            return redirect()->route('users.index')
+                ->with('success', 'User updated successfully');
         }
-
-        $user = User::find($id);
-        $user->update($input);
-        DB::table('model_has_roles')->where('model_id', $id)->delete();
-
-        $user->assignRole($request->input('roles'));
-
-        return redirect()->route('users.index')
-            ->with('success', 'User updated successfully');
     }
 
     /**
@@ -136,5 +136,15 @@ class UserController extends Controller
         User::find($id)->delete();
         return redirect()->route('users.index')
             ->with('success', 'User deleted successfully');
+    }
+
+
+    public function profile($id)
+    {
+        $user = User::find($id);
+
+        // return $user;
+
+        return view('users.profile', compact('user'));
     }
 }

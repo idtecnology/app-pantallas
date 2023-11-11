@@ -14,8 +14,22 @@
     <link rel="dns-prefetch" href="//fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet">
 
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+
     <!-- Scripts -->
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
+
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings:
+                'FILL' 0,
+                'wght' 400,
+                'GRAD' 0,
+                'opsz' 20
+        }
+    </style>
 </head>
 
 <body>
@@ -81,10 +95,9 @@
                             @endif
                         @else
                             <li class="nav-item">
-                                <a class="nav-link" href="#">Notificaciones</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="#">Mensajes</a>
+                                <a class="nav-link" href="#"><span class="material-symbols-outlined">
+                                        inbox
+                                    </span></a>
                             </li>
                             @can('admin-list')
                                 <li class="nav-item dropdown">
@@ -97,29 +110,39 @@
                                         <li><a class="dropdown-item" href="{{ route('screen.index') }}">Pantallas</a></li>
                                         <li><a class="dropdown-item" href="#">Pagos</a></li>
                                         <li><a class="dropdown-item" href="{{ route('users.index') }}">Usuarios</a></li>
-                                        <li><a class="dropdown-item" href="#">Clientes</a></li>
+                                        <li><a class="dropdown-item" href="{{ route('clients.index') }}">Clientes</a></li>
 
 
                                     </ul>
                                 </li>
                             @endcan
                             <li class="nav-item dropdown">
-                                <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button"
+                                <a id="navbarDropdown2" class="nav-link dropdown-toggle" href="#" role="button"
                                     data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                                     {{ Auth::user()->name }}
                                 </a>
 
-                                <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                                    <a class="dropdown-item" href="{{ route('logout') }}"
-                                        onclick="event.preventDefault();
+                                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                    <li><a class="dropdown-item"
+                                            href="{{ route('users.profile', Auth::user()->id) }}">Perfil</a></li>
+                                    <li><a class="dropdown-item" href="#">Preguntas Frecuentes</a></li>
+                                    <li>
+                                        <hr class="dropdown-divider">
+                                    </li>
+                                    <li><a class="dropdown-item" href="{{ route('logout') }}"
+                                            onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">
-                                        {{ __('Logout') }}
-                                    </a>
+                                            Cerrar sesion
+                                        </a>
 
-                                    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                                        @csrf
-                                    </form>
-                                </div>
+                                        <form id="logout-form" action="{{ route('logout') }}" method="POST"
+                                            class="d-none">
+                                            @csrf
+                                        </form>
+                                    </li>
+
+
+                                </ul>
                             </li>
                         @endguest
                     </ul>

@@ -19,9 +19,8 @@ return new class extends Migration
             $table->string('password');
             $table->rememberToken();
             $table->string('last_name');
-            $table->string('dni')->unique();
-            $table->string('phone', 11)->nullable();
-            $table->text('avatar')->nullable();
+            $table->date('birth')->nullable();
+            $table->string('phone', 13)->nullable();
             $table->boolean('isActive')->default(1);
             $table->boolean('isUser');
             $table->timestamps();

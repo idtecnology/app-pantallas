@@ -5,71 +5,38 @@
         <div class="row justify-content-center">
             <div class="col-md-8">
                 <div class="card">
-                    <div class="card-header">{{ __('Register') }}</div>
-
                     <div class="card-body">
                         <form method="POST" action="{{ route('register') }}">
                             @csrf
 
                             <div class="row mb-3">
-                                <label for="name" class="col-md-4 col-form-label text-md-end">{{ __('Name') }}</label>
+                                <label for="name" class="col-md-4 col-form-label text-md-end">Nombre</label>
 
                                 <div class="col-md-6">
                                     <input id="name" type="text"
                                         class="form-control @error('name') is-invalid @enderror" name="name"
                                         value="{{ old('name') }}" required autocomplete="name" autofocus>
-
-                                    @error('name')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                    @enderror
                                 </div>
                             </div>
                             <div class="row mb-3">
-                                <label class="col-md-4 col-form-label text-md-end">Last name</label>
+                                <label class="col-md-4 col-form-label text-md-end">Apellido</label>
 
                                 <div class="col-md-6">
                                     <input id="last_name" type="text"
                                         class="form-control @error('name') is-invalid @enderror" name="last_name"
                                         value="{{ old('last_name') }}" required autocomplete="last_name">
-
-
                                 </div>
                             </div>
 
-                            <div class="row mb-3">
-                                <label class="col-md-4 col-form-label text-md-end">DNI</label>
-                                <div class="col-md-6">
-                                    <input id="dni" type="text"
-                                        class="form-control @error('name') is-invalid @enderror" name="dni"
-                                        value="{{ old('dni') }}" required autocomplete="dni">
-                                </div>
-                            </div>
+
 
                             <div class="row mb-3">
-                                <label class="col-md-4 col-form-label text-md-end">Phone</label>
-                                <div class="col-md-6">
-                                    <input id="phone" type="text"
-                                        class="form-control @error('name') is-invalid @enderror" name="phone"
-                                        value="{{ old('phone') }}" required autocomplete="phone">
-                                </div>
-                            </div>
-
-                            <div class="row mb-3">
-                                <label for="email"
-                                    class="col-md-4 col-form-label text-md-end">{{ __('Email Address') }}</label>
+                                <label for="email" class="col-md-4 col-form-label text-md-end">Email</label>
 
                                 <div class="col-md-6">
                                     <input id="email" type="email"
                                         class="form-control @error('email') is-invalid @enderror" name="email"
                                         value="{{ old('email') }}" required autocomplete="email">
-
-                                    @error('email')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                    @enderror
                                 </div>
                             </div>
 
@@ -81,22 +48,20 @@
                                     <input id="password" type="password"
                                         class="form-control @error('password') is-invalid @enderror" name="password"
                                         required autocomplete="new-password">
-
-                                    @error('password')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                    @enderror
                                 </div>
                             </div>
 
                             <div class="row mb-3">
-                                <label for="password-confirm"
-                                    class="col-md-4 col-form-label text-md-end">{{ __('Confirm Password') }}</label>
+                                <div class="col-md-6 offset-md-4">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" required name="remember"
+                                            id="remember" {{ old('remember') ? 'checked' : '' }}>
 
-                                <div class="col-md-6">
-                                    <input id="password-confirm" type="password" class="form-control"
-                                        name="password_confirmation" required autocomplete="new-password">
+                                        <label class="form-check-label" for="remember">
+                                            Acepto las <a class="fw-bold">Politicas de Privacidad</a> y <a class="fw-bold"
+                                                href="">Terminos y Condiciones</a>
+                                        </label>
+                                    </div>
                                 </div>
                             </div>
 
@@ -107,6 +72,8 @@
                                     </button>
                                 </div>
                             </div>
+
+
                         </form>
                     </div>
                 </div>
