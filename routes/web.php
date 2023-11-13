@@ -5,8 +5,8 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MediaController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\ScreenController;
+use App\Http\Controllers\TramoController;
 use App\Http\Controllers\UserController;
-use App\Models\Screen;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -41,6 +41,8 @@ Route::group(['middleware' => ['auth']], function () {
         return view('pagar');
     })->name('pagar');
 
+
+    Route::resource('/tramo', TramoController::class);
 
 
     // Route::get('/', [HomeController::class, 'index'])->name('home');

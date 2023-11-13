@@ -17,6 +17,7 @@ return new class extends Migration
             $table->date('fecha');
             $table->integer('duracion')->default(600);
             $table->time('tramos');
+            $table->boolean('isActive')->default(1);
             $table->timestamps();
         });
     }

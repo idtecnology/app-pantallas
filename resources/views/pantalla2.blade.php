@@ -4,22 +4,12 @@
 @section('content')
     <div id="multimedia">
         <span class="fs-3 mb-3">Tu multimedia</span>
-        <div class="row text-center mt-4">
-            <div class="col-3">
-                <img src="https://placehold.co/200x200" alt="">
-            </div>
-            <div class="col-3">
-                <img src="https://placehold.co/200x200" alt="">
-            </div>
-            <div class="col-3">
-                <img src="https://placehold.co/200x200" alt="">
-            </div>
-            <div class="col-3">
-                <img src="https://placehold.co/200x200" alt="">
-            </div>
+        <div class="row text-center mt-4" id="mediaaas">
+            Seleccione la multimedia
         </div>
         <div class="w-100 mt-4">
-            <a class="btn btn-primary rounded-pill d-flex text-center align-middle">
+            <a data-bs-toggle="modal" data-bs-toggle="modal" data-bs-target="#staticBackdro2"
+                class="btn btn-primary rounded-pill d-flex text-center align-middle">
                 <span class="material-symbols-outlined">
                     edit
                 </span>
@@ -33,15 +23,10 @@
     <div id="horario-select" class="mt-4 p-2">
         <div class="d-flex align-middle items-center">
             <span class="fs-3 fw-bold">Horario seleccionado:</span>
-            <span class="fs-4">Hoy, 15:30 hs</span>
+            <span class="fs-4 ms-3 align-middle" id="span_tramo">Hoy, 00:00 hs</span>
         </div>
-        <div class="row text-center mt-3">
-            <div class="col-2"><span class="py-2 px-3 bg-primary rounded-pill text-white">15:10</span></div>
-            <div class="col-2"><span class="py-2 px-3 bg-secondary rounded-pill text-white">15:20</span></div>
-            <div class="col-2"><span class="py-2 px-3 bg-secondary rounded-pill text-white">15:30</span></div>
-            <div class="col-2"><span class="py-2 px-3 bg-secondary rounded-pill text-white">15:40</span></div>
-            <div class="col-2"><span class="py-2 px-3 bg-secondary rounded-pill text-white">15:50</span></div>
-            <div class="col-2"><span class="py-2 px-3 bg-secondary rounded-pill text-white">16:00</span></div>
+        <div class="row text-center mt-3" id='fuera'>
+
         </div>
         <div class="mt-4 text-center px-2 py-2 shadow-sm border border-1">
             <a data-bs-toggle="modal" data-bs-toggle="modal" data-bs-target="#staticBackdrop" class="">Ver horarios
@@ -55,7 +40,7 @@
         </span>
         <div class="d-flex flex-column">
             <span>tu publicacion sera de 15 segundos</span>
-            <span>Se visualizara el 27/10/2023 - 15:30 hs</span>
+            <span id="fehca_visualizacion">Se visualizara el 27/10/2023 - 15:30 hs</span>
             <span>Total: $10.000</span>
         </div>
         <div class="mt-2"><a class="btn btn-primary rounded-pill w-100 d-flex align-middle">
@@ -76,46 +61,12 @@
                 </div>
                 <div class="modal-body">
                     <div id="fecha">
-                        <input type="date" name="date" id="date" class="form-control">
+                        <input onchange="buscarTramos(this.value, 1)" type="date" name="date" id="date"
+                            class="form-control">
+                        <input class="form-control" type="time" disabled id="tramo_select_2" name="tramo_select_2" />
                     </div>
                     <div id="diasDisponibles" class="mt-4 p-3 border border-1">
-                        <div class="row">
-                            <div class="col-2 mb-2">
-                                <a class="btn btn-primary px-4 py-1 rounded-pill">07:00</a>
-                            </div>
-                            <div class="col-2 mb-2">
-                                <a class="btn btn-primary px-4 py-1 rounded-pill">07:10</a>
-                            </div>
-                            <div class="col-2 mb-2">
-                                <a class="btn btn-primary px-4 py-1 rounded-pill">07:20</a>
-                            </div>
-                            <div class="col-2 mb-2">
-                                <a class="btn btn-primary px-4 py-1 rounded-pill">07:30</a>
-                            </div>
-                            <div class="col-2 mb-2">
-                                <a class="btn btn-primary px-4 py-1 rounded-pill">07:40</a>
-                            </div>
-                            <div class="col-2 mb-2">
-                                <a class="btn btn-primary px-4 py-1 rounded-pill">07:50</a>
-                            </div>
-                            <div class="col-2 mb-2">
-                                <a class="btn btn-primary px-4 py-1 rounded-pill">08:00</a>
-                            </div>
-
-                            <div class="col-2 mb-2">
-                                <a class="btn btn-primary px-4 py-1 rounded-pill">08:10</a>
-                            </div>
-                            <div class="col-2 mb-2">
-                                <a class="btn btn-primary px-4 py-1 rounded-pill">08:20</a>
-                            </div>
-                            <div class="col-2 mb-2">
-                                <a class="btn btn-primary px-4 py-1 rounded-pill">08:30</a>
-                            </div>
-                            <div class="col-2 mb-2">
-                                <a class="btn btn-primary px-4 py-1 rounded-pill">08:40</a>
-                            </div>
-
-                        </div>
+                        <div class="row" id="tramo"></div>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -124,4 +75,166 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="staticBackdro2" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Cargar multimedia</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    {!! Form::open([
+                        'route' => 'sale.store',
+                        'method' => 'POST',
+                        'id' => 'file-upload',
+                        'enctype' => 'multipart/form-data',
+                    ]) !!}
+                    <input type="hidden" id="tramo_select" name="tramo_select" />
+                    <div class="row">
+                        <div class="col-8 mb-3">
+                            <div class="form-group">
+                                <strong>Nombre:</strong>
+                                {!! Form::text('name', null, ['placeholder' => 'Nombre', 'class' => 'form-control']) !!}
+                            </div>
+                        </div>
+                        <div class="col-4 mb-3">
+                            <div class="form-group">
+                                <strong>Tipo:</strong>
+                                <div class="form-check">
+                                    {{ Form::radio('type', '1', false, ['class' => 'form-check-input']) }}
+                                    <label class="form-check-label" for="flexRadioDefault1">
+                                        Video
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    {{ Form::radio('type', '2', false, ['class' => 'form-check-input']) }}
+                                    <label class="form-check-label" for="flexRadioDefault1">
+                                        Slideshow
+                                    </label>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="form-group">
+                            <strong>Ficheros:</strong>
+                            <input type="file" name='files[]' multiple class="form-control">
+                        </div>
+                    </div>
+
+                    <div class="col-xs-12 col-sm-12 col-md-12 text-center mt-4">
+                        <button type="submit" class="btn btn-primary">Guardar</button>
+                    </div>
+                </div>
+
+                {!! Form::close() !!}
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var myModal = new bootstrap.Modal(document.getElementById('staticBackdrop'));
+
+        buscarTramos("{{ date('Y-m-d') }}", 2)
+
+
+        function buscarTramos(fecha, lugar) {
+
+            var tramo = document.querySelector('#tramo')
+            console.log(fecha)
+
+            fetch('/api/tramo', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        fecha: fecha,
+                        limit: lugar == 2 ? '5' : ''
+                    }),
+                    headers: {
+                        'content-type': 'application/json',
+                    }
+                }).then(response => response.json())
+                .then(data => {
+                    console.log(data)
+                    if (lugar == 1) {
+                        var divs = '';
+                        if (data == '') {
+                            divs += `Vacio, no hay tramos disponibles`
+                        } else {
+                            for (tramos in data) {
+                                divs += `<div class="col-2 mb-2">
+                                <a onclick="seleccionTramo(this, '1')" class="btn btn-primary px-4 py-1 rounded-pill">${data[tramos].tramos}</a>
+                            </div>`
+                            }
+                            // divs += '<input type="hidden" id="tramo_select" name="tramo_select"/>'
+                        }
+                        tramo.innerHTML = divs;
+                    } else {
+
+                        for (tramos in data) {
+                            divs += `<div class="col-2 mb-2">
+                                <a onclick="seleccionTramo(this,'2')" class="btn btn-primary px-4 py-1 rounded-pill">${data[tramos].tramos}</a>
+                            </div>`
+                        }
+
+                        document.querySelector('#span_tramo').innerHTML = `Hoy, ${data[0].tramos} hs`
+                        document.querySelector('#fehca_visualizacion').innerHTML =
+                            `Se visualizara el ${fecha} - ${data[0].tramos} hs`
+                        document.getElementById('tramo_select').value = data[0].tramos
+
+
+                        document.querySelector('#fuera').innerHTML = ''
+                        document.querySelector('#fuera').innerHTML = divs
+                    }
+
+                });
+        }
+
+        function seleccionTramo(tramo, lugar) {
+            var textoDelEnlace = tramo.innerText || tramo.textContent;
+            if (lugar == 1) {
+                document.getElementById('tramo_select').value = textoDelEnlace
+                document.getElementById('tramo_select_2').value = textoDelEnlace
+                document.querySelector('#span_tramo').innerHTML = `Hoy, ${textoDelEnlace} hs`
+
+            } else {
+                document.querySelector('#span_tramo').innerHTML = `Hoy, ${textoDelEnlace} hs`
+                document.getElementById('tramo_select').value = textoDelEnlace
+            }
+
+
+        }
+        const csrfToken = "{{ csrf_token() }}";
+
+        document.getElementById('file-upload').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevenir la acción predeterminada del formulario (enviar por POST)
+
+            const formData = new FormData(this);
+            console.log(formData)
+
+            // Realizar la solicitud Fetch
+            fetch('{{ route('sale.store') }}', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                    document.getElementById('mediaaas').innerHTML = `<div class="col-3">
+                <img src="${data}" alt="">
+            </div>`
+                })
+                .catch(error => {
+                    // Manejar errores de la solicitud
+                    console.error('Error:', error);
+                });
+        });
+    </script>
 @endsection

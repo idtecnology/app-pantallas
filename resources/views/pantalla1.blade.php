@@ -12,12 +12,13 @@
                 <span class="fs-4">Address</span>
                 <div class="row mt-4">
                     <div class="col-6">
-                        <select class="form-select rounded-pill" name="" id="">
-                            <option value="">15 seg - $10.000</option>
-                            <option value="">30 seg - $20.000</option>
-                            <option value="">45 seg - $30.000</option>
-                            <option value="">60 seg - $40.000</option>
-                            <option value="">120 seg - $80.000</option>
+                        <select onchange="tiempo(this.value)" class="form-select rounded-pill" name=""
+                            id="">
+                            <option value="15">15 seg - $10.000</option>
+                            <option value="30">30 seg - $20.000</option>
+                            <option value="45">45 seg - $30.000</option>
+                            <option value="60">60 seg - $40.000</option>
+                            <option value="120">120 seg - $80.000</option>
                         </select>
                     </div>
                     <div class="col-6">
@@ -58,4 +59,11 @@
             </div>
         </div>
     </div>
+
+    <script>
+        function tiempo(segundos) {
+
+            console.log('hola')
+        }
+    </script>
 @endsection
