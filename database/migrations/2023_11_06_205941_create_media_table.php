@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id('_id');
             $table->string('name');
             $table->integer('client_id');
+            $table->string('tramo_id');
             $table->integer('screen_id');
             $table->time('time');
             $table->date('date');
@@ -23,6 +24,7 @@ return new class extends Migration
             $table->string('path');
             $table->tinyInteger('type')->default(0);
             $table->tinyInteger('approved')->default(0);
+            $table->tinyInteger('isPaid')->default(0);
             $table->tinyInteger('downloaded')->default(0);
             $table->boolean('isActive')->default(0);
             $table->timestamps();

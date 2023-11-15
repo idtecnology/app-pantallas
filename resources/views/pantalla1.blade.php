@@ -1,6 +1,5 @@
 @extends('layouts.app')
 
-
 @section('content')
     <div class="border border-2 p-3 d-flex">
         <div class="">
@@ -22,7 +21,7 @@
                         </select>
                     </div>
                     <div class="col-6">
-                        <a href="{{ route('pantalla2') }}" class="btn btn-primary w-100 rounded-pill text-center">
+                        <a id="mienlace" class="btn btn-primary w-100 rounded-pill text-center">
                             <div class="d-flex align-middle justify-content-center">
                                 <span class="material-symbols-outlined md-18 ">
                                     photo_camera
@@ -61,9 +60,11 @@
     </div>
 
     <script>
-        function tiempo(segundos) {
+        tiempo()
 
-            console.log('hola')
+        function tiempo(segundos = 15) {
+            document.getElementById('mienlace').href = `http://localhost:8000/p2/1/${segundos}`
+
         }
     </script>
 @endsection

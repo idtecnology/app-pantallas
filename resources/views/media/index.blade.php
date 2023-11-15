@@ -29,7 +29,6 @@
                                 <div class="btn-group" role="group" aria-label="Basic example">
                                     <a href="{{ route('sale.show', $dato->_id) }}" type="button"
                                         class="btn btn-primary btn-sm">Ver</a>
-                                    <a href="" type="button" class="btn btn-success btn-sm">Aprobar</a>
                                 </div>
                             </td>
                         @else

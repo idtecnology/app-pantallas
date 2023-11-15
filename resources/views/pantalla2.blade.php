@@ -13,7 +13,7 @@
                 <span class="material-symbols-outlined">
                     edit
                 </span>
-                <span>edita tu contenido</span></a>
+                <span>Edita tu contenido</span></a>
         </div>
     </div>
     <div id="horario-text" class="mt-4 d-flex flex-column">
@@ -39,9 +39,29 @@
             Resumen de tu compra
         </span>
         <div class="d-flex flex-column">
-            <span>tu publicacion sera de 15 segundos</span>
+            <span>Tu publicacion sera de {{ $time }} segundos</span>
             <span id="fehca_visualizacion">Se visualizara el 27/10/2023 - 15:30 hs</span>
-            <span>Total: $10.000</span>
+            <span>Total: @switch($time)
+                    @case(30)
+                        $20.000
+                    @break
+
+                    @case(45)
+                        $30.000
+                    @break
+
+                    @case(60)
+                        $40.000
+                    @break
+
+                    @case(120)
+                        $80.000
+                    @break
+
+                    @default
+                        $10.000
+                @endswitch
+            </span>
         </div>
         <div class="mt-2"><a class="btn btn-primary rounded-pill w-100 d-flex align-middle">
                 <span class="material-symbols-outlined">
@@ -85,6 +105,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
+                    <div id="panel-alert"></div>
                     {!! Form::open([
                         'route' => 'sale.store',
                         'method' => 'POST',
@@ -92,6 +113,9 @@
                         'enctype' => 'multipart/form-data',
                     ]) !!}
                     <input type="hidden" id="tramo_select" name="tramo_select" />
+                    <input type="hidden" id="screen_id" name="screen_id" value="{{ $id }}" />
+                    <input type="hidden" id="duration" name="duration" value="{{ $time }}" />
+                    <input type="hidden" id="fechasss" name="fecha" value="" />
                     <div class="row">
                         <div class="col-8 mb-3">
                             <div class="form-group">
@@ -115,9 +139,7 @@
                                     </label>
                                 </div>
                             </div>
-
                         </div>
-
                         <div class="form-group">
                             <strong>Ficheros:</strong>
                             <input type="file" name='files[]' multiple class="form-control">
@@ -146,7 +168,7 @@
         function buscarTramos(fecha, lugar) {
 
             var tramo = document.querySelector('#tramo')
-            console.log(fecha)
+            document.getElementById('fechasss').value = fecha
 
             fetch('/api/tramo', {
                     method: 'POST',
@@ -159,7 +181,6 @@
                     }
                 }).then(response => response.json())
                 .then(data => {
-                    console.log(data)
                     if (lugar == 1) {
                         var divs = '';
                         if (data == '') {
@@ -181,10 +202,15 @@
                             </div>`
                         }
 
+                        console.log(fecha)
+
+
                         document.querySelector('#span_tramo').innerHTML = `Hoy, ${data[0].tramos} hs`
                         document.querySelector('#fehca_visualizacion').innerHTML =
                             `Se visualizara el ${fecha} - ${data[0].tramos} hs`
                         document.getElementById('tramo_select').value = data[0].tramos
+
+
 
 
                         document.querySelector('#fuera').innerHTML = ''
@@ -204,6 +230,7 @@
             } else {
                 document.querySelector('#span_tramo').innerHTML = `Hoy, ${textoDelEnlace} hs`
                 document.getElementById('tramo_select').value = textoDelEnlace
+
             }
 
 
@@ -211,12 +238,10 @@
         const csrfToken = "{{ csrf_token() }}";
 
         document.getElementById('file-upload').addEventListener('submit', function(event) {
-            event.preventDefault(); // Prevenir la acción predeterminada del formulario (enviar por POST)
+            event.preventDefault();
 
             const formData = new FormData(this);
-            console.log(formData)
 
-            // Realizar la solicitud Fetch
             fetch('{{ route('sale.store') }}', {
                     method: 'POST',
                     body: formData,
@@ -226,13 +251,23 @@
                 })
                 .then(response => response.json())
                 .then(data => {
-                    console.log(data);
-                    document.getElementById('mediaaas').innerHTML = `<div class="col-3">
-                <img src="${data}" alt="">
-            </div>`
+                    console.log(data)
+                    if (data.status === 1) {
+                        document.getElementById('mediaaas').innerHTML =
+                            `<div class="col-3"><img src="${data}" alt=""></div>`
+                    } else {
+                        document.getElementById('panel-alert').innerHTML = `
+                        <div class="alert alert-danger" id='miAlerta' alert-dismissible fade show" role="alert">
+                        ${data.message}
+                    </div>`
+
+                    }
+
+                    setTimeout(function() {
+                        document.getElementById('miAlerta').classList.remove('show');
+                    }, 3000);
                 })
                 .catch(error => {
-                    // Manejar errores de la solicitud
                     console.error('Error:', error);
                 });
         });

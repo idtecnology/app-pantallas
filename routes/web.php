@@ -27,14 +27,17 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', [HomeController::class, 'index'])->name('home');
-Route::get('/p1', function () {
-    return view('pantalla1');
+Route::get('/p1/{id}', function ($id) {
+    return view('pantalla1', compact('id'));
 })->name('pantalla1');
 
 Route::group(['middleware' => ['auth']], function () {
 
-    Route::get('/p2', function () {
-        return view('pantalla2');
+    Route::get('/p2/{id}/{time}', function ($id, $time) {
+
+
+        session(['screen_id' => $id, 'time' => $time]);
+        return view('pantalla2', compact('id', 'time'));
     })->name('pantalla2');
 
     Route::get('/pagar', function () {
@@ -48,6 +51,7 @@ Route::group(['middleware' => ['auth']], function () {
     // Route::get('/', [HomeController::class, 'index'])->name('home');
     Route::resource('/sale', MediaController::class);
     Route::get('/sale/programar/{id}', [MediaController::class, 'programar'])->name('sale.programar');
+    Route::get('/grilla', [MediaController::class, 'grilla'])->name('grilla');
 
 
     Route::get('/profile/{id}', [UserController::class, 'profile'])->name('users.profile');

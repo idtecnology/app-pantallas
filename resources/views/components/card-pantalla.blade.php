@@ -7,7 +7,7 @@
                 <span>{{ $address ?? 'addess POS' }}</span>
             </div>
 
-            <a href="{{ route('pantalla1') }}" class="btn btn-primary rounded-5 btn-block">Publica ahora</a>
+            <a href="{{ route('pantalla1', 1) }}" class="btn btn-primary rounded-5 btn-block">Publica ahora</a>
         </div>
     </div>
 </div>

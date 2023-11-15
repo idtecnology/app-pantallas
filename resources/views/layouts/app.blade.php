@@ -20,9 +20,12 @@
 
     <!-- Scripts -->
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous">
+    {{-- <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"
+        integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous">
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"
+        integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous">
+    </script> --}}
 
 
     <style>
@@ -54,6 +57,8 @@
                     @guest
                     @else
                         <ul class="navbar-nav me-auto">
+                            <li><a class="dropdown-item" href="{{ route('sale.create') }}">Cargar multimedia</a>
+                            </li>
                             @can('client-list')
                                 <li class="nav-item dropdown">
                                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
@@ -111,6 +116,8 @@
                                     </a>
 
                                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                        <li><a class="dropdown-item" href="{{ route('sale.index') }}">Videos</a></li>
+                                        <li><a class="dropdown-item" href="{{ route('grilla') }}">Grilla</a></li>
                                         <li><a class="dropdown-item" href="{{ route('screen.index') }}">Pantallas</a></li>
                                         <li><a class="dropdown-item" href="#">Pagos</a></li>
                                         <li><a class="dropdown-item" href="{{ route('users.index') }}">Usuarios</a></li>
