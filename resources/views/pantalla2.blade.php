@@ -11,10 +11,6 @@
             <span class="fs-3 fw-bold">Horario seleccionado:</span>
             <span class="fs-4 ms-3 align-middle" id="span_tramo">Hoy, 00:00 hs</span>
         </div>
-        <div class="card">
-            <div id='fuera' class="card-body row text-center">
-            </div>
-        </div>
 
         <div class="mt-2 text-center px-2 py-2 shadow-sm border border-1">
             <a data-bs-toggle="modal" data-bs-toggle="modal" data-bs-target="#staticBackdrop" class="">Ver horarios
@@ -43,7 +39,7 @@
         </span>
         <div class="d-flex flex-column">
             <span>Tu publicacion sera de {{ $time }} segundos</span>
-            <span id="fehca_visualizacion">Se visualizara el 27/10/2023 - 00:00 hs</span>
+            <span id="fehca_visualizacion"></span>
             <span>Total: @switch($time)
                     @case(30)
                         $20.000
@@ -167,7 +163,7 @@
         // var myModal = new bootstrap.Modal(document.getElementById('staticBackdrop2'));
         // const myModalAlternative = new bootstrap.Modal('#staticBackdrop2')
 
-        buscarTramos("{{ date('Y-m-d') }}", 2)
+        buscarTramos("{{ date('Y-m-d') }}", 1)
         const csrfToken = "{{ csrf_token() }}";
 
 
@@ -201,37 +197,27 @@
                     if (data == '') {
                         divs += `Vacio, no hay tramos disponibles`;
                     } else {
-                        console.log(data.length)
-                        for (let tramos in data) {
+                        for (var tramos in data) {
                             // console.log(tramos)
                             divs += `<div class="col-2 mb-2">
-                                <a onclick="seleccionTramo(this, '1')" class="btn btn-primary px-4 py-1 rounded-pill">${data[tramos].tramos}</a>
+                                <a onclick="seleccionTramo(this, '1', \'${data[tramos].fecha}\')" class="btn btn-primary px-4 py-1 rounded-pill">${data[tramos].tramos}</a>
                             </div>`;
                         }
                     }
                     tramo.innerHTML = divs;
-                } else {
-                    var divs = '';
-                    if (data == '') {
-                        divs += `Vacio, no hay tramos disponibles`;
-                    } else {
-                        for (tramos in data) {
-                            divs += `<div class="col-2">
-                                <a onclick="seleccionTramo(this,'2')" class="btn btn-primary px-4 py-1 rounded-pill">${data[tramos].tramos}</a>
-                            </div>`;
-                        }
-                    }
+                }
 
-                    if (data != '') {
-                        inputFecha.min = data[tramos].fecha;
-                        inputFecha.max = data[tramos].fecha[data[tramos].fecha.length - 1];
-                        document.querySelector('#span_tramo').innerHTML = `Hoy, ${data[0].tramos} hs`;
-                        document.querySelector('#fehca_visualizacion').innerHTML =
-                            `Se visualizara el ${fecha} - ${data[0].tramos} hs`;
-                        document.getElementById('tramo_select').value = data[0].tramos;
-                        document.querySelector('#fuera').innerHTML = '';
-                    }
-                    document.querySelector('#fuera').innerHTML = divs;
+                var fechaFormateada = formatearFecha(data[tramos].fecha);
+
+                if (data != '') {
+                    inputFecha.min = data[tramos].fecha;
+                    inputFecha.max = data[tramos].fecha[data[tramos].fecha.length - 1];
+                    document.querySelector('#span_tramo').innerHTML =
+                        `${data[0].fecha == fecha ? 'Hoy' : fechaFormateada}, ${data[tramos].tramos}hs`;
+                    document.querySelector('#fehca_visualizacion').innerHTML =
+                        `Se visualizara el ${fechaFormateada} - ${data[0].tramos} hs`;
+                    document.getElementById('tramo_select').value = data[0].tramos;
+                    document.querySelector('#fuera').innerHTML = '';
                 }
 
 
@@ -240,15 +226,22 @@
             }
         }
 
-        function seleccionTramo(tramo, lugar) {
+        function seleccionTramo(tramo, lugar, fecha) {
             var textoDelEnlace = tramo.innerText || tramo.textContent;
+
+            var fechaFormateada = formatearFecha(fecha);
             if (lugar == 1) {
+                document.querySelector('#span_tramo').innerHTML = `${fechaFormateada}, ${textoDelEnlace} hs`;
+                document.querySelector('#fehca_visualizacion').innerHTML =
+                    `Se visualizara el ${fechaFormateada} - ${textoDelEnlace} hs`;
                 document.getElementById('tramo_select').value = textoDelEnlace
-                document.getElementById('tramo_select_2').value = textoDelEnlace
-                document.querySelector('#span_tramo').innerHTML = `Hoy, ${textoDelEnlace} hs`
+                document.querySelector('#selectTramo').classList.remove('disabled');
+                document.querySelector('#pagar').classList.remove('disabled');
             } else {
-                document.querySelector('#span_tramo').innerHTML = `Hoy, ${textoDelEnlace} hs`
+                document.querySelector('#span_tramo').innerHTML = `${fechaFormateada}, ${textoDelEnlace} hs`;
                 document.getElementById('tramo_select').value = textoDelEnlace
+                document.querySelector('#fehca_visualizacion').innerHTML =
+                    `Se visualizara el ${fechaFormateada} - ${textoDelEnlace} hs`;
                 document.querySelector('#selectTramo').classList.remove('disabled');
                 document.querySelector('#pagar').classList.remove('disabled');
             }
@@ -289,5 +282,24 @@
                     console.error('Error:', error);
                 });
         });
+
+
+        function formatearFecha(fechaOriginal) {
+
+
+            var fecha = new Date(fechaOriginal + 'T00:00:00-04:00');
+
+            // Crear un objeto Intl.DateTimeFormat para formatear la fecha como "dd-mm-yyyy" con la zona horaria local
+            var options = {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                timeZone: 'America/Caracas'
+            };
+            var formatoFecha = new Intl.DateTimeFormat('es-ES', options);
+
+            // Obtener la fecha formateada
+            return formatoFecha.format(fecha);
+        }
     </script>
 @endsection
