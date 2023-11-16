@@ -11,10 +11,14 @@ class TramoController extends Controller
     {
 
         if ($request->limit != '') {
-            // return date('H:i');
+
             $data = Tramo::where('tramos', '>=', date('H:i'))->where('fecha', '>=', $request->fecha)->where('duracion', '>', 15)->limit(6)->get();
         } else {
-            $data = Tramo::where('tramos', '>=', date('H:i'))->where('fecha', '>=', $request->fecha)->where('duracion', '>', 15)->get();
+            if ($request->fecha === date('Y-m-d')) {
+                $data = Tramo::where('tramos', '>=', date('H:i'))->where('fecha', '>=', $request->fecha)->where('duracion', '>', 15)->get();
+            } else {
+                $data = Tramo::where('fecha', '>=', $request->fecha)->where('duracion', '>', 15)->get();
+            }
         }
         return response()->json($data, 200);
     }
