@@ -136,12 +136,12 @@
                                         Video
                                     </label>
                                 </div>
-                                <div class="form-check">
-                                    {{ Form::radio('type', '2', false, ['class' => 'form-check-input']) }}
-                                    <label class="form-check-label" for="flexRadioDefault1">
-                                        Slideshow
-                                    </label>
-                                </div>
+                                {{-- <div class="form-check">
+                                        {{ Form::radio('type', '2', false, ['class' => 'form-check-input']) }}
+                                        <label class="form-check-label" for="flexRadioDefault1">
+                                            Slideshow
+                                        </label>
+                                    </div> --}}
                             </div>
                         </div>
                         <div class="form-group">

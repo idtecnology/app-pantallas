@@ -2,8 +2,12 @@
 
 @section('content')
     <div class="col-12">
-        <table class="table table-sm mb-b">
+        <table class="table table-sm mb-0 table-bordered">
             <thead>
+                <tr>
+                    <td colspan="4"><a class="btn btn-success btn-sm" href="{{ route('screen.create') }}">Crear nueva</a>
+                    </td>
+                </tr>
                 <tr>
                     <th>Nombre</th>
                     <th>Ubicacion</th>
