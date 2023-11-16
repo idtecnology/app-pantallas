@@ -171,10 +171,17 @@
         const csrfToken = "{{ csrf_token() }}";
 
 
+
+
+
+
+
+
         async function buscarTramos(fecha, lugar) {
             try {
                 var tramo = document.querySelector('#tramo');
                 document.getElementById('fechasss').value = fecha;
+                const inputFecha = document.getElementById('date');
 
                 const response = await fetch('/api/tramo', {
                     method: 'POST',
@@ -214,6 +221,8 @@
                     }
 
                     if (data != '') {
+                        inputFecha.min = data[tramos].fecha;
+                        inputFecha.max = data[tramos].fecha[data[tramos].fecha.length - 1];
                         document.querySelector('#span_tramo').innerHTML = `Hoy, ${data[0].tramos} hs`;
                         document.querySelector('#fehca_visualizacion').innerHTML =
                             `Se visualizara el ${fecha} - ${data[0].tramos} hs`;

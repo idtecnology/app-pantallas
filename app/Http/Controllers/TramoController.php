@@ -18,4 +18,13 @@ class TramoController extends Controller
         }
         return response()->json($data, 200);
     }
+
+
+    public function fechasDisp()
+    {
+
+        $data = Tramo::where('duracion', '>', 15)->limit(6)->get();
+
+        return response()->json($data, 200);
+    }
 }
