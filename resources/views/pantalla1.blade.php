@@ -63,7 +63,7 @@
         tiempo()
 
         function tiempo(segundos = 15) {
-            document.getElementById('mienlace').href = `http://localhost:8000/p2/1/${segundos}`
+            document.getElementById('mienlace').href = `/p2/1/${segundos}`
 
         }
     </script>
