@@ -43,7 +43,7 @@
         </span>
         <div class="d-flex flex-column">
             <span>Tu publicacion sera de {{ $time }} segundos</span>
-            <span id="fehca_visualizacion">Se visualizara el 27/10/2023 - 15:30 hs</span>
+            <span id="fehca_visualizacion">Se visualizara el 27/10/2023 - 00:00 hs</span>
             <span>Total: @switch($time)
                     @case(30)
                         $20.000
@@ -66,7 +66,8 @@
                 @endswitch
             </span>
         </div>
-        <div class="mt-2"><a href="{{ route('pagar') }}" class="btn btn-primary rounded-pill w-100 d-flex align-middle">
+        <div class="mt-2"><a id="pagar" href="{{ route('pagar') }}"
+                class="btn btn-primary rounded-pill w-100 d-flex align-middle disabled">
                 <span class="material-symbols-outlined">
                     credit_card
                 </span>
@@ -167,14 +168,15 @@
         // const myModalAlternative = new bootstrap.Modal('#staticBackdrop2')
 
         buscarTramos("{{ date('Y-m-d') }}", 2)
+        const csrfToken = "{{ csrf_token() }}";
 
 
-        function buscarTramos(fecha, lugar) {
+        async function buscarTramos(fecha, lugar) {
+            try {
+                var tramo = document.querySelector('#tramo');
+                document.getElementById('fechasss').value = fecha;
 
-            var tramo = document.querySelector('#tramo')
-            document.getElementById('fechasss').value = fecha
-
-            fetch('/api/tramo', {
+                const response = await fetch('/api/tramo', {
                     method: 'POST',
                     body: JSON.stringify({
                         fecha: fecha,
@@ -183,37 +185,47 @@
                     headers: {
                         'content-type': 'application/json',
                     }
-                }).then(response => response.json())
-                .then(data => {
-                    if (lugar == 1) {
-                        var divs = '';
-                        if (data == '') {
-                            divs += `Vacio, no hay tramos disponibles`
-                        } else {
-                            for (tramos in data) {
-                                divs += `<div class="col-2 mb-2">
-                                            <a onclick="seleccionTramo(this, '1')" class="btn btn-primary px-4 py-1 rounded-pill">${data[tramos].tramos}</a>
-                                        </div>`
-                            }
-                        }
-                        tramo.innerHTML = divs;
-                    } else {
+                });
 
+                const data = await response.json();
+
+                if (lugar == 1) {
+                    var divs = '';
+                    if (data == '') {
+                        divs += `Vacio, no hay tramos disponibles`;
+                    } else {
+                        for (tramos in data) {
+                            divs += `<div class="col-2 mb-2">
+                                <a onclick="seleccionTramo(this, '1')" class="btn btn-primary px-4 py-1 rounded-pill">${data[tramos].tramos}</a>
+                            </div>`;
+                        }
+                    }
+                    tramo.innerHTML = divs;
+                } else {
+                    var divs = '';
+                    if (data == '') {
+                        divs += `Vacio, no hay tramos disponibles`;
+                    } else {
                         for (tramos in data) {
                             divs += `<div class="col-2">
-                                        <a onclick="seleccionTramo(this,'2')" class="btn btn-primary px-4 py-1 rounded-pill">${data[tramos].tramos}</a>
-                                    </div>`
+                                <a onclick="seleccionTramo(this,'2')" class="btn btn-primary px-4 py-1 rounded-pill">${data[tramos].tramos}</a>
+                            </div>`;
                         }
-
-                        document.querySelector('#span_tramo').innerHTML = `Hoy, ${data[0].tramos} hs`
-                        document.querySelector('#fehca_visualizacion').innerHTML =
-                            `Se visualizara el ${fecha} - ${data[0].tramos} hs`
-                        document.getElementById('tramo_select').value = data[0].tramos
-                        document.querySelector('#fuera').innerHTML = ''
-                        document.querySelector('#fuera').innerHTML = divs
                     }
 
-                });
+                    if (data != '') {
+                        document.querySelector('#span_tramo').innerHTML = `Hoy, ${data[0].tramos} hs`;
+                        document.querySelector('#fehca_visualizacion').innerHTML =
+                            `Se visualizara el ${fecha} - ${data[0].tramos} hs`;
+                        document.getElementById('tramo_select').value = data[0].tramos;
+                        document.querySelector('#fuera').innerHTML = '';
+                    }
+                }
+
+                document.querySelector('#fuera').innerHTML = divs;
+            } catch (error) {
+                console.error('Error en buscarTramos:', error);
+            }
         }
 
         function seleccionTramo(tramo, lugar) {
@@ -222,17 +234,14 @@
                 document.getElementById('tramo_select').value = textoDelEnlace
                 document.getElementById('tramo_select_2').value = textoDelEnlace
                 document.querySelector('#span_tramo').innerHTML = `Hoy, ${textoDelEnlace} hs`
-
             } else {
                 document.querySelector('#span_tramo').innerHTML = `Hoy, ${textoDelEnlace} hs`
                 document.getElementById('tramo_select').value = textoDelEnlace
                 document.querySelector('#selectTramo').classList.remove('disabled');
-
+                document.querySelector('#pagar').classList.remove('disabled');
             }
-
-
         }
-        const csrfToken = "{{ csrf_token() }}";
+
 
         document.getElementById('file-upload').addEventListener('submit', function(event) {
             event.preventDefault();
@@ -254,9 +263,9 @@
                             `<div class="col-3"><img class='img-thumbnail' width='200px' heigth='200px' src="${data.img}" alt=""></div>`
                     } else {
                         document.getElementById('panel-alert').innerHTML = `
-                        <div class="alert alert-danger" id='miAlerta' alert-dismissible fade show" role="alert">
-                        ${data.message}
-                    </div>`
+                            <div class="alert alert-danger" id='miAlerta' alert-dismissible fade show" role="alert">
+                            ${data.message}
+                        </div>`
 
                     }
 
@@ -267,8 +276,6 @@
                 .catch(error => {
                     console.error('Error:', error);
                 });
-
-
         });
     </script>
 @endsection
