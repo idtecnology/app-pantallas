@@ -74,7 +74,7 @@ class MediaController extends Controller
                         //Colocar tramo
                         $path = Storage::disk('s3')->put('1/' . date('Ymd'), $request->file('files')[0]);
                         $path = Storage::disk('s3')->url($path);
-                        $ath = Storage::disk('s3')->temporaryUrl($path, now()->addMinutes(30));
+                        $ath = Storage::disk('s3')->temporaryUrl($path, now()->addMinutes(120));
 
                         $saveMedia->path =  $path;
                     } else {
@@ -99,8 +99,6 @@ class MediaController extends Controller
             return redirect()->route('sale.index');
         } else {
             $tramo = Tramo::where('fecha', '=', $request->fecha)->where('tramos', '=', $request->tramo_select)->get();
-
-
             if ($tramo[0]->duracion > $request->duration) {
                 $resto = $tramo[0]->duracion - $request->duration;
                 Tramo::where('_id', '=', $tramo[0]->_id)->update(['duracion' => $resto]);
@@ -116,29 +114,30 @@ class MediaController extends Controller
                 $saveMedia->tramo_id = $tramo[0]->tramo_id;
 
                 if ($request->type == 1) {
-                    $saveMedia->files_name = auth()->id() . '_' . time() . '.' . $request->file('files')[0]->extension();
+
                     //Colocar tramo
                     $path = Storage::disk('s3')->put('1/' . date('Ymd'), $request->file('files')[0]);
-                    $path = Storage::disk('s3')->url($path);
-                    $ath = Storage::disk('s3')->temporaryUrl($path, now()->addMinutes(30));
+                    $path = Storage::disk('s3')->temporaryUrl($path, now()->addMinutes(120));
+                    $saveMedia->files_name = $path;
 
-                    $saveMedia->path =  $path;
+                    $saveMedia->path =  '';
                 } else {
                     $files = [];
                     foreach ($request->file('files') as $key => $file) {
-                        $file_name = auth()->id() . '_' . $key . '_' . time() . '.' . $file->extension();
-                        $file->storeAs('/slideshow/uploads/' . date('Ymd'), $file_name, 'public');
-                        $files[] = $file_name;
-                        $saveMedia->path = '/slideshow/uploads/' . date('Ymd');
-                        $saveMedia->files_name = json_encode($files);
+
+                        $path = Storage::disk('s3')->put('1/' . date('Ymd'), $file);
+                        $path = Storage::disk('s3')->temporaryUrl($path, now()->addMinutes(120));
+                        $files[] = $path;
                     }
+
+                    $saveMedia->files_name = json_encode($files);
                 }
 
 
 
                 $saveMedia->save();
 
-                return response()->json(['message' => 'success', 'status' => 1, 'img' => $ath], 200);
+                return response()->json(['message' => 'success', 'status' => 1, 'img' => $path], 200);
             } else {
                 return response()->json(['message' => 'el tramo no cuenta con el tiempo disponible', 'status' => 0], 200);
             }
@@ -178,5 +177,15 @@ class MediaController extends Controller
     }
 
 
-    //! MONTAR EL APROVAR DE UNA.
+    public function approved($id)
+    {
+        Media::where('_id', '=', $id)->update(['approved' => 1]);
+        return back();
+    }
+
+    public function notApproved($id)
+    {
+        Media::where('_id', '=', $id)->update(['approved' => 0]);
+        return back();
+    }
 }

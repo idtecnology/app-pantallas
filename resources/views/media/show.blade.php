@@ -8,10 +8,13 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-12 d-flex justify-content-between mb-3">
-                        <h3 class="">Aprovar</h3>
+                        <a class="btn btn-sm btn-dark" href="{{ route('sale.index') }}">Regresar</a>
+                        <h3 class="">Aprobar</h3>
                         <div class="btn-group" role="group" aria-label="Basic example">
-                            <button type="button" class="btn btn-success btn-sm">Aprovar</button>
-                            <button type="button" class="btn btn-danger btn-sm">Desaprovar</button>
+                            <a href="{{ route('approved', $data->_id) }}" type="button"
+                                class="btn btn-success btn-sm">aprobar</a>
+                            <a href="{{ route('notapproved', $data->_id) }}" type="button"
+                                class="btn btn-danger btn-sm">Desaprobar</a>
                         </div>
                     </div>
                     <div class="col-12">
@@ -51,7 +54,7 @@
                                         @break
 
                                         @default
-                                            Por aprovar
+                                            Por aprobar
                                     @endswitch
                                 </td>
                             </tr>
@@ -60,6 +63,9 @@
                 </div>
                 <div class="col-12 mt-4">
                     <span>Ver</span>
+                    <div class="">
+                        <img src="{{ $data->files_name }}" alt="" class="img-thumnail">
+                    </div>
                 </div>
             </div>
         </div>

@@ -2,35 +2,38 @@
 
 
 @section('content')
+    <div id="horario-text" class="mb-2 d-flex flex-column">
+        <span class="fs-3 mb-3">Elegí tu horario</span>
+        <span class="fs-5 mb-3">Tu publicación saldrá dentro de los 5 minutos siguientes al horario seleccionado.</span>
+    </div>
+    <div id="horario-select" class="mt-2 p-2">
+        <div class="d-flex align-middle items-center">
+            <span class="fs-3 fw-bold">Horario seleccionado:</span>
+            <span class="fs-4 ms-3 align-middle" id="span_tramo">Hoy, 00:00 hs</span>
+        </div>
+        <div class="card">
+            <div id='fuera' class="card-body row text-center">
+            </div>
+        </div>
+
+        <div class="mt-2 text-center px-2 py-2 shadow-sm border border-1">
+            <a data-bs-toggle="modal" data-bs-toggle="modal" data-bs-target="#staticBackdrop" class="">Ver horarios
+                disponibles</a>
+        </div>
+    </div>
+
     <div id="multimedia">
         <span class="fs-3 mb-3">Tu multimedia</span>
         <div class="row text-center mt-4" id="mediaaas">
             Seleccione la multimedia
         </div>
         <div class="w-100 mt-4">
-            <a data-bs-toggle="modal" data-bs-toggle="modal" data-bs-target="#staticBackdro2"
-                class="btn btn-primary rounded-pill d-flex text-center align-middle">
+            <a data-bs-toggle="modal" id='selectTramo' data-bs-toggle="modal" data-bs-target="#staticBackdro2"
+                class="btn btn-primary rounded-pill d-flex text-center align-middle disabled">
                 <span class="material-symbols-outlined">
                     edit
                 </span>
                 <span>Edita tu contenido</span></a>
-        </div>
-    </div>
-    <div id="horario-text" class="mt-4 d-flex flex-column">
-        <span class="fs-3 mb-3">Elegi tu horario</span>
-        <span class="fs-5 mb-3">Tu publicación saldrá dentro de los 5 minutos siguientes al horario seleccionado.</span>
-    </div>
-    <div id="horario-select" class="mt-4 p-2">
-        <div class="d-flex align-middle items-center">
-            <span class="fs-3 fw-bold">Horario seleccionado:</span>
-            <span class="fs-4 ms-3 align-middle" id="span_tramo">Hoy, 00:00 hs</span>
-        </div>
-        <div class="row text-center mt-3" id='fuera'>
-
-        </div>
-        <div class="mt-4 text-center px-2 py-2 shadow-sm border border-1">
-            <a data-bs-toggle="modal" data-bs-toggle="modal" data-bs-target="#staticBackdrop" class="">Ver horarios
-                disponibles</a>
         </div>
     </div>
 
@@ -63,7 +66,7 @@
                 @endswitch
             </span>
         </div>
-        <div class="mt-2"><a class="btn btn-primary rounded-pill w-100 d-flex align-middle">
+        <div class="mt-2"><a href="{{ route('pagar') }}" class="btn btn-primary rounded-pill w-100 d-flex align-middle">
                 <span class="material-symbols-outlined">
                     credit_card
                 </span>
@@ -160,7 +163,8 @@
     </div>
 
     <script>
-        var myModal = new bootstrap.Modal(document.getElementById('staticBackdrop'));
+        // var myModal = new bootstrap.Modal(document.getElementById('staticBackdrop2'));
+        // const myModalAlternative = new bootstrap.Modal('#staticBackdrop2')
 
         buscarTramos("{{ date('Y-m-d') }}", 2)
 
@@ -188,31 +192,23 @@
                         } else {
                             for (tramos in data) {
                                 divs += `<div class="col-2 mb-2">
-                                <a onclick="seleccionTramo(this, '1')" class="btn btn-primary px-4 py-1 rounded-pill">${data[tramos].tramos}</a>
-                            </div>`
+                                            <a onclick="seleccionTramo(this, '1')" class="btn btn-primary px-4 py-1 rounded-pill">${data[tramos].tramos}</a>
+                                        </div>`
                             }
-                            // divs += '<input type="hidden" id="tramo_select" name="tramo_select"/>'
                         }
                         tramo.innerHTML = divs;
                     } else {
 
                         for (tramos in data) {
-                            divs += `<div class="col-2 mb-2">
-                                <a onclick="seleccionTramo(this,'2')" class="btn btn-primary px-4 py-1 rounded-pill">${data[tramos].tramos}</a>
-                            </div>`
+                            divs += `<div class="col-2">
+                                        <a onclick="seleccionTramo(this,'2')" class="btn btn-primary px-4 py-1 rounded-pill">${data[tramos].tramos}</a>
+                                    </div>`
                         }
-
-                        console.log(fecha)
-
 
                         document.querySelector('#span_tramo').innerHTML = `Hoy, ${data[0].tramos} hs`
                         document.querySelector('#fehca_visualizacion').innerHTML =
                             `Se visualizara el ${fecha} - ${data[0].tramos} hs`
                         document.getElementById('tramo_select').value = data[0].tramos
-
-
-
-
                         document.querySelector('#fuera').innerHTML = ''
                         document.querySelector('#fuera').innerHTML = divs
                     }
@@ -230,6 +226,7 @@
             } else {
                 document.querySelector('#span_tramo').innerHTML = `Hoy, ${textoDelEnlace} hs`
                 document.getElementById('tramo_select').value = textoDelEnlace
+                document.querySelector('#selectTramo').classList.remove('disabled');
 
             }
 
@@ -254,7 +251,7 @@
                     console.log(data)
                     if (data.status === 1) {
                         document.getElementById('mediaaas').innerHTML =
-                            `<div class="col-3"><img src="${data}" alt=""></div>`
+                            `<div class="col-3"><img class='img-thumbnail' width='200px' heigth='200px' src="${data.img}" alt=""></div>`
                     } else {
                         document.getElementById('panel-alert').innerHTML = `
                         <div class="alert alert-danger" id='miAlerta' alert-dismissible fade show" role="alert">
@@ -270,6 +267,8 @@
                 .catch(error => {
                     console.error('Error:', error);
                 });
+
+
         });
     </script>
 @endsection

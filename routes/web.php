@@ -52,6 +52,8 @@ Route::group(['middleware' => ['auth']], function () {
     Route::resource('/sale', MediaController::class);
     Route::get('/sale/programar/{id}', [MediaController::class, 'programar'])->name('sale.programar');
     Route::get('/grilla', [MediaController::class, 'grilla'])->name('grilla');
+    Route::get('/approved/{id}', [MediaController::class, 'approved'])->name('approved');
+    Route::get('/notapproved/{id}', [MediaController::class, 'notApproved'])->name('notapproved');
 
 
     Route::get('/profile/{id}', [UserController::class, 'profile'])->name('users.profile');
