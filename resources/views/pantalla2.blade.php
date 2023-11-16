@@ -201,7 +201,9 @@
                     if (data == '') {
                         divs += `Vacio, no hay tramos disponibles`;
                     } else {
-                        for (tramos in data) {
+                        console.log(data.length)
+                        for (let tramos in data) {
+                            // console.log(tramos)
                             divs += `<div class="col-2 mb-2">
                                 <a onclick="seleccionTramo(this, '1')" class="btn btn-primary px-4 py-1 rounded-pill">${data[tramos].tramos}</a>
                             </div>`;
@@ -229,9 +231,10 @@
                         document.getElementById('tramo_select').value = data[0].tramos;
                         document.querySelector('#fuera').innerHTML = '';
                     }
+                    document.querySelector('#fuera').innerHTML = divs;
                 }
 
-                document.querySelector('#fuera').innerHTML = divs;
+
             } catch (error) {
                 console.error('Error en buscarTramos:', error);
             }
