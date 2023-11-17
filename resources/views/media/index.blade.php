@@ -22,7 +22,7 @@
                         <td>{{ $dato->duration }} segundos</td>
                         <td>{{ date('d-m-Y', strtotime($dato->date)) }}</td>
                         <td>{{ $dato->type == 1 ? 'Video' : 'Slideshow' }}</td>
-                        <td>{{ $dato->approved == 1 ? 'Aprovado' : 'Sin aprobar' }}</td>
+                        <td>{{ $dato->approved == 1 ? 'Aprobado' : 'Sin aprobar' }}</td>
 
                         @can('admin-list')
                             <td>

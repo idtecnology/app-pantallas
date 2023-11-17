@@ -45,12 +45,12 @@
                                     @endswitch
                                 </td>
                                 <td>
-                                    Aprovado
+                                    Aprobado
                                 </td>
                                 <td colspan="3">
                                     @switch($data->approved)
                                         @case(1)
-                                            Aprovado
+                                            Aprobado
                                         @break
 
                                         @default
