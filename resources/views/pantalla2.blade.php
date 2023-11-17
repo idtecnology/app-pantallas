@@ -83,7 +83,7 @@
                     <div id="fecha">
                         <input onchange="buscarTramos(this.value, 1)" type="date" name="date" id="date"
                             class="form-control">
-                        <input class="form-control" type="time" disabled id="tramo_select_2" name="tramo_select_2" />
+
                     </div>
                     <div id="diasDisponibles" class="mt-4 p-3 border border-1">
                         <div class="row" id="tramo"></div>
@@ -140,10 +140,15 @@
                                     </div> --}}
                             </div>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group mb-3">
                             <strong>Ficheros:</strong>
                             <input type="file" name='files[]' multiple class="form-control">
                         </div>
+                    </div>
+
+                    <div style="display: none;" class="progress" role="progressbar" aria-label="Default striped example"
+                        aria-valuenow="10" aria-valuemin="0" aria-valuemax="100">
+                        <div class="progress-bar progress-bar-striped" id="progressBar" style="width: 0%"></div>
                     </div>
 
                     <div class="col-xs-12 col-sm-12 col-md-12 text-center mt-4">
@@ -158,11 +163,11 @@
             </div>
         </div>
     </div>
+@endsection
 
+
+@section('js')
     <script>
-        // var myModal = new bootstrap.Modal(document.getElementById('staticBackdrop2'));
-        // const myModalAlternative = new bootstrap.Modal('#staticBackdrop2')
-
         buscarTramos("{{ date('Y-m-d') }}", 1)
         const csrfToken = "{{ csrf_token() }}";
 
@@ -200,10 +205,11 @@
                         for (var tramos in data) {
                             // console.log(tramos)
                             divs += `<div class="col-2 mb-2">
-                                <a onclick="seleccionTramo(this, '1', \'${data[tramos].fecha}\')" class="btn btn-primary px-4 py-1 rounded-pill">${data[tramos].tramos}</a>
+                                <a data-bs-dismiss="modal" onclick="seleccionTramo(this, '1', \'${data[tramos].fecha}\')" class="btn btn-primary px-4 py-1 rounded-pill boton">${data[tramos].tramos}</a>
                             </div>`;
                         }
                     }
+
                     tramo.innerHTML = divs;
                 }
 
@@ -217,7 +223,7 @@
                     document.querySelector('#fehca_visualizacion').innerHTML =
                         `Se visualizara el ${fechaFormateada} - ${data[0].tramos} hs`;
                     document.getElementById('tramo_select').value = data[0].tramos;
-                    document.querySelector('#fuera').innerHTML = '';
+
                 }
 
 
@@ -251,6 +257,11 @@
         document.getElementById('file-upload').addEventListener('submit', function(event) {
             event.preventDefault();
 
+            document.querySelector('.progress').style.display = 'block';
+            var progressBar = document.getElementById('progressBar');
+            progressBar.style.width = '0%';
+            progressBar.innerHTML = '0%';
+
             const formData = new FormData(this);
 
             fetch('{{ route('sale.store') }}', {
@@ -260,10 +271,19 @@
                         'X-CSRF-TOKEN': csrfToken
                     }
                 })
-                .then(response => response.json())
+                .then(response => {
+                    progressBar.style.width = '100%';
+                    progressBar.innerHTML = '100%';
+                    return response.json();
+                })
                 .then(data => {
-                    console.log(data)
+                    // console.log(data)
+                    document.querySelector('.progress').style.display = 'none';
                     if (data.status === 1) {
+                        document.getElementById('panel-alert').innerHTML = `
+                            <div class="alert alert-success" id='miAlerta' alert-dismissible fade show" role="alert">
+                            Se subio con exito
+                        </div>`
                         document.getElementById('mediaaas').innerHTML =
                             `<div class="col-3"><img class='img-thumbnail' width='200px' heigth='200px' src="${data.img}" alt=""></div>`
                     } else {
@@ -285,11 +305,7 @@
 
 
         function formatearFecha(fechaOriginal) {
-
-
             var fecha = new Date(fechaOriginal + 'T00:00:00-04:00');
-
-            // Crear un objeto Intl.DateTimeFormat para formatear la fecha como "dd-mm-yyyy" con la zona horaria local
             var options = {
                 day: '2-digit',
                 month: '2-digit',
@@ -297,8 +313,6 @@
                 timeZone: 'America/Caracas'
             };
             var formatoFecha = new Intl.DateTimeFormat('es-ES', options);
-
-            // Obtener la fecha formateada
             return formatoFecha.format(fecha);
         }
     </script>
