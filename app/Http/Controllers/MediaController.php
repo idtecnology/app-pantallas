@@ -82,7 +82,7 @@ class MediaController extends Controller
                             //Colocar tramo
                             $path = Storage::disk('s3')->put('1/' . date('Ymd'), $request->file('files')[0]);
                             // $path = Storage::disk('s3')->url($path);
-                            $path = Storage::disk('s3')->temporaryUrl($path, now()->addMinutes(1440));
+                            $path = Storage::disk('s3')->temporaryUrl($path, now()->addMinutes(120));
 
                             $saveMedia->path =  '';
                         } else {
@@ -135,7 +135,7 @@ class MediaController extends Controller
                         foreach ($request->file('files') as $key => $file) {
 
                             $path = Storage::disk('s3')->put('1/' . date('Ymd'), $file);
-                            $path = Storage::disk('s3')->temporaryUrl($path, now()->addMinutes(1440));
+                            $path = Storage::disk('s3')->temporaryUrl($path, now()->addMinutes(120));
                             $files[] = $path;
                         }
 
