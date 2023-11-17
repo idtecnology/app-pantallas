@@ -63,9 +63,17 @@
                 </div>
                 <div class="col-12 mt-4">
                     <span>Ver</span>
-                    <div class="">
-                        <img src="{{ $data->files_name }}" alt="" class="img-thumnail">
-                    </div>
+                    @if ($data->ext === 'mp4')
+                        <div class="col-3"><video width="320" height="240" controls>
+                                <source src="{{ $data->files_name }}" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video></div>
+                    @else
+                        <div class="">
+                            <img src="{{ $data->files_name }}" alt="" class="img-thumnail">
+                        </div>
+                    @endif
+
                 </div>
             </div>
         </div>

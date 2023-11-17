@@ -167,6 +167,13 @@ class MediaController extends Controller
     public function show($id)
     {
         $data = Media::find($id);
+
+
+
+        $url = pathinfo($data->files_name);
+        $extension = $url['extension'];
+        $extension = strtok($extension, '?');
+        $data['ext'] = $extension;
         // return $data;
         return view('media.show', compact('data'));
     }
