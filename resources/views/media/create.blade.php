@@ -34,7 +34,7 @@
             <div class="col-4 mb-3">
                 <div class="form-group">
                     <strong>Fecha:</strong>
-                    <input onchange="buscarTramos(this.value, 2)" type="date" min='today' name='fecha'
+                    <input onchange="buscarTramos(this.value, 1)" type="date" min='today' name='fecha'
                         class="form-control">
                 </div>
             </div>

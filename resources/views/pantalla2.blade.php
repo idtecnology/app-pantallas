@@ -152,7 +152,7 @@
                     </div>
 
                     <div class="col-xs-12 col-sm-12 col-md-12 text-center mt-4">
-                        <button type="submit" class="btn btn-primary">Guardar</button>
+                        <button type="submit" id="saveFile" class="btn btn-primary">Guardar</button>
                     </div>
                 </div>
 
@@ -219,7 +219,7 @@
                     inputFecha.min = data[tramos].fecha;
                     inputFecha.max = data[tramos].fecha[data[tramos].fecha.length - 1];
                     document.querySelector('#span_tramo').innerHTML =
-                        `${data[0].fecha == fecha ? 'Hoy' : fechaFormateada}, ${data[tramos].tramos}hs`;
+                        `${data[0].fecha == fecha ? 'Hoy' : fechaFormateada}, ${data[0].tramos}hs`;
                     document.querySelector('#fehca_visualizacion').innerHTML =
                         `Se visualizara el ${fechaFormateada} - ${data[0].tramos} hs`;
                     document.getElementById('tramo_select').value = data[0].tramos;
@@ -257,6 +257,8 @@
         document.getElementById('file-upload').addEventListener('submit', function(event) {
             event.preventDefault();
 
+            document.querySelector('#saveFile').classList.add('disabled');
+
             document.querySelector('.progress').style.display = 'block';
             var progressBar = document.getElementById('progressBar');
             progressBar.style.width = '0%';
@@ -278,14 +280,23 @@
                 })
                 .then(data => {
                     // console.log(data)
+
                     document.querySelector('.progress').style.display = 'none';
                     if (data.status === 1) {
                         document.getElementById('panel-alert').innerHTML = `
                             <div class="alert alert-success" id='miAlerta' alert-dismissible fade show" role="alert">
                             Se subio con exito
                         </div>`
-                        document.getElementById('mediaaas').innerHTML =
-                            `<div class="col-3"><img class='img-thumbnail' width='200px' heigth='200px' src="${data.img}" alt=""></div>`
+                        if (data.ext != 'mp4') {
+                            document.getElementById('mediaaas').innerHTML =
+                                `<div class="col-3"><img class='img-thumbnail' width='200px' heigth='200px' src="${data.img}" alt=""></div>`
+                        } else {
+                            document.getElementById('mediaaas').innerHTML =
+                                `<div class="col-3"><video width="320" height="240" controls>
+                                    <source src="${data.img}" type="video/mp4">
+                                    Your browser does not support the video tag.
+                                    </video></div>`
+                        }
                     } else {
                         document.getElementById('panel-alert').innerHTML = `
                             <div class="alert alert-danger" id='miAlerta' alert-dismissible fade show" role="alert">

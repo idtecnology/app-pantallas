@@ -45,102 +45,114 @@ class MediaController extends Controller
     }
     public function store(Request $request)
     {
-        // return $request;
-
-        $arr = [];
 
 
-        if (is_array($request->tramos)) {
-            foreach ($request->tramos as $value) {
-                $tramo = Tramo::where('fecha', '=', $request->fecha)->where('tramos', '=', $value)->get();
+        $extension = $request->file('files')[0]->getClientOriginalExtension(); // Obtiene la extensión original del archivo
+        $extensionesPermitidas = ['jpeg', 'png', 'jpg', 'mp4'];
+
+        if (in_array($extension, $extensionesPermitidas)) {
+
+
+
+
+            $arr = [];
+
+
+            if (is_array($request->tramos)) {
+                foreach ($request->tramos as $value) {
+                    $tramo = Tramo::where('fecha', '=', $request->fecha)->where('tramos', '=', $value)->get();
+                    if ($tramo[0]->duracion > $request->duration) {
+                        $resto = $tramo[0]->duracion - $request->duration;
+                        Tramo::where('_id', '=', $tramo[0]->_id)->update(['duracion' => $resto]);
+                        $saveMedia = new Media();
+                        $saveMedia->client_id = auth()->id();
+                        $saveMedia->screen_id = 1;
+                        $saveMedia->name = strtoupper($request->name);
+                        $saveMedia->time = $value;
+                        $saveMedia->tramo_id = $tramo[0]->tramo_id;
+                        $saveMedia->duration = $request->duration;
+                        $saveMedia->date = $request->fecha;
+                        $saveMedia->type = $request->type;
+                        $saveMedia->approved = 1;
+                        // ! Ver que solo suba una vez
+                        // ! de una
+
+                        if ($request->type == 1) {
+                            $saveMedia->files_name = auth()->id() . '_' . time() . '.' . $request->file('files')[0]->extension();
+                            //Colocar tramo
+                            $path = Storage::disk('s3')->put('1/' . date('Ymd'), $request->file('files')[0]);
+                            // $path = Storage::disk('s3')->url($path);
+                            $path = Storage::disk('s3')->temporaryUrl($path, now()->addMinutes(120));
+
+                            $saveMedia->path =  '';
+                        } else {
+                            $files = [];
+                            foreach ($request->file('files') as $key => $file) {
+                                $file_name = auth()->id() . '_' . $key . '_' . time() . '.' . $file->extension();
+                                $file->storeAs('/slideshow/uploads/' . date('Ymd'), $file_name, 'public');
+                                $files[] = $file_name;
+                                $saveMedia->path = '/slideshow/uploads/' . date('Ymd');
+                                $saveMedia->files_name = json_encode($files);
+                            }
+                        }
+
+
+
+                        $saveMedia->save();
+
+                        // return response()->json(['message' => 'success', 'status' => 1, 'img' => $ath], 200);
+
+                    }
+                }
+                return redirect()->route('sale.index');
+            } else {
+                $tramo = Tramo::where('fecha', '=', $request->fecha)->where('tramos', '=', $request->tramo_select)->get();
                 if ($tramo[0]->duracion > $request->duration) {
                     $resto = $tramo[0]->duracion - $request->duration;
                     Tramo::where('_id', '=', $tramo[0]->_id)->update(['duracion' => $resto]);
                     $saveMedia = new Media();
                     $saveMedia->client_id = auth()->id();
-                    $saveMedia->screen_id = 1;
+                    $saveMedia->screen_id = $request->screen_id;
                     $saveMedia->name = strtoupper($request->name);
-                    $saveMedia->time = $value;
-                    $saveMedia->tramo_id = $tramo[0]->tramo_id;
+                    $saveMedia->time = $request->tramo_select;
                     $saveMedia->duration = $request->duration;
                     $saveMedia->date = $request->fecha;
                     $saveMedia->type = $request->type;
-                    $saveMedia->approved = 1;
-                    // ! Ver que solo suba una vez
-                    // ! de una
+                    $saveMedia->isPaid = 1;
+                    $saveMedia->tramo_id = $tramo[0]->tramo_id;
 
                     if ($request->type == 1) {
-                        $saveMedia->files_name = auth()->id() . '_' . time() . '.' . $request->file('files')[0]->extension();
+
                         //Colocar tramo
                         $path = Storage::disk('s3')->put('1/' . date('Ymd'), $request->file('files')[0]);
-                        $path = Storage::disk('s3')->url($path);
-                        $ath = Storage::disk('s3')->temporaryUrl($path, now()->addMinutes(120));
+                        $path = Storage::disk('s3')->temporaryUrl($path, now()->addMinutes(120));
 
-                        $saveMedia->path =  $path;
+                        $saveMedia->files_name = $path;
+
+                        $saveMedia->path =  '';
                     } else {
                         $files = [];
                         foreach ($request->file('files') as $key => $file) {
-                            $file_name = auth()->id() . '_' . $key . '_' . time() . '.' . $file->extension();
-                            $file->storeAs('/slideshow/uploads/' . date('Ymd'), $file_name, 'public');
-                            $files[] = $file_name;
-                            $saveMedia->path = '/slideshow/uploads/' . date('Ymd');
-                            $saveMedia->files_name = json_encode($files);
+
+                            $path = Storage::disk('s3')->put('1/' . date('Ymd'), $file);
+                            $path = Storage::disk('s3')->temporaryUrl($path, now()->addMinutes(120));
+                            $files[] = $path;
                         }
+
+                        $saveMedia->files_name = json_encode($files);
                     }
 
 
 
                     $saveMedia->save();
 
-                    // return response()->json(['message' => 'success', 'status' => 1, 'img' => $ath], 200);
-
-                }
-            }
-            return redirect()->route('sale.index');
-        } else {
-            $tramo = Tramo::where('fecha', '=', $request->fecha)->where('tramos', '=', $request->tramo_select)->get();
-            if ($tramo[0]->duracion > $request->duration) {
-                $resto = $tramo[0]->duracion - $request->duration;
-                Tramo::where('_id', '=', $tramo[0]->_id)->update(['duracion' => $resto]);
-                $saveMedia = new Media();
-                $saveMedia->client_id = auth()->id();
-                $saveMedia->screen_id = $request->screen_id;
-                $saveMedia->name = strtoupper($request->name);
-                $saveMedia->time = $request->tramo_select;
-                $saveMedia->duration = $request->duration;
-                $saveMedia->date = $request->fecha;
-                $saveMedia->type = $request->type;
-                $saveMedia->isPaid = 1;
-                $saveMedia->tramo_id = $tramo[0]->tramo_id;
-
-                if ($request->type == 1) {
-
-                    //Colocar tramo
-                    $path = Storage::disk('s3')->put('1/' . date('Ymd'), $request->file('files')[0]);
-                    $path = Storage::disk('s3')->temporaryUrl($path, now()->addMinutes(120));
-                    $saveMedia->files_name = $path;
-
-                    $saveMedia->path =  '';
+                    return response()->json(['message' => 'success', 'status' => 1, 'img' => $path, 'ext' => $extension], 200);
                 } else {
-                    $files = [];
-                    foreach ($request->file('files') as $key => $file) {
-
-                        $path = Storage::disk('s3')->put('1/' . date('Ymd'), $file);
-                        $path = Storage::disk('s3')->temporaryUrl($path, now()->addMinutes(120));
-                        $files[] = $path;
-                    }
-
-                    $saveMedia->files_name = json_encode($files);
+                    return response()->json(['message' => 'el tramo no cuenta con el tiempo disponible', 'status' => 0], 200);
                 }
-
-
-
-                $saveMedia->save();
-
-                return response()->json(['message' => 'success', 'status' => 1, 'img' => $path], 200);
-            } else {
-                return response()->json(['message' => 'el tramo no cuenta con el tiempo disponible', 'status' => 0], 200);
             }
+        } else {
+            return response()->json(['message' => 'El formato no es el correcto', 'status' => 0], 400);
         }
     }
     public function edit($id)
