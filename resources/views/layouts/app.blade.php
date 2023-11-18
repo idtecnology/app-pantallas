@@ -159,7 +159,7 @@
 
         <main class="py-4 container">
             <div class="row">
-                <div class="col-12">
+                <div class="col-12 col-sm-12">
                     @yield('content')
                 </div>
             </div>

@@ -1,16 +1,16 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="border border-2 p-3 d-flex">
+    <div class="border border-2">
         <div class="">
-            <img class="" src="https://placehold.co/600x400" alt="">
+            <img class="img-fluid" src="https://placehold.co/292x170" alt="">
         </div>
         <div class="d-flex flex-column">
-            <div class="ms-3">
-                <h1>Title</h1>
+            <div class="p-2">
+                <h1 class="mt-2">Title</h1>
                 <span class="fs-4">Address</span>
                 <div class="row mt-4">
-                    <div class="col-6">
+                    <div class="col-sm-6 col-xs-12">
                         <select onchange="tiempo(this.value)" class="form-select rounded-pill" name=""
                             id="">
                             <option value="15">15 seg - $10.000</option>
@@ -20,7 +20,7 @@
                             <option value="120">120 seg - $80.000</option>
                         </select>
                     </div>
-                    <div class="col-6">
+                    <div class="col-sm-6 col-xs-12 mt-2">
                         <a id="mienlace" class="btn btn-primary w-100 rounded-pill text-center">
                             <div class="d-flex align-middle justify-content-center">
                                 <span class="material-symbols-outlined md-18 ">
@@ -35,7 +35,7 @@
 
 
             </div>
-            <div class="ms-3 mt-4">
+            <div class="ms-2 mt-4">
                 <p class="fw-bold">¡Publicar nunca fue tan fácil!</p>
                 <p>Subí tus fotos o un video y publicalo en nuestra pantalla</p>
                 <p class="d-flex align-middle ">

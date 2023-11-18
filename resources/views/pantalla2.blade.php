@@ -3,13 +3,13 @@
 
 @section('content')
     <div id="horario-text" class="mb-2 d-flex flex-column">
-        <span class="fs-3 mb-3">Elegí tu horario</span>
-        <span class="fs-5 mb-3">Tu publicación saldrá dentro de los 5 minutos siguientes al horario seleccionado.</span>
+        <span class="fs-4 mb-2">Elegí tu horario</span>
+        <span class="fs-6">Tu publicación saldrá dentro de los 5 minutos siguientes al horario seleccionado.</span>
     </div>
-    <div id="horario-select" class="mt-2 p-2">
-        <div class="d-flex align-middle items-center">
-            <span class="fs-3 fw-bold">Horario seleccionado:</span>
-            <span class="fs-4 ms-3 align-middle" id="span_tramo">Hoy, 00:00 hs</span>
+    <div id="horario-select" class="">
+        <div class="d-flex justify-content-between">
+            <span class="fw-bold">Horario seleccionado:</span>
+            <span class="align-middle" id="span_tramo">Hoy, 00:00 hs</span>
         </div>
 
         <div class="mt-2 text-center px-2 py-2 shadow-sm border border-1">
@@ -18,23 +18,23 @@
         </div>
     </div>
 
-    <div id="multimedia">
-        <span class="fs-3 mb-3">Tu multimedia</span>
-        <div class="row text-center mt-4" id="mediaaas">
+    <div class="mt-4" id="multimedia">
+        <span class="fs-4">Tu multimedia</span>
+        <div class="row ms-1 mt-4 text-center" id="mediaaas">
             Seleccione la multimedia
         </div>
         <div class="w-100 mt-4">
             <a data-bs-toggle="modal" id='selectTramo' data-bs-toggle="modal" data-bs-target="#staticBackdro2"
-                class="btn btn-primary rounded-pill d-flex text-center align-middle disabled">
+                class="btn btn-primary rounded-pill d-flex text-center align-middle disabled justify-content-center">
                 <span class="material-symbols-outlined">
                     edit
                 </span>
-                <span>Edita tu contenido</span></a>
+                <span class="ms-3">Edita tu contenido</span></a>
         </div>
     </div>
 
     <div id="resumen" class="mt-4">
-        <span class="fw-bold fs-3">
+        <span class="fw-bold fs-4">
             Resumen de tu compra
         </span>
         <div class="d-flex flex-column">
@@ -63,7 +63,7 @@
             </span>
         </div>
         <div class="mt-2"><a id="pagar" href="{{ route('pagar') }}"
-                class="btn btn-primary rounded-pill w-100 d-flex align-middle disabled">
+                class="btn btn-primary rounded-pill w-100 d-flex align-middle disabled justify-content-center">
                 <span class="material-symbols-outlined">
                     credit_card
                 </span>
@@ -101,7 +101,7 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="exampleModalLabel">Cargar multimedia</h1>
+                    <h1 class="modal-title fs-4" id="exampleModalLabel">Cargar multimedia</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -117,13 +117,13 @@
                     <input type="hidden" id="duration" name="duration" value="{{ $time }}" />
                     <input type="hidden" id="fechasss" name="fecha" value="" />
                     <div class="row">
-                        <div class="col-8 mb-3">
+                        <div class="col-12 mb-3">
                             <div class="form-group">
                                 <strong>Nombre:</strong>
                                 {!! Form::text('name', null, ['placeholder' => 'Nombre', 'class' => 'form-control']) !!}
                             </div>
                         </div>
-                        <div class="col-4 mb-3">
+                        <div class="col-12 mb-3">
                             <div class="form-group">
                                 <strong>Tipo:</strong>
                                 <div class="form-check">
@@ -204,8 +204,8 @@
                     } else {
                         for (var tramos in data) {
                             // console.log(tramos)
-                            divs += `<div class="col-2 mb-2">
-                                <a data-bs-dismiss="modal" onclick="seleccionTramo(this, '1', \'${data[tramos].fecha}\')" class="btn btn-primary px-4 py-1 rounded-pill boton">${data[tramos].tramos}</a>
+                            divs += `<div class="col-4 px-0">
+                                <a data-bs-dismiss="modal" onclick="seleccionTramo(this, '1', \'${data[tramos].fecha}\')" class="btn btn-primary mb-2">${data[tramos].tramos}</a>
                             </div>`;
                         }
                     }
@@ -292,7 +292,7 @@
                                 `<div class="col-3"><img class='img-thumbnail' width='200px' heigth='200px' src="${data.img}" alt=""></div>`
                         } else {
                             document.getElementById('mediaaas').innerHTML =
-                                `<div class="col-3"><video width="320" height="240" controls>
+                                `<div class="col-12"><video width="200px" height="auto" controls>
                                     <source src="${data.img}" type="video/mp4">
                                     Your browser does not support the video tag.
                                     </video></div>`
