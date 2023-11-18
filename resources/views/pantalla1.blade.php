@@ -3,7 +3,7 @@
 @section('content')
     <div class="border border-2">
         <div class="">
-            <img class="img-fluid" src="https://placehold.co/292x170" alt="">
+            <img class="img-fluid" src="https://placehold.co/600x400" alt="">
         </div>
         <div class="d-flex flex-column">
             <div class="p-2">
