@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('tramos', function (Blueprint $table) {
             $table->id('_id');
             $table->string('tramo_id')->nullable();
+            $table->integer('screen_id');
             $table->date('fecha');
             $table->integer('duracion')->default(600);
             $table->time('tramos');
