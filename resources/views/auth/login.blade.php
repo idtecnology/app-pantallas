@@ -8,7 +8,8 @@
                     <div class="card-body">
                         <form method="POST" action="{{ route('login') }}">
                             @csrf
-
+                            <h1>Iniciar sesion</h1>
+                            <h2><a href="{{ route('register') }}">Registrate</a></h2>
                             <div class="row mb-3">
                                 <label for="email" class="col-md-4 col-form-label text-md-end">Email</label>
 

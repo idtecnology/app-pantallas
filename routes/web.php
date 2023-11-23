@@ -3,11 +3,15 @@
 use App\Http\Controllers\ClientesController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MediaController;
+use App\Http\Controllers\PagosController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\ScreenController;
 use App\Http\Controllers\TramoController;
 use App\Http\Controllers\UserController;
+use App\Models\Media;
+use App\Models\Screen;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,28 +25,44 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    $screens = Screen::all();
+    // return $screens;
+    return view('welcome', compact('screens'));
 });
 
 Auth::routes();
 
+
 Route::get('/home', [HomeController::class, 'index'])->name('home');
+
 Route::get('/p1/{id}', function ($id) {
+
     return view('pantalla1', compact('id'));
 })->name('pantalla1');
 
 Route::group(['middleware' => ['auth']], function () {
 
-    Route::get('/p2/{id}/{time}', function ($id, $time) {
+    Route::get('/p2/{id}/{time}/{media_id}/{preference_id}', function ($id, $time, $media_id, $preference_id) {
 
 
-        session(['screen_id' => $id, 'time' => $time]);
-        return view('pantalla2', compact('id', 'time'));
+        $data = Media::where('_id', '=', $media_id)->get()[0];
+
+        $rutaLocal = 'storage/uploads/tmp/' . $data->files_name;
+        // return dd($rutaLocal);
+
+        $url = pathinfo($data->files_name);
+        $extension = $url['extension'];
+        $extension = strtok($extension, '?');
+
+
+
+        return view('pantalla2', compact('id', 'time', 'rutaLocal', 'media_id', 'extension', 'preference_id'));
     })->name('pantalla2');
 
-    Route::get('/pagar', function () {
-        return view('pagar');
-    })->name('pagar');
+
+
+
+    Route::post('/guardarData', [MediaController::class, 'guardarData'])->name('guardarData');
 
 
     Route::resource('/tramo', TramoController::class);
@@ -58,10 +78,19 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::get('/profile/{id}', [UserController::class, 'profile'])->name('users.profile');
 
+    Route::post('/stores', [MediaController::class, 'stores'])->name('stores');
+
+
 
     // Mantenimientos
     Route::resource('/mantenice/roles', RoleController::class);
     Route::resource('/mantenice/users', UserController::class);
     Route::resource('/mantenice/clients', ClientesController::class);
     Route::resource('/mantenice/screen', ScreenController::class);
+
+
+    Route::get('/success', [PagosController::class, 'success'])->name('success');
+    Route::get('/pendiente', [PagosController::class, 'pendiente'])->name('pendiente');
+    Route::get('/failure', [PagosController::class, 'failure'])->name('failure');
+    Route::get('/pagare/{preference}', [PagosController::class, 'crearPago'])->name('pagare');
 });

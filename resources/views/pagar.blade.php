@@ -1,13 +1,29 @@
 @extends('layouts.app')
-
 @section('content')
-    <div class="col-12 text-center">
-        <span class="material-symbols-outlined text-primary" style="font-size: 300px !important;">
-            check_circle
-        </span>
-        <h3>Gracias por publicar</h3>
-        <p>Tu pago fue exitoso</p>
-        <p>tu publicacionse esta revisando en caso de ser rechazada se te rembolsara el dinero</p>
-        <p>Recibiras un correo con los detalles de tu compra</p>
+    <div class="d-none">
+        <div class="cho-container"></div>
     </div>
+@endsection
+@section('js')
+    <script src="https://sdk.mercadopago.com/js/v2"></script>
+    <script>
+        window.addEventListener('load', function() {
+            // Simula un clic en el botón de Mercado Pago
+            document.querySelector('.mercadopago-button').click();
+        });
+        const mp = new MercadoPago('TEST-c00d4341-14f8-4d93-ab17-ef2b8b1e9983', {
+            locale: 'es-AR'
+        })
+
+        mp.checkout({
+            preference: {
+                id: '{{ $preference }}'
+
+            },
+            render: {
+                label: 'Pagar',
+                container: '.cho-container'
+            }
+        })
+    </script>
 @endsection

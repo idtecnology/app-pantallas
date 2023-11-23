@@ -16,12 +16,12 @@
                     {!! Form::text('location', null, ['placeholder' => 'Ubicacion', 'class' => 'form-control']) !!}
                 </div>
             </div>
-            <div class="col-xs-12 col-sm-12 col-md-12 mb-3">
+            {{-- <div class="col-xs-12 col-sm-12 col-md-12 mb-3">
                 <div class="form-group">
                     <strong>Precio:</strong>
                     {!! Form::number('price', null, ['placeholder' => 'Precio (Ej: 21.10)', 'class' => 'form-control']) !!}
                 </div>
-            </div>
+            </div> --}}
 
             <div class="col-xs-12 col-sm-12 col-md-12 text-center mt-4">
                 <button type="submit" class="btn btn-primary">Guardar</button>

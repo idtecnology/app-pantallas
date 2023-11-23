@@ -63,16 +63,34 @@
                 </div>
                 <div class="col-12 mt-4">
                     <span>Ver</span>
-                    @if ($data->ext === 'mp4')
-                        <div class="col-3"><video width="320" height="240" controls>
-                                <source src="{{ $data->files_name }}" type="video/mp4">
-                                Your browser does not support the video tag.
-                            </video></div>
+                    @if (isset($arr))
+                        @foreach ($data->files_name as $k => $valor)
+                            @if ($arr[$k] === 'mp4')
+                                <div class="col-3"><video width="320" height="240" controls>
+                                        <source src="{{ $valor }}" type="video/mp4">
+                                        Your browser does not support the video tag.
+                                    </video></div>
+                            @else
+                                <div class="">
+                                    <img width="200px" height="200px" src="{{ $valor }}" alt=""
+                                        class="img-thumnail">
+                                </div>
+                            @endif
+                        @endforeach
                     @else
-                        <div class="">
-                            <img src="{{ $data->files_name }}" alt="" class="img-thumnail">
-                        </div>
+                        @if ($data->ext === 'mp4')
+                            <div class="col-3"><video width="320" height="240" controls>
+                                    <source src="{{ $data->files_name }}" type="video/mp4">
+                                    Your browser does not support the video tag.
+                                </video></div>
+                        @else
+                            <div class="">
+                                <img width="200px" height="200px" src="{{ $data->files_name }}" alt=""
+                                    class="img-thumnail">
+                            </div>
+                        @endif
                     @endif
+
 
                 </div>
             </div>

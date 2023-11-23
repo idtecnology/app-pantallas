@@ -33,7 +33,7 @@ class ScreenController extends Controller
 
         $storeData->name = strtoupper($request->name);
         $storeData->location = strtoupper($request->location);
-        $storeData->price = strtoupper($request->price);
+        // $storeData->price = strtoupper($request->price);
         $storeData->save();
 
         return  redirect()->route('screen.index');

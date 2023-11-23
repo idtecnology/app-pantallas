@@ -11,8 +11,7 @@
                 <span class="fs-4">Address</span>
                 <div class="row mt-4">
                     <div class="col-sm-6 col-xs-12">
-                        <select onchange="tiempo(this.value)" class="form-select rounded-pill" name=""
-                            id="">
+                        <select class="form-select rounded-pill" name="" id="tiempo">
                             <option value="15">15 seg - $10.000</option>
                             <option value="30">30 seg - $20.000</option>
                             <option value="45">45 seg - $30.000</option>
@@ -21,7 +20,7 @@
                         </select>
                     </div>
                     <div class="col-sm-6 col-xs-12 mt-2">
-                        <a id="mienlace" class="btn btn-primary w-100 rounded-pill text-center">
+                        {{-- <a id="mienlace" class="btn btn-primary w-100 rounded-pill text-center">
                             <div class="d-flex align-middle justify-content-center">
                                 <span class="material-symbols-outlined md-18 ">
                                     photo_camera
@@ -29,7 +28,8 @@
                                 <span class="ms-3">Sube tu contenido</span>
                             </div>
 
-                        </a>
+                        </a> --}}
+                        <input type="file" id="archivos" multiple>
                     </div>
                 </div>
 
@@ -58,13 +58,75 @@
             </div>
         </div>
     </div>
+    <input id="checkSess" type="hidden" value="{{ auth()->check() }}">
 
     <script>
-        tiempo()
+        // tiempo()
 
-        function tiempo(segundos = 15) {
-            document.getElementById('mienlace').href = `/p2/1/${segundos}`
+        // function tiempo(segundos = 15) {
+        //     document.getElementById('mienlace').href = `/p2/{{ session('screen_id') }}/${segundos}`
 
-        }
+        // }
     </script>
+
+
+@section('js')
+    <script>
+        var checkSess = document.getElementById('checkSess').value;
+
+        document.getElementById('archivos').addEventListener('click', function(event) {
+            if (checkSess == 1) {
+                console.log('click')
+            } else {
+                event.preventDefault();
+                window.location.href = '/login';
+            }
+
+
+        });
+
+
+        const csrfToken = "{{ csrf_token() }}";
+        document.getElementById('archivos').addEventListener('change', function() {
+
+            var inputArchivos = document.getElementById('archivos');
+            tiempo = document.getElementById('tiempo').value;
+
+            // Crear un objeto FormData y agregar los archivos seleccionados
+            var formData = new FormData();
+            for (var i = 0; i < inputArchivos.files.length; i++) {
+                formData.append('archivos[]', inputArchivos.files[i]);
+            }
+
+            formData.append('screen_id', {{ $id }});
+            formData.append('tiempo', tiempo);
+            formData.append('client_id', {{ auth()->id() }});
+
+            console.log(formData)
+
+            // Realizar una solicitud fetch a la otra página
+            fetch("/guardarData", {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Manejar la respuesta del servidor si es necesario
+                    console.log(data);
+                    if (data.media_id != '') {
+                        var urlConParametro =
+                            `/p2/{{ $id }}/${tiempo}/${data.media_id}/${data.preference_id}`
+                        window.location.href = urlConParametro;
+                    }
+                })
+                .catch(error => {
+                    // Manejar errores de la solicitud
+                    console.error('Error:', error);
+                });
+        });
+    </script>
+@endsection
 @endsection

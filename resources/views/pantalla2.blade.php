@@ -2,6 +2,20 @@
 
 
 @section('content')
+    {{-- @dd(session('screen_id')) --}}
+    {!! Form::open([
+        'route' => 'sale.store',
+        'method' => 'POST',
+        'id' => 'file-upload',
+        'enctype' => 'multipart/form-data',
+    ]) !!}
+
+    <input type="hidden" id="tramo_select" name="tramo_select" />
+    <input type="hidden" id="screen_id" name="screen_id" value="{{ $id }}" />
+    <input type="hidden" id="duration" name="duration" value="{{ $time }}" />
+    <input type="hidden" id="fechasss" name="fecha" value="" />
+    <input type="hidden" id="preference" name="preference" value="{{ $preference_id }}" />
+    <input type="hidden" id="preference" name="media_id" value="{{ $media_id }}" />
     <div id="horario-text" class="mb-2 d-flex flex-column">
         <span class="fs-4 mb-2">Elegí tu horario</span>
         <span class="fs-6">Tu publicación saldrá dentro de los 5 minutos siguientes al horario seleccionado.</span>
@@ -20,12 +34,24 @@
 
     <div class="mt-4" id="multimedia">
         <span class="fs-4">Tu multimedia</span>
+        <input type="file" name="file[]" id="archivos" accept="image/*,video/*" multiple>
+        <div id="archivosPrevisualizacion"></div>
         <div class="row ms-1 mt-4 text-center" id="mediaaas">
-            Seleccione la multimedia
+            <div class="col-4">
+                @if ($extension == 'mp4')
+                    <div class="col-3"><video width="320" height="240" controls>
+                            <source src="{{ asset($rutaLocal) }}" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video></div>
+                @else
+                    <img class="img-fluid" width="200px" height="200px" src="{{ asset($rutaLocal) }}" alt="">
+                @endif
+
+            </div>
         </div>
         <div class="w-100 mt-4">
             <a data-bs-toggle="modal" id='selectTramo' data-bs-toggle="modal" data-bs-target="#staticBackdro2"
-                class="btn btn-primary rounded-pill d-flex text-center align-middle disabled justify-content-center">
+                class="btn btn-primary rounded-pill d-flex text-center align-middle  justify-content-center">
                 <span class="material-symbols-outlined">
                     edit
                 </span>
@@ -62,14 +88,18 @@
                 @endswitch
             </span>
         </div>
-        <div class="mt-2"><a id="pagar" href="{{ route('pagar') }}"
+        <div class="mt-2"><button type="submit" id="pagar"
                 class="btn btn-primary rounded-pill w-100 d-flex align-middle disabled justify-content-center">
                 <span class="material-symbols-outlined">
                     credit_card
                 </span>
                 <span class="ms-3">Ir a pagar</span>
-            </a></div>
+            </button></div>
+
     </div>
+    {!! Form::close() !!}
+
+
 
     <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
         aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -95,88 +125,143 @@
             </div>
         </div>
     </div>
-
-    <div class="modal fade" id="staticBackdro2" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-        aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-4" id="exampleModalLabel">Cargar multimedia</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div id="panel-alert"></div>
-                    {!! Form::open([
-                        'route' => 'sale.store',
-                        'method' => 'POST',
-                        'id' => 'file-upload',
-                        'enctype' => 'multipart/form-data',
-                    ]) !!}
-                    <input type="hidden" id="tramo_select" name="tramo_select" />
-                    <input type="hidden" id="screen_id" name="screen_id" value="{{ $id }}" />
-                    <input type="hidden" id="duration" name="duration" value="{{ $time }}" />
-                    <input type="hidden" id="fechasss" name="fecha" value="" />
-                    <div class="row">
-                        <div class="col-12 mb-3">
-                            <div class="form-group">
-                                <strong>Nombre:</strong>
-                                {!! Form::text('name', null, ['placeholder' => 'Nombre', 'class' => 'form-control']) !!}
-                            </div>
-                        </div>
-                        <div class="col-12 mb-3">
-                            <div class="form-group">
-                                <strong>Tipo:</strong>
-                                <div class="form-check">
-                                    {{ Form::radio('type', '1', false, ['class' => 'form-check-input']) }}
-                                    <label class="form-check-label" for="flexRadioDefault1">
-                                        Video
-                                    </label>
-                                </div>
-                                {{-- <div class="form-check">
-                                        {{ Form::radio('type', '2', false, ['class' => 'form-check-input']) }}
-                                        <label class="form-check-label" for="flexRadioDefault1">
-                                            Slideshow
-                                        </label>
-                                    </div> --}}
-                            </div>
-                        </div>
-                        <div class="form-group mb-3">
-                            <strong>Ficheros:</strong>
-                            <input type="file" name='files[]' multiple class="form-control">
-                        </div>
-                    </div>
-
-                    <div style="display: none;" class="progress" role="progressbar" aria-label="Default striped example"
-                        aria-valuenow="10" aria-valuemin="0" aria-valuemax="100">
-                        <div class="progress-bar progress-bar-striped" id="progressBar" style="width: 0%"></div>
-                    </div>
-
-                    <div class="col-xs-12 col-sm-12 col-md-12 text-center mt-4">
-                        <button type="submit" id="saveFile" class="btn btn-primary">Guardar</button>
-                    </div>
-                </div>
-
-                {!! Form::close() !!}
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                </div>
-            </div>
-        </div>
-    </div>
 @endsection
 
 
 @section('js')
     <script>
+        var seleccionarArchivos = document.getElementById('archivos');
+        var archivosPrevisualizacion = document.getElementById('archivosPrevisualizacion');
+        var mediaaas = document.getElementById('mediaaas');
+        var duracionTotal = 0;
+
+        seleccionarArchivos.addEventListener('change', function(event) {
+            archivosPrevisualizacion.innerHTML = '';
+            mediaaas.innerHTML = '';
+            duracionTotal = 0; // Reiniciar la duración total
+
+            // Crear un array de promesas para manejar la carga de los metadatos de los videos
+            var promesas = [];
+
+            // Crear un div contenedor principal de tipo row
+            var rowContainer = document.createElement('div');
+            rowContainer.classList.add('row'); // Agregar clase de Bootstrap 'row'
+
+            for (var i = 0; i < event.target.files.length; i++) {
+                var archivo = event.target.files[i];
+
+                // Crear un objeto URL para el archivo seleccionado
+                var objetoURL = URL.createObjectURL(archivo);
+
+                // Crear un elemento de imagen o video según el tipo de archivo
+                var elementoMedia;
+                if (archivo.type.startsWith('image')) {
+                    elementoMedia = document.createElement('img');
+                    elementoMedia.classList.add('img-thumbnail');
+                    elementoMedia.style.maxWidth = '200px'; // Establecer el ancho máximo
+                    elementoMedia.style.maxHeight = '200px';
+                    // Añadir el tiempo específico para imágenes (1.5 segundos)
+                    duracionTotal += 1.5;
+                } else if (archivo.type.startsWith('video')) {
+                    elementoMedia = document.createElement('video');
+                    // Añadir el video al array de promesas
+                    promesas.push(cargarDuracionVideo(elementoMedia));
+                    elementoMedia.style.maxWidth = '200px'; // Establecer el ancho máximo
+                    elementoMedia.style.maxHeight = '200px';
+                }
+
+                elementoMedia.src = objetoURL;
+                elementoMedia.width = 200; // Establecer el ancho según tus necesidades
+                elementoMedia.controls = true; // Mostrar controles de reproducción para videos
+
+                // Crear un div contenedor de tipo col-12
+                var colContainer = document.createElement('div');
+                colContainer.classList.add('col-md-4');
+                colContainer.classList.add('col-xs-12');
+                colContainer.classList.add('col-sm-6'); // Agregar clase de Bootstrap 'col-12'
+
+                // Agregar el elementoMedia al div contenedor de tipo col-12
+                colContainer.appendChild(elementoMedia);
+
+                // Agregar el div contenedor de tipo col-12 al div contenedor principal
+                rowContainer.appendChild(colContainer);
+            }
+
+            // Agregar el div contenedor principal al contenedor
+            archivosPrevisualizacion.appendChild(rowContainer);
+
+            // Verificar la duración total después de agregar todos los elementos
+            Promise.all(promesas)
+                .then(function(duraciones) {
+                    duraciones.forEach(function(duracion) {
+                        duracionTotal += duracion;
+                    });
+                    verificarDuracionTotal();
+                })
+                .catch(function(error) {
+                    console.error('Error al cargar metadatos de videos:', error);
+                });
+
+            // agregar fecth con el update. 
+
+            var inputArchivos = document.getElementById('archivos');
+
+            // Crear un objeto FormData y agregar los archivos seleccionados
+            var formData = new FormData();
+            for (var i = 0; i < inputArchivos.files.length; i++) {
+                formData.append('archivos[]', inputArchivos.files[i]);
+            }
+
+            formData.append('screen_id', {{ $id }});
+            formData.append('tiempo', {{ $time }});
+            formData.append('media_id', {{ $media_id }});
+
+
+            fetch("/guardarData", {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Manejar la respuesta del servidor si es necesario
+                    console.log('Respuesta del servidor:', data);
+                })
+                .catch(error => {
+                    // Manejar errores de la solicitud
+                    console.error('Error:', error);
+                });
+
+
+
+        });
+
+        function cargarDuracionVideo(video) {
+            return new Promise(function(resolve, reject) {
+                video.addEventListener('loadedmetadata', function() {
+                    resolve(video.duration);
+                });
+                video.addEventListener('error', function(event) {
+                    reject(event.error);
+                });
+            });
+        }
+
+        function verificarDuracionTotal() {
+            console.log(duracionTotal)
+            if (duracionTotal > 600) {
+                alert('La duración total supera los 30 segundos. Por favor, ajusta tus archivos.');
+                // Limpiar la lista de previsualización y reiniciar la duración total
+                archivosPrevisualizacion.innerHTML = '';
+                duracionTotal = 0;
+            }
+        }
+    </script>
+    <script>
         buscarTramos("{{ date('Y-m-d') }}", 1)
         const csrfToken = "{{ csrf_token() }}";
-
-
-
-
-
-
-
 
         async function buscarTramos(fecha, lugar) {
             try {
@@ -188,7 +273,8 @@
                     method: 'POST',
                     body: JSON.stringify({
                         fecha: fecha,
-                        limit: lugar == 2 ? '5' : ''
+                        limit: lugar == 2 ? '5' : '',
+                        duration: {{ $time }}
                     }),
                     headers: {
                         'content-type': 'application/json',
@@ -226,7 +312,6 @@
 
                 }
 
-
             } catch (error) {
                 console.error('Error en buscarTramos:', error);
             }
@@ -254,65 +339,32 @@
         }
 
 
-        document.getElementById('file-upload').addEventListener('submit', function(event) {
-            event.preventDefault();
 
-            document.querySelector('#saveFile').classList.add('disabled');
 
-            document.querySelector('.progress').style.display = 'block';
-            var progressBar = document.getElementById('progressBar');
-            progressBar.style.width = '0%';
-            progressBar.innerHTML = '0%';
 
-            const formData = new FormData(this);
+        // document.getElementById('file-upload').addEventListener('submit', function(event) {
+        //     event.preventDefault();
 
-            fetch('{{ route('sale.store') }}', {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'X-CSRF-TOKEN': csrfToken
-                    }
-                })
-                .then(response => {
-                    progressBar.style.width = '100%';
-                    progressBar.innerHTML = '100%';
-                    return response.json();
-                })
-                .then(data => {
-                    // console.log(data)
 
-                    document.querySelector('.progress').style.display = 'none';
-                    if (data.status === 1) {
-                        document.getElementById('panel-alert').innerHTML = `
-                            <div class="alert alert-success" id='miAlerta' alert-dismissible fade show" role="alert">
-                            Se subio con exito
-                        </div>`
-                        if (data.ext != 'mp4') {
-                            document.getElementById('mediaaas').innerHTML =
-                                `<div class="col-3"><img class='img-thumbnail' width='200px' heigth='200px' src="${data.img}" alt=""></div>`
-                        } else {
-                            document.getElementById('mediaaas').innerHTML =
-                                `<div class="col-12"><video width="200px" height="auto" controls>
-                                    <source src="${data.img}" type="video/mp4">
-                                    Your browser does not support the video tag.
-                                    </video></div>`
-                        }
-                    } else {
-                        document.getElementById('panel-alert').innerHTML = `
-                            <div class="alert alert-danger" id='miAlerta' alert-dismissible fade show" role="alert">
-                            ${data.message}
-                        </div>`
+        //     const formData = new FormData(this);
 
-                    }
-
-                    setTimeout(function() {
-                        document.getElementById('miAlerta').classList.remove('show');
-                    }, 3000);
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                });
-        });
+        //     fetch('{{ route('sale.store') }}', {
+        //             method: 'POST',
+        //             body: formData,
+        //             headers: {
+        //                 'X-CSRF-TOKEN': csrfToken
+        //             }
+        //         })
+        //         .then(response => {
+        //             return response.json();
+        //         })
+        //         .then(data => {
+        //             console.log(data)
+        //         })
+        //         .catch(error => {
+        //             console.error('Error:', error);
+        //         });
+        // });
 
 
         function formatearFecha(fechaOriginal) {

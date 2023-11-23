@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id('_id');
             $table->string('name');
             $table->string('location');
-            $table->double('price', 8, 2);
+            $table->double('price', 8, 2)->nullable();
             $table->boolean('isActive')->default(1);
             $table->timestamps();
         });
