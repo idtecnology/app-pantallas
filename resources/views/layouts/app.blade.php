@@ -52,7 +52,13 @@
                     @else
                         <ul class="navbar-nav me-auto">
                             @can('admin-list')
-                                <li><a class="dropdown-item" href="{{ route('sale.create') }}">Cargar multimedia</a>
+                                <li>
+                                    <a class="dropdown-item" href="{{ route('sale.create') }}">Cargar multimedia</a>
+                                </li>
+                            @endcan
+                            @can('client-list')
+                                <li>
+                                    <a class="dropdown-item" href="{{ route('sale.index') }}">Mi publicaciones</a>
                                 </li>
                             @endcan
                             {{-- @can('client-list')
@@ -115,7 +121,7 @@
                                         <li><a class="dropdown-item" href="{{ route('sale.index') }}">Videos</a></li>
                                         <li><a class="dropdown-item" href="{{ route('grilla') }}">Grilla</a></li>
                                         <li><a class="dropdown-item" href="{{ route('screen.index') }}">Pantallas</a></li>
-                                        <li><a class="dropdown-item" href="#">Pagos</a></li>
+                                        <li><a class="dropdown-item" href="{{ route('pagos.index') }}">Pagos</a></li>
                                         <li><a class="dropdown-item" href="{{ route('users.index') }}">Usuarios</a></li>
                                         <li><a class="dropdown-item" href="{{ route('clients.index') }}">Clientes</a></li>
 

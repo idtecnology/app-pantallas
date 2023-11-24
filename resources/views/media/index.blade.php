@@ -4,25 +4,39 @@
 
 @section('content')
     <div class="col-12">
-        <table class="table table-sm mb-b">
-            <thead>
+        <table class="table table-bordered table-sm mb-0 text-center">
+            <thead class="text-uppercase table-dark">
                 <tr>
-                    <th>Nombre</th>
-                    <th>Duracion</th>
-                    <th>fecha</th>
-                    <th>Tipo</th>
-                    <th>Estado</th>
+                    @can('admin-list')
+                        <th>Cliente:</th>
+                    @endcan
+
+                    <th>Fecha:</th>
+                    <th>Horario:</th>
+                    <th>Duracion:</th>
+                    <th>Estado:</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach ($data as $dato)
                     <tr class="align-middle">
-                        <td>{{ $dato->name }}</td>
-                        <td>{{ $dato->duration }} segundos</td>
+                        @can('admin-list')
+                            <td>{{ $dato->email }}</td>
+                        @endcan
                         <td>{{ date('d-m-Y', strtotime($dato->date)) }}</td>
-                        <td>{{ $dato->type == 1 ? 'Video' : 'Slideshow' }}</td>
-                        <td>{{ $dato->approved == 1 ? 'Aprobado' : 'Sin aprobar' }}</td>
+                        <td>{{ date('H:i', strtotime($dato->time)) }}</td>
+                        <td>{{ $dato->duration }} segundos</td>
+                        <td>
+                            @switch($dato->approved)
+                                @case(1)
+                                    <span class="text-success">Aprobado</span>
+                                @break
+
+                                @default
+                                    <span class="text-danger">Por aprobar</span>
+                            @endswitch
+                        </td>
 
                         @can('admin-list')
                             <td>
@@ -36,10 +50,6 @@
                                 <div class="btn-group" role="group" aria-label="Basic example">
                                     <a href="{{ route('sale.show', $dato->_id) }}" type="button"
                                         class="btn btn-primary btn-sm">Ver</a>
-                                    <a href="{{ route('sale.edit', $dato->_id) }}" type="button"
-                                        class="btn btn-warning btn-sm">Editar</a>
-                                    <a href="{{ route('sale.programar', $dato->_id) }}" type="button"
-                                        class="btn btn-success btn-sm">Programar</a>
                                 </div>
                             </td>
                         @endcan

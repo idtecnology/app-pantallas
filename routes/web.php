@@ -93,4 +93,6 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/pendiente', [PagosController::class, 'pendiente'])->name('pendiente');
     Route::get('/failure', [PagosController::class, 'failure'])->name('failure');
     Route::get('/pagare/{preference}', [PagosController::class, 'crearPago'])->name('pagare');
+
+    Route::resource('/pagos', PagosController::class);
 });

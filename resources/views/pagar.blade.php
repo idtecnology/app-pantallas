@@ -1,17 +1,21 @@
 @extends('layouts.app')
 @section('content')
-    <div class="d-none">
-        <div class="cho-container"></div>
-    </div>
+
+    <body onload="document.querySelector('.mercadopago-button').click()">
+        <div class="d-none">
+            <div class="cho-container"></div>
+        </div>
+    </body>
 @endsection
 @section('js')
     <script src="https://sdk.mercadopago.com/js/v2"></script>
     <script>
-        window.addEventListener('load', function() {
-            // Simula un clic en el botón de Mercado Pago
-            document.querySelector('.mercadopago-button').click();
-        });
-        const mp = new MercadoPago('TEST-c00d4341-14f8-4d93-ab17-ef2b8b1e9983', {
+        // window.onload = function() {
+        //     ;
+        // };
+
+
+        const mp = new MercadoPago('{{ env('MP_CLIENT') }}', {
             locale: 'es-AR'
         })
 

@@ -30,7 +30,7 @@ class MediaController extends Controller
     {
         $user = auth()->user();
         if ($user->can('admin-list')) {
-            $data = Media::where('isPaid', '=', 1)->get();
+            $data = Media::select('media.*', 'users.email')->where('isPaid', '=', 1)->join('users', 'users.id', '=', 'media.client_id')->get();
         } else {
             $data = Media::where('client_id', '=', $user->id)->get();
         }
@@ -176,7 +176,7 @@ class MediaController extends Controller
                             $extension = $file->getClientOriginalExtension();
                             if (in_array($extension, $extensionesPermitidas)) {
                                 $path = Storage::disk('s3')->put($request->screen_id . '/' . date('Ymd', strtotime($request->fecha)), $file);
-                                $path = Storage::disk('s3')->temporaryUrl($path, now()->addMinutes(120));
+                                $path = Storage::disk('s3')->temporaryUrl($path, now()->addMinutes(1440));
                                 $files_names[] = $path;
                             } else {
                                 return "manejar error";
@@ -201,7 +201,7 @@ class MediaController extends Controller
                             $dataUpdateMedia->date = $request->fecha;
                             $dataUpdateMedia->tramo_id = $tramo[0]->tramo_id;
                             $path = Storage::disk('s3')->put($request->screen_id . '/' . date('Ymd', strtotime($request->fecha)), $request->file('file')[0]);
-                            $path = Storage::disk('s3')->temporaryUrl($path, now()->addMinutes(120));
+                            $path = Storage::disk('s3')->temporaryUrl($path, now()->addMinutes(1440));
                             $dataUpdateMedia->files_name = $path;
                             $dataUpdateMedia->save();
                             $preference = $request->preference;
@@ -228,7 +228,7 @@ class MediaController extends Controller
                             $name_file = $request->screen_id . '/' . date('Ymd', strtotime($request->fecha)) . '/' . $img_tmp;
                             $nameF = '/' . date('Ymd', strtotime($request->fecha)) . '/' . $img_tmp;
                             $path = Storage::disk('s3')->put($name_file, file_get_contents($rutaLocal));
-                            $path = Storage::disk('s3')->temporaryUrl($path . $nameF, now()->addMinutes(120));
+                            $path = Storage::disk('s3')->temporaryUrl($path . $nameF, now()->addMinutes(1440));
                             $files_names[] = $path;
                             unlink($rutaLocal);
                         }
@@ -237,7 +237,7 @@ class MediaController extends Controller
                         $name_file = $request->screen_id . '/' . date('Ymd', strtotime($request->fecha)) . '/' . $dataUpdateMedia->files_name;
                         $nameF = '/' . date('Ymd', strtotime($request->fecha)) . '/' . $dataUpdateMedia->files_name;
                         $path = Storage::disk('s3')->put($name_file, file_get_contents($rutaLocal));
-                        $path = Storage::disk('s3')->temporaryUrl($path . $nameF, now()->addMinutes(120));
+                        $path = Storage::disk('s3')->temporaryUrl($path . $nameF, now()->addMinutes(1440));
                         unlink($rutaLocal);
                     }
                     $dataUpdateMedia->files_name = $path;
@@ -280,11 +280,14 @@ class MediaController extends Controller
             $data['files_name'] = json_decode($data['files_name'], true);
             return view('media.show', compact('data', 'arr'));
         } else {
+
             $url = pathinfo($data->files_name);
+            $base = $url['filename'];
             $extension = $url['extension'];
             $extension = strtok($extension, '?');
+            $data->files_name = Storage::disk('s3')->temporaryUrl($data->screen_id . '/' . date('Ymd', strtotime($data->date)) . '/' . $base . '.' . $extension, now()->addMinutes(1440));
+            $data->save();
             $data['ext'] = $extension;
-            $arr = [];
             return view('media.show', compact('data'));
         }
     }

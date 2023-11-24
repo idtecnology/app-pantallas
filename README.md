@@ -64,3 +64,18 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+
+
+# nano vendor/laravel/ui/auth-backend/RegistersUsers.php
+# nano vendor/laravel/ui/auth-backend/AuthenticatesUsers.php
+
+$previousUrl = Session::pull('previousUrl', $this->redirectTo);
+
+        return redirect()->intended($previousUrl);
+
+        use Illuminate\Support\Facades\Session;
+php artisan storage:link
+
+        
+
