@@ -2,6 +2,7 @@
 
 
 @section('content')
+    <div hidden id="spinner"></div>
     {{-- @dd(session('screen_id')) --}}
     {!! Form::open([
         'route' => 'sale.store',
@@ -13,9 +14,37 @@
     <input type="hidden" id="tramo_select" name="tramo_select" />
     <input type="hidden" id="screen_id" name="screen_id" value="{{ $id }}" />
     <input type="hidden" id="duration" name="duration" value="{{ $time }}" />
-    <input type="hidden" id="fechasss" name="fecha" value="" />
+    <input type="hidden" id="date_hidden" name="fecha" value="" />
     <input type="hidden" id="preference" name="preference" value="{{ $preference_id }}" />
     <input type="hidden" id="preference" name="media_id" value="{{ $media_id }}" />
+    <div class="" id="multimedia">
+        <span class="fs-4">Tu multimedia</span>
+        <input style="display: none;" type="file" name="file[]" id="archivos" accept="image/*,video/*" multiple>
+        <div id="archivosPrevisualizacion"></div>
+        <div class="row ms-1 mt-4 text-center justify-content-center" id="mediaaas">
+            <div class="col-4">
+                @if ($extension == 'mp4')
+                    <div class="col-3"><video class="img-fluid img-thumbnail" width="320" height="240" controls>
+                            <source src="{{ asset($rutaLocal) }}" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video></div>
+                @else
+                    <img class="img-fluid img-thumbnail" width="200px" height="200px" src="{{ asset($rutaLocal) }}"
+                        alt="">
+                @endif
+
+            </div>
+        </div>
+        <div class="w-100 my-4">
+            <a onclick="openFiles()"
+                class="btn btn-primary rounded-pill d-flex text-center align-middle  justify-content-center">
+                <span class="material-symbols-outlined">
+                    edit
+                </span>
+                <span class="ms-3">Edita tu contenido</span></a>
+        </div>
+    </div>
+
     <div id="horario-text" class="mb-2 d-flex flex-column">
         <span class="fs-4 mb-2">Elegí tu horario</span>
         <span class="fs-6">Tu publicación saldrá dentro de los 5 minutos siguientes al horario seleccionado.</span>
@@ -23,7 +52,10 @@
     <div id="horario-select" class="">
         <div class="d-flex justify-content-between">
             <span class="fw-bold">Horario seleccionado:</span>
-            <span class="align-middle" id="span_tramo">Hoy, 00:00 hs</span>
+            <span class="align-middle fs-5" id="span_tramo">Hoy, 00:00 hs</span>
+        </div>
+        <div class="mt-2 row text-center justify-content-center" id="tramo_fuera">
+
         </div>
 
         <div class="mt-2 text-center px-2 py-2 shadow-sm border border-1">
@@ -32,32 +64,7 @@
         </div>
     </div>
 
-    <div class="mt-4" id="multimedia">
-        <span class="fs-4">Tu multimedia</span>
-        <input type="file" name="file[]" id="archivos" accept="image/*,video/*" multiple>
-        <div id="archivosPrevisualizacion"></div>
-        <div class="row ms-1 mt-4 text-center" id="mediaaas">
-            <div class="col-4">
-                @if ($extension == 'mp4')
-                    <div class="col-3"><video width="320" height="240" controls>
-                            <source src="{{ asset($rutaLocal) }}" type="video/mp4">
-                            Your browser does not support the video tag.
-                        </video></div>
-                @else
-                    <img class="img-fluid" width="200px" height="200px" src="{{ asset($rutaLocal) }}" alt="">
-                @endif
 
-            </div>
-        </div>
-        <div class="w-100 mt-4">
-            <a data-bs-toggle="modal" id='selectTramo' data-bs-toggle="modal" data-bs-target="#staticBackdro2"
-                class="btn btn-primary rounded-pill d-flex text-center align-middle  justify-content-center">
-                <span class="material-symbols-outlined">
-                    edit
-                </span>
-                <span class="ms-3">Edita tu contenido</span></a>
-        </div>
-    </div>
 
     <div id="resumen" class="mt-4">
         <span class="fw-bold fs-4">
@@ -89,7 +96,7 @@
             </span>
         </div>
         <div class="mt-2"><button type="submit" id="pagar"
-                class="btn btn-primary rounded-pill w-100 d-flex align-middle disabled justify-content-center">
+                class="btn btn-primary rounded-pill w-100 d-flex align-middle justify-content-center">
                 <span class="material-symbols-outlined">
                     credit_card
                 </span>
@@ -111,12 +118,13 @@
                 </div>
                 <div class="modal-body">
                     <div id="fecha">
-                        <input onchange="buscarTramos(this.value, 1)" type="date" name="date" id="date"
+                        <input onchange="buscarTramos(this.value, 1)" type="date" name="date" id="inputFechaModal"
                             class="form-control">
 
                     </div>
                     <div id="diasDisponibles" class="mt-4 p-3 border border-1">
-                        <div class="row" id="tramo"></div>
+                        <div class="row text-center justify-content-center" style="height:55vh;overflow-y: auto;"
+                            id="tramo_modal"></div>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -130,6 +138,13 @@
 
 @section('js')
     <script>
+        const spinner = document.getElementById("spinner");
+        const csrfToken = "{{ csrf_token() }}";
+
+        document.getElementById('pagar').addEventListener('click', function(event) {
+            spinner.removeAttribute('hidden');
+        });
+
         var seleccionarArchivos = document.getElementById('archivos');
         var archivosPrevisualizacion = document.getElementById('archivosPrevisualizacion');
         var mediaaas = document.getElementById('mediaaas');
@@ -174,23 +189,18 @@
                 elementoMedia.width = 200; // Establecer el ancho según tus necesidades
                 elementoMedia.controls = true; // Mostrar controles de reproducción para videos
 
-                // Crear un div contenedor de tipo col-12
                 var colContainer = document.createElement('div');
                 colContainer.classList.add('col-md-4');
                 colContainer.classList.add('col-xs-12');
                 colContainer.classList.add('col-sm-6'); // Agregar clase de Bootstrap 'col-12'
 
-                // Agregar el elementoMedia al div contenedor de tipo col-12
                 colContainer.appendChild(elementoMedia);
 
-                // Agregar el div contenedor de tipo col-12 al div contenedor principal
                 rowContainer.appendChild(colContainer);
             }
 
-            // Agregar el div contenedor principal al contenedor
             archivosPrevisualizacion.appendChild(rowContainer);
 
-            // Verificar la duración total después de agregar todos los elementos
             Promise.all(promesas)
                 .then(function(duraciones) {
                     duraciones.forEach(function(duracion) {
@@ -250,31 +260,55 @@
         }
 
         function verificarDuracionTotal() {
-            console.log(duracionTotal)
-            if (duracionTotal > 600) {
+            if (duracionTotal > {{ $time }}) {
                 alert('La duración total supera los 30 segundos. Por favor, ajusta tus archivos.');
-                // Limpiar la lista de previsualización y reiniciar la duración total
                 archivosPrevisualizacion.innerHTML = '';
                 duracionTotal = 0;
             }
         }
     </script>
     <script>
-        buscarTramos("{{ date('Y-m-d') }}", 1)
-        const csrfToken = "{{ csrf_token() }}";
+        buscarTramos("{{ date('Y-m-d') }}", 2)
+        getAvailabilityDates()
+
+
+        function openFiles() {
+            document.querySelector('#archivos').click();
+        }
+
+        async function getAvailabilityDates() {
+            var inputFechaModal = document.querySelector('#inputFechaModal');
+            const response = await fetch('/api/availability-dates', {
+                method: 'POST',
+                body: JSON.stringify({
+                    duration: {{ $time }},
+                    screen_id: {{ $id }}
+                }),
+                headers: {
+                    'content-type': 'application/json',
+                }
+            });
+            const data = await response.json();
+            const count = data.length - 1
+            inputFechaModal.min = data[0].fecha;
+            inputFechaModal.max = data[count].fecha;
+        }
+
 
         async function buscarTramos(fecha, lugar) {
             try {
-                var tramo = document.querySelector('#tramo');
-                document.getElementById('fechasss').value = fecha;
-                const inputFecha = document.getElementById('date');
+                var tramo_modal = document.querySelector('#tramo_modal');
+                var tramo_fuera = document.querySelector('#tramo_fuera');
+                var divs = '';
+
+                document.getElementById('date_hidden').value = fecha;
 
                 const response = await fetch('/api/tramo', {
                     method: 'POST',
                     body: JSON.stringify({
                         fecha: fecha,
-                        limit: lugar == 2 ? '5' : '',
-                        duration: {{ $time }}
+                        duration: {{ $time }},
+                        screen_id: {{ $id }}
                     }),
                     headers: {
                         'content-type': 'application/json',
@@ -284,30 +318,37 @@
                 const data = await response.json();
 
                 if (lugar == 1) {
-                    var divs = '';
                     if (data == '') {
                         divs += `Vacio, no hay tramos disponibles`;
                     } else {
                         for (var tramos in data) {
-                            // console.log(tramos)
-                            divs += `<div class="col-4 px-0">
-                                <a data-bs-dismiss="modal" onclick="seleccionTramo(this, '1', \'${data[tramos].fecha}\')" class="btn btn-primary mb-2">${data[tramos].tramos}</a>
+                            divs += `<div class="col-3 px-0">
+                                <a data-bs-dismiss="modal" onclick="seleccionTramo(this, '1', \'${data[tramos].fecha}\')" class="btn btn-primary mb-2">${cambiarFormatoHora(data[tramos].tramos)}</a>
                             </div>`;
                         }
                     }
-
-                    tramo.innerHTML = divs;
+                    tramo_modal.innerHTML = divs;
+                } else {
+                    if (data == '') {
+                        divs += `Vacio, no hay tramos disponibles`;
+                    } else {
+                        for (var i = 0; i < 10; i++) {
+                            divs += `
+                                <a onclick="seleccionTramo(this, '1', \'${data[i].fecha}\')" class="btn btn-primary btn-sm mb-2 mx-1 col-2">${cambiarFormatoHora(data[i].tramos)}</a>
+                            `;
+                        }
+                    }
+                    tramo_fuera.innerHTML = divs;
                 }
 
-                var fechaFormateada = formatearFecha(data[tramos].fecha);
+
 
                 if (data != '') {
-                    inputFecha.min = data[tramos].fecha;
-                    inputFecha.max = data[tramos].fecha[data[tramos].fecha.length - 1];
+                    var fechaFormateada = formatearFecha(data[0].fecha);
                     document.querySelector('#span_tramo').innerHTML =
-                        `${data[0].fecha == fecha ? 'Hoy' : fechaFormateada}, ${data[0].tramos}hs`;
+                        `${data[0].fecha == fecha ? 'Hoy' : fechaFormateada}, ${cambiarFormatoHora(data[0].tramos)} hs`;
                     document.querySelector('#fehca_visualizacion').innerHTML =
-                        `Se visualizara el ${fechaFormateada} - ${data[0].tramos} hs`;
+                        `Se visualizara el ${fechaFormateada} - ${cambiarFormatoHora(data[0].tramos)} hs`;
                     document.getElementById('tramo_select').value = data[0].tramos;
 
                 }
@@ -326,46 +367,15 @@
                 document.querySelector('#fehca_visualizacion').innerHTML =
                     `Se visualizara el ${fechaFormateada} - ${textoDelEnlace} hs`;
                 document.getElementById('tramo_select').value = textoDelEnlace
-                document.querySelector('#selectTramo').classList.remove('disabled');
                 document.querySelector('#pagar').classList.remove('disabled');
             } else {
                 document.querySelector('#span_tramo').innerHTML = `${fechaFormateada}, ${textoDelEnlace} hs`;
                 document.getElementById('tramo_select').value = textoDelEnlace
                 document.querySelector('#fehca_visualizacion').innerHTML =
                     `Se visualizara el ${fechaFormateada} - ${textoDelEnlace} hs`;
-                document.querySelector('#selectTramo').classList.remove('disabled');
                 document.querySelector('#pagar').classList.remove('disabled');
             }
         }
-
-
-
-
-
-        // document.getElementById('file-upload').addEventListener('submit', function(event) {
-        //     event.preventDefault();
-
-
-        //     const formData = new FormData(this);
-
-        //     fetch('{{ route('sale.store') }}', {
-        //             method: 'POST',
-        //             body: formData,
-        //             headers: {
-        //                 'X-CSRF-TOKEN': csrfToken
-        //             }
-        //         })
-        //         .then(response => {
-        //             return response.json();
-        //         })
-        //         .then(data => {
-        //             console.log(data)
-        //         })
-        //         .catch(error => {
-        //             console.error('Error:', error);
-        //         });
-        // });
-
 
         function formatearFecha(fechaOriginal) {
             var fecha = new Date(fechaOriginal + 'T00:00:00-04:00');
@@ -377,6 +387,18 @@
             };
             var formatoFecha = new Intl.DateTimeFormat('es-ES', options);
             return formatoFecha.format(fecha);
+        }
+
+        function cambiarFormatoHora(horaOriginal) {
+            var fecha = new Date('2000-01-01T' + horaOriginal);
+
+            var horas = fecha.getHours();
+            var minutos = fecha.getMinutes();
+
+            var horasFormateadas = horas < 10 ? '0' + horas : horas;
+            var minutosFormateados = minutos < 10 ? '0' + minutos : minutos;
+
+            return horasFormateadas + ':' + minutosFormateados;
         }
     </script>
 @endsection

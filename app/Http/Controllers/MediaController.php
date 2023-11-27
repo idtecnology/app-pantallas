@@ -65,7 +65,7 @@ class MediaController extends Controller
                 break;
         }
 
-        SDK::setAccessToken('TEST-1054596616269099-103012-c403390fbc48cb5b5874fcbac6854c10-92765599');
+        SDK::setAccessToken(env('MP_SECRET'));
 
 
 

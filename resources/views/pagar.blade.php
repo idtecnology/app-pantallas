@@ -8,12 +8,8 @@
     </body>
 @endsection
 @section('js')
+    <script src="https://sdk.mercadopago.com/js/v2"></script>
     <script>
-        // window.onload = function() {
-        //     ;
-        // };
-
-
         const mp = new MercadoPago('{{ env('MP_CLIENT') }}', {
             locale: 'es-AR'
         })

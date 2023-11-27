@@ -7,27 +7,22 @@ use Illuminate\Http\Request;
 
 class TramoController extends Controller
 {
+    private $tramo;
+    public function __construct(Tramo $tramo)
+    {
+        $this->tramo = $tramo;
+    }
     public function index(Request $request)
     {
-
-        if ($request->limit != '') {
-            $data = Tramo::where('tramos', '>=', date('H:i'))->where('fecha', '=', $request->fecha)->where('duracion', '>', $request->duration)->limit(6)->get();
-        } else {
-            if ($request->fecha === date('Y-m-d')) {
-                $data = Tramo::where('tramos', '>=', date('H:i'))->where('fecha', '=', $request->fecha)->where('duracion', '>', 20)->get();
-            } else {
-                $data = Tramo::where('fecha', '=', $request->fecha)->where('duracion', '>', 20)->get();
-            }
-        }
+        // return response()->json($request, 200);
+        $data = $this->tramo->getTramos($request->fecha, $request->duration, $request->screen_id);
         return response()->json($data, 200);
     }
 
 
-    public function fechasDisp()
+    public function getAvailabilityDates(Request $request)
     {
-
-        $data = Tramo::where('duracion', '>', 20)->limit(6)->get();
-
+        $data = $this->tramo->getAvailabilityDates($request->screen_id, $request->duration);
         return response()->json($data, 200);
     }
 }

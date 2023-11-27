@@ -1,14 +1,15 @@
 @extends('layouts.app')
 
 @section('content')
+    <div hidden id="spinner"></div>
     <div class="border border-2">
         <div class="">
             <img class="img-fluid" src="https://placehold.co/600x400" alt="">
         </div>
         <div class="d-flex flex-column">
             <div class="p-2">
-                <h1 class="mt-2">Title</h1>
-                <span class="fs-4">Address</span>
+                <h1 class="mt-2">{{ $screen->name }}</h1>
+                <span class="fs-4">{{ $screen->location }}</span>
                 <div class="row mt-4">
                     <div class="col-sm-6 col-xs-12">
                         <select class="form-select rounded-pill" name="" id="tiempo">
@@ -20,7 +21,7 @@
                         </select>
                     </div>
                     <div class="col-sm-6 col-xs-12 mt-2">
-                        {{-- <a id="mienlace" class="btn btn-primary w-100 rounded-pill text-center">
+                        <a onclick="openFiles()" id="mienlace" class="btn btn-primary w-100 rounded-pill text-center">
                             <div class="d-flex align-middle justify-content-center">
                                 <span class="material-symbols-outlined md-18 ">
                                     photo_camera
@@ -28,8 +29,8 @@
                                 <span class="ms-3">Sube tu contenido</span>
                             </div>
 
-                        </a> --}}
-                        <input type="file" id="archivos" multiple>
+                        </a>
+                        <input style="display: none" type="file" id="archivos" multiple>
                     </div>
                 </div>
 
@@ -72,6 +73,12 @@
 
 @section('js')
     <script>
+        function openFiles() {
+            document.querySelector('#archivos').click();
+        }
+
+        const spinner = document.getElementById("spinner");
+
         var checkSess = document.getElementById('checkSess').value;
 
         document.getElementById('archivos').addEventListener('click', function(event) {
@@ -102,7 +109,8 @@
             formData.append('tiempo', tiempo);
             formData.append('client_id', {{ auth()->id() }});
 
-            console.log(formData)
+            // console.log(formData)
+            spinner.removeAttribute('hidden');
 
             // Realizar una solicitud fetch a la otra página
             fetch("/guardarData", {
@@ -117,6 +125,7 @@
                     // Manejar la respuesta del servidor si es necesario
                     console.log(data);
                     if (data.media_id != '') {
+                        spinner.setAttribute('hidden', '');
                         var urlConParametro =
                             `/p2/{{ $id }}/${tiempo}/${data.media_id}/${data.preference_id}`
                         window.location.href = urlConParametro;

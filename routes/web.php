@@ -37,7 +37,8 @@ Route::get('/home', [HomeController::class, 'index'])->name('home');
 
 Route::get('/p1/{id}', function ($id) {
 
-    return view('pantalla1', compact('id'));
+    $screen = Screen::find($id);
+    return view('pantalla1', compact('id', 'screen'));
 })->name('pantalla1');
 
 Route::group(['middleware' => ['auth']], function () {

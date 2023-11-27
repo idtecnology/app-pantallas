@@ -21,4 +21,4 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 
 Route::post('/tramo', [TramoController::class, 'index']);
-Route::post('/api/fechas-disp', [TramoController::class, 'fechasDisp']);
+Route::post('/availability-dates', [TramoController::class, 'getAvailabilityDates']);
