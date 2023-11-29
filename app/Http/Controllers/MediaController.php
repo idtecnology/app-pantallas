@@ -10,11 +10,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Aws\S3\S3Client;
 use Aws\Exception\AwsException;
+// use FFMpeg\FFMpeg;
 use Illuminate\Support\Arr;
 use MercadoPago\Item;
 use MercadoPago\Preference;
 use MercadoPago\SDK;
 use Illuminate\Support\Facades\Session;
+use ProtoneMedia\LaravelFFMpeg\Support\FFMpeg;
 
 class MediaController extends Controller
 {
@@ -47,6 +49,36 @@ class MediaController extends Controller
 
     public function guardarData(Request $request)
     {
+        $extensionesPermitidasVideo = ['mp4'];
+        $extensionesPermitidas = ['jpeg', 'png', 'jpg'];
+        $archivos = $request->file('archivos');
+        $durationInSeconds = [];
+        foreach ($archivos as $ll => $archivo) {
+            $nombreArchivo = uniqid() . '.' . $archivo->getClientOriginalExtension();
+            $archivo->storeAs('public/uploads/tmp', $nombreArchivo);
+            $rutaLocal = storage_path('app/public/uploads/tmp/' . $nombreArchivo);
+
+            if (in_array($archivo->getClientOriginalExtension(), $extensionesPermitidasVideo)) {
+                $ffmpeg = FFMpeg::fromDisk('public')->open('/uploads/tmp/' . $nombreArchivo);
+                $durationInSeconds[] = $ffmpeg->getDurationInSeconds();
+            } else if (in_array($archivo->getClientOriginalExtension(), $extensionesPermitidas)) {
+                $durationInSeconds[] = 2;
+            } else {
+                $rutaLocal = storage_path('app/public/uploads/tmp/' . $nombreArchivo);
+                unlink($rutaLocal);
+                return response()->json(['status' => 0, 'error' => 'hubo un error con la carga, puede que alguno de los formatos no sea permitido [' . $archivo->getClientOriginalExtension() . '], Formatos permitidos: png, jpg, jepg, mp4'], 404);
+            }
+        }
+
+
+        $sumaDuracion = array_sum($durationInSeconds);
+
+        if ($sumaDuracion > $request->tiempo) {
+            $rutaLocal = storage_path('app/public/uploads/tmp/' . $nombreArchivo);
+            unlink($rutaLocal);
+            return response()->json(['status' => 0, 'error' => 'tiempo excedido'], 404);
+        }
+
         switch ($request->tiempo) {
             case '15':
                 $price = 10000;
@@ -99,40 +131,37 @@ class MediaController extends Controller
         if ($request->media_id > 0) {
             //Actualizamos los que estan
             $media_update = Media::where('_id', '=', $request->media_id)->get()[0];
+
             if (is_object(json_decode($media_update->files_name, true)) || is_array(json_decode($media_update->files_name, true))) {
+
+
                 $imgs_temp = json_decode($media_update->files_name, true);
+
                 foreach ($imgs_temp as $img_tmp) {
-                    $rutaLocal = storage_path('app/public/uploads/tmp/' . $img_tmp);
+                    $rutaLocal = storage_path('app/public/uploads/tmp/' . $img_tmp['file_name']);
                     unlink($rutaLocal);
                 }
             } else {
                 $rutaLocal = storage_path('app/public/uploads/tmp/' . $media_update->files_name);
                 unlink($rutaLocal);
             }
-            foreach ($archivos as $archivo) {
+            foreach ($archivos as $ll => $archivo) {
                 $nombreArchivo = uniqid() . '.' . $archivo->getClientOriginalExtension();
                 $archivo->storeAs('public/uploads/tmp/', $nombreArchivo);
-                $files_names[] = $nombreArchivo;
+                $files_names[] = ['file_name'  => $nombreArchivo, 'duration' => $durationInSeconds[$ll]];
             }
-            if (count($archivos) > 1) {
-                Media::where('_id', '=', $request->media_id)->update(['files_name' => json_encode($files_names)]);
-            } else {
-                Media::where('_id', '=', $request->media_id)->update(['files_name' => $files_names[0]]);
-            }
+            Media::where('_id', '=', $request->media_id)->update(['files_name' => json_encode($files_names)]);
             return response()->json(['mensaje' => 'éxito', 'preference_id' => $preference->id]);
         } else {
             //insertamos nuevos. 
             $media = new Media();
-            foreach ($archivos as $archivo) {
+            foreach ($archivos as $l => $archivo) {
                 $nombreArchivo = uniqid() . '.' . $archivo->getClientOriginalExtension();
                 $archivo->storeAs('public/uploads/tmp', $nombreArchivo);
-                $files_names[] = $nombreArchivo;
+                $files_names[] = ['file_name'  => $nombreArchivo, 'duration' => $durationInSeconds[$l]];
             }
-            if (count($archivos) > 1) {
-                $media->files_name = json_encode($files_names);
-            } else {
-                $media->files_name = $files_names[0];
-            }
+
+            $media->files_name = json_encode($files_names);
             $media->screen_id = $request->screen_id;
             $media->duration = $request->tiempo;
             $media->client_id = $request->client_id;
@@ -152,64 +181,43 @@ class MediaController extends Controller
         if ($request->media_id != '') {
             $dataUpdateMedia = Media::find($request->media_id);
             if (is_array($request->file('file'))) {
-                if (count($request->file('file')) > 1) {
-                    if ($tramo[0]->duracion > $request->duration) {
-                        $resto = $tramo[0]->duracion - $request->duration;
-                        Tramo::where('_id', '=', $tramo[0]->_id)->update(['duracion' => $resto]);
-                        $dataUpdateMedia->screen_id = $request->screen_id;
-                        $dataUpdateMedia->time = $request->tramo_select;
-                        $dataUpdateMedia->duration = $request->duration;
-                        $dataUpdateMedia->date = $request->fecha;
-                        $dataUpdateMedia->tramo_id = $tramo[0]->tramo_id;
-                        if (is_object(json_decode($dataUpdateMedia->files_name, true)) || is_array(json_decode($dataUpdateMedia->files_name, true))) {
-                            $imgs_temp = json_decode($dataUpdateMedia->files_name, true);
-                            foreach ($imgs_temp as $img_tmp) {
-                                $rutaLocal = storage_path('app/public/uploads/tmp/' . $img_tmp);
-                                unlink($rutaLocal);
-                            }
-                        } else {
-                            $rutaLocal = storage_path('app/public/uploads/tmp/' . $dataUpdateMedia->files_name);
+
+                if ($tramo[0]->duracion > $request->duration) {
+                    $resto = $tramo[0]->duracion - $request->duration;
+                    Tramo::where('_id', '=', $tramo[0]->_id)->update(['duracion' => $resto]);
+                    $dataUpdateMedia->screen_id = $request->screen_id;
+                    $dataUpdateMedia->time = $request->tramo_select;
+                    $dataUpdateMedia->duration = $request->duration;
+                    $dataUpdateMedia->date = $request->fecha;
+                    $dataUpdateMedia->tramo_id = $tramo[0]->tramo_id;
+                    if (is_object(json_decode($dataUpdateMedia->files_name, true)) || is_array(json_decode($dataUpdateMedia->files_name, true))) {
+                        $imgs_temp = json_decode($dataUpdateMedia->files_name, true);
+                        foreach ($imgs_temp as $img_tmp) {
+                            $rutaLocal = storage_path('app/public/uploads/tmp/' . $img_tmp['file_name']);
                             unlink($rutaLocal);
                         }
-                        $files_names = [];
-                        foreach ($request->file('file') as $file) {
-                            $extension = $file->getClientOriginalExtension();
-                            if (in_array($extension, $extensionesPermitidas)) {
-                                $path = Storage::disk('s3')->put($request->screen_id . '/' . date('Ymd', strtotime($request->fecha)), $file);
-                                $path = Storage::disk('s3')->temporaryUrl($path, now()->addMinutes(1440));
-                                $files_names[] = $path;
-                            } else {
-                                return "manejar error";
-                            }
-                        }
-                        $dataUpdateMedia->files_name = json_encode($files_names);
-                        $dataUpdateMedia->save();
-                        $preference = $request->preference;
-                        return redirect()->route('pagare', ['preference' => $preference]);
                     } else {
-                        return 'tengo que manejar el mensaje de error.';
+                        $rutaLocal = storage_path('app/public/uploads/tmp/' . $dataUpdateMedia->files_name);
+                        unlink($rutaLocal);
                     }
-                } else {
-                    $extension = $request->file('file')[0]->getClientOriginalExtension();
-                    if (in_array($extension, $extensionesPermitidas)) {
-                        if ($tramo[0]->duracion > $request->duration) {
-                            $resto = $tramo[0]->duracion - $request->duration;
-                            Tramo::where('_id', '=', $tramo[0]->_id)->update(['duracion' => $resto]);
-                            $dataUpdateMedia->screen_id = $request->screen_id;
-                            $dataUpdateMedia->time = $request->tramo_select;
-                            $dataUpdateMedia->duration = $request->duration;
-                            $dataUpdateMedia->date = $request->fecha;
-                            $dataUpdateMedia->tramo_id = $tramo[0]->tramo_id;
-                            $path = Storage::disk('s3')->put($request->screen_id . '/' . date('Ymd', strtotime($request->fecha)), $request->file('file')[0]);
+                    $files_names = [];
+                    foreach ($request->file('file') as $file) {
+                        $extension = $file->getClientOriginalExtension();
+                        if (in_array($extension, $extensionesPermitidas)) {
+                            $path = Storage::disk('s3')->put($request->screen_id . '/' . date('Ymd', strtotime($request->fecha)), $file);
                             $path = Storage::disk('s3')->temporaryUrl($path, now()->addMinutes(1440));
-                            $dataUpdateMedia->files_name = $path;
-                            $dataUpdateMedia->save();
-                            $preference = $request->preference;
-                            return redirect()->route('pagare', ['preference' => $preference]);
+                            // $files_names[] = $path;
+                            $files_names[] = ['file_name'  => $path, 'duration' => $img_tmp['duration']];
+                        } else {
+                            return "manejar error";
                         }
-                    } else {
-                        return 'mensaje de error';
                     }
+                    $dataUpdateMedia->files_name = json_encode($files_names);
+                    $dataUpdateMedia->save();
+                    $preference = $request->preference;
+                    return redirect()->route('pagare', ['preference' => $preference]);
+                } else {
+                    return 'tengo que manejar el mensaje de error.';
                 }
             } else {
                 $tramo = Tramo::where('fecha', '=', $request->fecha)->where('screen_id', '=', $request->screen_id)->where('tramos', '=', $request->tramo_select)->get();
@@ -224,12 +232,13 @@ class MediaController extends Controller
                     if (is_object(json_decode($dataUpdateMedia->files_name, true)) || is_array(json_decode($dataUpdateMedia->files_name, true))) {
                         $imgs_temp = json_decode($dataUpdateMedia->files_name, true);
                         foreach ($imgs_temp as $img_tmp) {
-                            $rutaLocal = storage_path('app/public/uploads/tmp/' . $img_tmp);
-                            $name_file = $request->screen_id . '/' . date('Ymd', strtotime($request->fecha)) . '/' . $img_tmp;
-                            $nameF = '/' . date('Ymd', strtotime($request->fecha)) . '/' . $img_tmp;
+                            $rutaLocal = storage_path('app/public/uploads/tmp/' . $img_tmp['file_name']);
+                            $name_file = $request->screen_id . '/' . date('Ymd', strtotime($request->fecha)) . '/' . $img_tmp['file_name'];
+                            $nameF = '/' . date('Ymd', strtotime($request->fecha)) . '/' . $img_tmp['file_name'];
                             $path = Storage::disk('s3')->put($name_file, file_get_contents($rutaLocal));
                             $path = Storage::disk('s3')->temporaryUrl($path . $nameF, now()->addMinutes(1440));
-                            $files_names[] = $path;
+                            // $files_names[] = $path;
+                            $files_names[] = ['file_name'  => $path, 'duration' => $img_tmp['duration']];
                             unlink($rutaLocal);
                         }
                     } else {
@@ -240,7 +249,7 @@ class MediaController extends Controller
                         $path = Storage::disk('s3')->temporaryUrl($path . $nameF, now()->addMinutes(1440));
                         unlink($rutaLocal);
                     }
-                    $dataUpdateMedia->files_name = $path;
+                    $dataUpdateMedia->files_name = json_encode($files_names);
                     $dataUpdateMedia->save();
                 }
                 $preference = $request->preference;

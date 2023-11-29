@@ -22,18 +22,23 @@
         <input style="display: none;" type="file" name="file[]" id="archivos" accept="image/*,video/*" multiple>
         <div id="archivosPrevisualizacion"></div>
         <div class="row ms-1 mt-4 text-center justify-content-center" id="mediaaas">
-            <div class="col-4">
-                @if ($extension == 'mp4')
-                    <div class="col-3"><video class="img-fluid img-thumbnail" width="320" height="240" controls>
-                            <source src="{{ asset($rutaLocal) }}" type="video/mp4">
-                            Your browser does not support the video tag.
-                        </video></div>
-                @else
-                    <img class="img-fluid img-thumbnail" width="200px" height="200px" src="{{ asset($rutaLocal) }}"
-                        alt="">
-                @endif
 
-            </div>
+            @foreach ($arr as $llave => $ext)
+                <div class="col-4">
+                    @if ($ext == 'mp4')
+                        <div class="col-3"><video class="img-fluid img-thumbnail" width="320" height="240" controls>
+                                <source src="{{ asset($rutaLocal[$llave]) }}" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video></div>
+                    @else
+                        <img class="img-fluid img-thumbnail" width="200px" height="200px"
+                            src="{{ asset($rutaLocal[$llave]) }}" alt="">
+                    @endif
+                </div>
+            @endforeach
+
+
+
         </div>
         <div class="w-100 my-4">
             <a onclick="openFiles()"
@@ -150,22 +155,22 @@
         var mediaaas = document.getElementById('mediaaas');
         var duracionTotal = 0;
 
+
         seleccionarArchivos.addEventListener('change', function(event) {
             archivosPrevisualizacion.innerHTML = '';
             mediaaas.innerHTML = '';
-            duracionTotal = 0; // Reiniciar la duración total
+            duracionTotal = 0;
 
-            // Crear un array de promesas para manejar la carga de los metadatos de los videos
+
             var promesas = [];
 
-            // Crear un div contenedor principal de tipo row
-            var rowContainer = document.createElement('div');
-            rowContainer.classList.add('row'); // Agregar clase de Bootstrap 'row'
 
+            var rowContainer = document.createElement('div');
+            rowContainer.classList.add('row');
             for (var i = 0; i < event.target.files.length; i++) {
                 var archivo = event.target.files[i];
 
-                // Crear un objeto URL para el archivo seleccionado
+
                 var objetoURL = URL.createObjectURL(archivo);
 
                 // Crear un elemento de imagen o video según el tipo de archivo
@@ -236,7 +241,12 @@
                 })
                 .then(response => response.json())
                 .then(data => {
-                    // Manejar la respuesta del servidor si es necesario
+                    if (data.status == 0) {
+                        archivosPrevisualizacion.innerHTML = '';
+                        spinner.setAttribute('hidden', '');
+                        alert(data.error)
+                        document.querySelector('#archivos').click();
+                    }
                     console.log('Respuesta del servidor:', data);
                 })
                 .catch(error => {
@@ -251,6 +261,7 @@
         function cargarDuracionVideo(video) {
             return new Promise(function(resolve, reject) {
                 video.addEventListener('loadedmetadata', function() {
+                    console.log(video.duration)
                     resolve(video.duration);
                 });
                 video.addEventListener('error', function(event) {
@@ -261,7 +272,8 @@
 
         function verificarDuracionTotal() {
             if (duracionTotal > {{ $time }}) {
-                alert('La duración total supera los 30 segundos. Por favor, ajusta tus archivos.');
+                alert('La duración total supera los ' + {{ $time }} +
+                    ' segundos seleccionados. Por favor, ajusta tus archivos.');
                 archivosPrevisualizacion.innerHTML = '';
                 duracionTotal = 0;
             }

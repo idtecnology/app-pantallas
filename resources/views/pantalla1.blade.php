@@ -122,14 +122,21 @@
                 })
                 .then(response => response.json())
                 .then(data => {
-                    // Manejar la respuesta del servidor si es necesario
-                    console.log(data);
-                    if (data.media_id != '') {
+
+                    console.log(data)
+
+                    if (data.status == 0) {
+                        spinner.setAttribute('hidden', '');
+                        alert(data.error)
+                        document.querySelector('#archivos').click();
+                    } else {
                         spinner.setAttribute('hidden', '');
                         var urlConParametro =
                             `/p2/{{ $id }}/${tiempo}/${data.media_id}/${data.preference_id}`
                         window.location.href = urlConParametro;
                     }
+
+
                 })
                 .catch(error => {
                     // Manejar errores de la solicitud

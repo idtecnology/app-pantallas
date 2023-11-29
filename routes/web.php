@@ -48,16 +48,27 @@ Route::group(['middleware' => ['auth']], function () {
 
         $data = Media::where('_id', '=', $media_id)->get()[0];
 
-        $rutaLocal = 'storage/uploads/tmp/' . $data->files_name;
-        // return dd($rutaLocal);
+        $rutaLocal = [];
+        // return dd($data->files_name);
+        $arr = [];
+        foreach (json_decode($data->files_name, true) as  $file_name) {
+            $url = pathinfo($file_name['file_name']);
+            $extension = $url['extension'];
+            $extension = strtok($extension, '?');
+            $arr[] = $extension;
 
-        $url = pathinfo($data->files_name);
-        $extension = $url['extension'];
-        $extension = strtok($extension, '?');
+
+            $rutaLocal[] =
+                'storage/uploads/tmp/' . $file_name['file_name'];
+        }
+
+        // return $arr;
 
 
 
-        return view('pantalla2', compact('id', 'time', 'rutaLocal', 'media_id', 'extension', 'preference_id'));
+
+
+        return view('pantalla2', compact('id', 'time', 'rutaLocal', 'media_id', 'arr', 'preference_id'));
     })->name('pantalla2');
 
 

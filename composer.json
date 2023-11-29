@@ -15,6 +15,7 @@
         "laravelcollective/html": "^6.4",
         "league/flysystem-aws-s3-v3": "3.0",
         "mercadopago/dx-php": "2.6.1",
+        "pbmedia/laravel-ffmpeg": "^8.3",
         "spatie/laravel-permission": "^6.0"
     },
     "require-dev": {
