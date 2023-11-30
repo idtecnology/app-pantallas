@@ -7,10 +7,10 @@
         <table class="table table-bordered table-sm mb-b">
             <thead>
                 <tr>
-                    <th>Nombre</th>
+                    <th>Cliente</th>
                     <th>Duracion</th>
-                    <th>fecha</th>
-                    <th>tramo</th>
+                    <th>Fecha</th>
+                    <th>Hora</th>
                     <th>Visto</th>
                     <th>Activar</th>
                 </tr>
@@ -18,10 +18,10 @@
             <tbody>
                 @foreach ($data as $dato)
                     <tr class="align-middle">
-                        <td>{{ $dato->name }}</td>
+                        <td>{{ $dato->email }}</td>
                         <td>{{ $dato->duration }} segundos</td>
                         <td>{{ date('d-m-Y', strtotime($dato->date)) }}</td>
-                        <td>{{ $dato->time }}</td>
+                        <td>{{ date('H:i', strtotime($dato->time)) }}</td>
                         <td>{{ $dato->isActive == 1 ? 'Visto' : 'No Visto' }}</td>
                         <td>
                             <div class="form-check form-switch">

@@ -10,3 +10,12 @@
         <p>Recibiras un correo con los detalles de tu compra</p>
     </div>
 @endsection
+@section('js')
+    <script>
+        window.onload = function() {
+            setTimeout(function() {
+                window.location.href = '/';
+            }, 10000);
+        };
+    </script>
+@endsection

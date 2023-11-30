@@ -17,6 +17,8 @@
     <input type="hidden" id="date_hidden" name="fecha" value="" />
     <input type="hidden" id="preference" name="preference" value="{{ $preference_id }}" />
     <input type="hidden" id="preference" name="media_id" value="{{ $media_id }}" />
+    <input type="hidden" id="amount" name="amount" value="{{ $datas->prices['amount'] }}" />
+
     <div class="" id="multimedia">
         <span class="fs-4">Tu multimedia</span>
         <input style="display: none;" type="file" name="file[]" id="archivos" accept="image/*,video/*" multiple>
@@ -78,26 +80,7 @@
         <div class="d-flex flex-column">
             <span>Tu publicacion sera de {{ $time }} segundos</span>
             <span id="fehca_visualizacion"></span>
-            <span>Total: @switch($time)
-                    @case(30)
-                        $20.000
-                    @break
-
-                    @case(45)
-                        $30.000
-                    @break
-
-                    @case(60)
-                        $40.000
-                    @break
-
-                    @case(120)
-                        $80.000
-                    @break
-
-                    @default
-                        $10.000
-                @endswitch
+            <span>Total: {{ $datas->prices['amount'] }}
             </span>
         </div>
         <div class="mt-2"><button type="submit" id="pagar"

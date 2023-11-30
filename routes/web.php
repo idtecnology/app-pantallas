@@ -35,41 +35,11 @@ Auth::routes();
 
 Route::get('/home', [HomeController::class, 'index'])->name('home');
 
-Route::get('/p1/{id}', function ($id) {
-
-    $screen = Screen::find($id);
-    return view('pantalla1', compact('id', 'screen'));
-})->name('pantalla1');
+Route::get('/p1/{id}', [ScreenController::class, 'screenUno'])->name('pantalla1');
 
 Route::group(['middleware' => ['auth']], function () {
 
-    Route::get('/p2/{id}/{time}/{media_id}/{preference_id}', function ($id, $time, $media_id, $preference_id) {
-
-
-        $data = Media::where('_id', '=', $media_id)->get()[0];
-
-        $rutaLocal = [];
-        // return dd($data->files_name);
-        $arr = [];
-        foreach (json_decode($data->files_name, true) as  $file_name) {
-            $url = pathinfo($file_name['file_name']);
-            $extension = $url['extension'];
-            $extension = strtok($extension, '?');
-            $arr[] = $extension;
-
-
-            $rutaLocal[] =
-                'storage/uploads/tmp/' . $file_name['file_name'];
-        }
-
-        // return $arr;
-
-
-
-
-
-        return view('pantalla2', compact('id', 'time', 'rutaLocal', 'media_id', 'arr', 'preference_id'));
-    })->name('pantalla2');
+    Route::get('/p2/{id}/{time}/{media_id}/{preference_id}', [ScreenController::class, 'screenDos'])->name('pantalla2');
 
 
 
@@ -83,6 +53,7 @@ Route::group(['middleware' => ['auth']], function () {
     // Route::get('/', [HomeController::class, 'index'])->name('home');
     Route::resource('/sale', MediaController::class);
     Route::get('/sale/programar/{id}', [MediaController::class, 'programar'])->name('sale.programar');
+    Route::post('/sale/store-massive', [MediaController::class, 'storeMassive'])->name('sale.store-massive');
     Route::get('/grilla', [MediaController::class, 'grilla'])->name('grilla');
     Route::get('/approved/{id}', [MediaController::class, 'approved'])->name('approved');
     Route::get('/notapproved/{id}', [MediaController::class, 'notApproved'])->name('notapproved');

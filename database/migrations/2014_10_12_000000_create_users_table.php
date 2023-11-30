@@ -20,6 +20,7 @@ return new class extends Migration
             $table->rememberToken();
             $table->string('last_name');
             $table->date('birth')->nullable();
+            $table->integer('discounts')->nullable();
             $table->string('phone', 13)->nullable();
             $table->boolean('isActive')->default(1);
             $table->boolean('isUser');

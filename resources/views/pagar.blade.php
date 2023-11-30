@@ -1,16 +1,14 @@
 @extends('layouts.app')
 @section('content')
-
-    <body onload="document.querySelector('.mercadopago-button').click()">
-        <div class="d-none">
-            <div class="cho-container"></div>
-        </div>
-    </body>
+    <div id="spinner"></div>
+    <div class="d-none">
+        <div class="cho-container"></div>
+    </div>
 @endsection
 @section('js')
     <script src="https://sdk.mercadopago.com/js/v2"></script>
     <script>
-        const mp = new MercadoPago('{{ env('MP_CLIENT') }}', {
+        const mp = new MercadoPago('{{ env('TEST_MP_CLIENT') }}', {
             locale: 'es-AR'
         })
 
@@ -24,5 +22,12 @@
                 container: '.cho-container'
             }
         })
+
+        window.onload = function() {
+            setTimeout(function() {
+                spinner.setAttribute('hidden', '');
+                document.querySelector('.mercadopago-button').click()
+            }, 3000);
+        };
     </script>
 @endsection

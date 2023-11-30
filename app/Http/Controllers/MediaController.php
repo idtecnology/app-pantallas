@@ -5,23 +5,16 @@ namespace App\Http\Controllers;
 use App\Models\Media;
 use App\Models\Screen;
 use App\Models\Tramo;
-use finfo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use Aws\S3\S3Client;
-use Aws\Exception\AwsException;
-// use FFMpeg\FFMpeg;
-use Illuminate\Support\Arr;
 use MercadoPago\Item;
 use MercadoPago\Preference;
 use MercadoPago\SDK;
-use Illuminate\Support\Facades\Session;
 use ProtoneMedia\LaravelFFMpeg\Support\FFMpeg;
 
 class MediaController extends Controller
 {
     function __construct()
-
     {
         $this->middleware('permission:admin-list|admin-create|admin-edit|admin-delete|client-list|client-create|client-edit|client-delete', ['only' => ['index', 'show', 'grilla']]);
         $this->middleware('permission:admin-create|client-create', ['only' => ['create', 'store', 'grilla']]);
@@ -34,7 +27,7 @@ class MediaController extends Controller
         if ($user->can('admin-list')) {
             $data = Media::select('media.*', 'users.email')->where('isPaid', '=', 1)->join('users', 'users.id', '=', 'media.client_id')->get();
         } else {
-            $data = Media::where('client_id', '=', $user->id)->get();
+            $data = Media::where('client_id', '=', $user->id)->where('isPaid', '=', 1)->get();
         }
         return view('media.index', compact('data'));
     }
@@ -42,7 +35,7 @@ class MediaController extends Controller
     public function create()
     {
         // $data = Tramo::where('tramos', '>=', date('H:i'))->where('fecha', '>=', $request->fecha)->where('fecha', '<=', date('Y-m-d'))->where('duracion', '>', 15)->get();
-        $pos = Screen::pluck('name', '_id');
+        $pos = Screen::all();
         return view('media.create', compact('pos'));
     }
 
@@ -79,25 +72,33 @@ class MediaController extends Controller
             return response()->json(['status' => 0, 'error' => 'tiempo excedido'], 404);
         }
 
-        switch ($request->tiempo) {
-            case '15':
-                $price = 10000;
-                break;
-            case '30':
-                $price = 20000;
-                break;
-            case '45':
-                $price = 30000;
-                break;
-            case '60':
-                $price = 40000;
-                break;
-            case '120':
-                $price = 80000;
-                break;
+
+        $prices = [
+            ['seconds' => 15, 'amount' => 10000],
+            ['seconds' => 30, 'amount' => 20000],
+            ['seconds' => 45, 'amount' => 30000],
+            ['seconds' => 60, 'amount' => 40000],
+            ['seconds' => 120, 'amount' => 80000],
+        ];
+
+        if (isset(auth()->user()->discounts) && auth()->user()->discounts > 0) {
+            $descuento = auth()->user()->discounts;
+            foreach ($prices as $key => $value) {
+                $prices[$key]['amount'] = $value['amount'] * ($descuento / 100);
+            }
         }
 
-        SDK::setAccessToken(env('MP_SECRET'));
+        $tiempito = $request->tiempo;
+
+        $matchingPrices = array_filter($prices, function ($price) use ($tiempito) {
+            return $price['seconds'] == $tiempito;
+        });
+
+
+        $price = reset($matchingPrices);
+
+
+        SDK::setAccessToken(env('TEST_MP_SECRET'));
 
 
 
@@ -118,12 +119,7 @@ class MediaController extends Controller
         $preference->back_urls = $back_urls;
 
         // Instanciamos el item
-        $item = new Item();
-        $item->title = 'Producto';
-        $item->quantity = 1;
-        $item->unit_price = $price;
-        $preference->items = [$item];
-        $preference->save();
+
 
         $files_names = [];
 
@@ -165,8 +161,26 @@ class MediaController extends Controller
             $media->screen_id = $request->screen_id;
             $media->duration = $request->tiempo;
             $media->client_id = $request->client_id;
-            $media->preference_id = $preference->id;
             $media->save();
+
+
+
+            $item = new Item();
+            $item->id = $media->_id;
+            $item->title = 'Producto';
+            $item->description = 'Tiempo en pantalla';
+            $item->quantity = 1;
+            $item->unit_price = $price['amount'];
+            $item->currency_id = 'ARS';
+
+            $preference->items = [$item];
+            $preference->save();
+
+
+
+            $upd_me = Media::find($media->_id);
+            $upd_me->preference_id = $preference->id;
+            $upd_me->save();
 
             return response()->json(['mensaje' => 'Archivos guardados con éxito', 'media_id' => $media->_id, 'preference_id' => $preference->id]);
         }
@@ -261,18 +275,6 @@ class MediaController extends Controller
     }
 
 
-
-    public function edit($id)
-    {
-        $data = Media::find($id);
-        return view('media.edit', compact('data'));
-    }
-
-
-    public function update(Request $request)
-    {
-    }
-
     public function show($id)
     {
         $data = Media::find($id);
@@ -280,7 +282,7 @@ class MediaController extends Controller
         $arr = [];
         if (is_array(json_decode($data['files_name'], true))) {
             foreach (json_decode($data['files_name'], true) as $key => $value) {
-                $url = pathinfo($value);
+                $url = pathinfo($value['file_name']);
                 $extension = $url['extension'];
                 $extension = strtok($extension, '?');
                 $arr[] = $extension;
@@ -301,18 +303,10 @@ class MediaController extends Controller
         }
     }
 
-
-    public function programar($id)
-    {
-
-        return $id;
-    }
-
-
     public function grilla()
     {
 
-        $data = Media::where('date', '=', date('Y-m-d'))->where('approved', '=', 1)->where('isPaid', '=', 1)->get();
+        $data = Media::select('media.*', 'users.email')->where('approved', '=', 1)->where('isPaid', '=', 1)->join('users', 'users.id', '=', 'media.client_id')->get();
 
         // return $data;
         return view('media.grilla', compact('data'));
@@ -329,5 +323,19 @@ class MediaController extends Controller
     {
         Media::where('_id', '=', $id)->update(['approved' => 0]);
         return back();
+    }
+
+
+    public static function getDataMedia($id)
+    {
+        return Media::getDataMedia($id);
+    }
+
+
+    public function storeMassive(Request $request)
+    {
+
+        return $request;
+        $media = new Media();
     }
 }

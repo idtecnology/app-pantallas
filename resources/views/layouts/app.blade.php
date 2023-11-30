@@ -20,7 +20,7 @@
 
     <!-- Scripts -->
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
-
+    <script src="https://sdk.mercadopago.com/js/v2"></script>
 
     <style>
         .material-symbols-outlined {

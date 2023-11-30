@@ -10,4 +10,12 @@ class Media extends Model
     use HasFactory;
 
     protected $primaryKey = '_id';
+
+
+
+    public static function getDataMedia($id)
+    {
+
+        return self::find($id);
+    }
 }

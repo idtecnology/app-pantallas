@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::create('media', function (Blueprint $table) {
             $table->id('_id');
-            $table->string('name')->nullable();
             $table->integer('client_id')->nullable();
             $table->string('tramo_id')->nullable();
             $table->integer('screen_id')->nullable();

@@ -13,11 +13,11 @@
                 <div class="row mt-4">
                     <div class="col-sm-6 col-xs-12">
                         <select class="form-select rounded-pill" name="" id="tiempo">
-                            <option value="15">15 seg - $10.000</option>
-                            <option value="30">30 seg - $20.000</option>
-                            <option value="45">45 seg - $30.000</option>
-                            <option value="60">60 seg - $40.000</option>
-                            <option value="120">120 seg - $80.000</option>
+                            @foreach ($prices as $price)
+                                <option value="{{ $price['seconds'] }}">{{ $price['seconds'] }} seg -
+                                    ${{ $price['amount'] }}
+                                </option>
+                            @endforeach
                         </select>
                     </div>
                     <div class="col-sm-6 col-xs-12 mt-2">
@@ -60,16 +60,7 @@
         </div>
     </div>
     <input id="checkSess" type="hidden" value="{{ auth()->check() }}">
-
-    <script>
-        // tiempo()
-
-        // function tiempo(segundos = 15) {
-        //     document.getElementById('mienlace').href = `/p2/{{ session('screen_id') }}/${segundos}`
-
-        // }
-    </script>
-
+@endsection
 
 @section('js')
     <script>
@@ -78,18 +69,13 @@
         }
 
         const spinner = document.getElementById("spinner");
-
         var checkSess = document.getElementById('checkSess').value;
 
         document.getElementById('archivos').addEventListener('click', function(event) {
-            if (checkSess == 1) {
-                console.log('click')
-            } else {
+            if (checkSess != 1) {
                 event.preventDefault();
                 window.location.href = '/login';
             }
-
-
         });
 
 
@@ -109,10 +95,8 @@
             formData.append('tiempo', tiempo);
             formData.append('client_id', {{ auth()->id() }});
 
-            // console.log(formData)
             spinner.removeAttribute('hidden');
 
-            // Realizar una solicitud fetch a la otra página
             fetch("/guardarData", {
                     method: 'POST',
                     body: formData,
@@ -122,9 +106,7 @@
                 })
                 .then(response => response.json())
                 .then(data => {
-
-                    console.log(data)
-
+                    // console.log(data)
                     if (data.status == 0) {
                         spinner.setAttribute('hidden', '');
                         alert(data.error)
@@ -144,5 +126,4 @@
                 });
         });
     </script>
-@endsection
 @endsection

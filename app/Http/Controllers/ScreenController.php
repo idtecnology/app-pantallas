@@ -63,4 +63,77 @@ class ScreenController extends Controller
 
         return view('screen.show', compact('data'));
     }
+
+
+    public function screenUno($id)
+    {
+        $screen = Screen::find($id);
+
+        $prices = [
+            ['seconds' => 15, 'amount' => 10000],
+            ['seconds' => 30, 'amount' => 20000],
+            ['seconds' => 45, 'amount' => 30000],
+            ['seconds' => 60, 'amount' => 40000],
+            ['seconds' => 120, 'amount' => 80000],
+        ];
+
+        if (isset(auth()->user()->discounts) && auth()->user()->discounts > 0) {
+            $descuento = auth()->user()->discounts;
+            foreach ($prices as $key => $value) {
+                $prices[$key]['amount'] = $value['amount'] * ($descuento / 100);
+            }
+        }
+
+
+
+        return view('pantalla1', compact('id', 'screen', 'prices'));
+    }
+
+    public function screenDos($id, $time, $media_id, $preference_id)
+    {
+        $data = new MediaController();
+        $datas = $data::getDataMedia($media_id);
+
+
+        $prices = [
+            ['seconds' => 15, 'amount' => 10000],
+            ['seconds' => 30, 'amount' => 20000],
+            ['seconds' => 45, 'amount' => 30000],
+            ['seconds' => 60, 'amount' => 40000],
+            ['seconds' => 120, 'amount' => 80000],
+        ];
+
+        if (isset(auth()->user()->discounts) && auth()->user()->discounts > 0) {
+            $descuento = auth()->user()->discounts;
+            foreach ($prices as $key => $value) {
+                $prices[$key]['amount'] = $value['amount'] * ($descuento / 100);
+            }
+        }
+
+        $matchingPrices = array_filter($prices, function ($price) use ($time) {
+            return $price['seconds'] == $time;
+        });
+
+        $datas->prices = reset($matchingPrices);
+
+
+
+        $rutaLocal = [];
+        $arr = [];
+        foreach (json_decode($datas->files_name, true) as $file_name) {
+            $url = pathinfo($file_name['file_name']);
+            $extension = $url['extension'];
+            $extension = strtok($extension, '?');
+            $arr[] = $extension;
+            $rutaLocal[] = 'storage/uploads/tmp/' . $file_name['file_name'];
+        }
+
+
+
+
+
+
+
+        return view('pantalla2', compact('id', 'time', 'rutaLocal', 'media_id', 'arr', 'preference_id', 'datas'));
+    }
 }

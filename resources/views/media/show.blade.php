@@ -46,12 +46,14 @@
                                 @can('admin-list')
                                     <tr class="text-center">
                                         <td>
-                                            <a href="{{ route('approved', $data->_id) }}" type="button"
-                                                class="btn btn-success btn-sm">Aprobar</a>
+                                            <a data-bs-toggle="modal" data-bs-toggle="modal" data-bs-target="#staticBackdrop"
+                                                type="button"
+                                                class="btn btn-success btn-sm @if ($data->approved == 1) disabled @endif">Aprobar</a>
                                         </td>
                                         <td>
-                                            <a href="{{ route('notapproved', $data->_id) }}" type="button"
-                                                class="btn btn-danger btn-sm">Desaprobar</a>
+                                            <a data-bs-toggle="modal" data-bs-toggle="modal" data-bs-target="#staticBackdrop2"
+                                                type="button"
+                                                class="btn btn-danger btn-sm @if ($data->approved == 0) disabled @endif">Desaprobar</a>
                                         </td>
                                     </tr>
                                 @endcan
@@ -63,33 +65,63 @@
         </div>
 
         <div class="col-sm-8 col-xs-12">
-            @if (isset($arr))
-                @foreach ($data->files_name as $k => $valor)
-                    @if ($arr[$k] === 'mp4')
-                        <div class="col-3"><video width="600px" height="400px" controls>
-                                <source src="{{ $valor }}" type="video/mp4">
-                                Your browser does not support the video tag.
-                            </video></div>
-                    @else
-                        <div class=" text-center">
-                            <img width="600px" height="400px" src="{{ $valor }}" alt=""
-                                class="img-thumbnail  img-fluid">
-                        </div>
-                    @endif
-                @endforeach
-            @else
-                @if ($data->ext === 'mp4')
+            {{-- @dd($data->files_name) --}}
+
+            @foreach ($data->files_name as $k => $valor)
+                @if ($arr[$k] === 'mp4')
                     <div class="col-3"><video width="600px" height="400px" controls>
-                            <source src="{{ $data->files_name }}" type="video/mp4">
+                            <source src="{{ $valor['file_name'] }}" type="video/mp4">
                             Your browser does not support the video tag.
                         </video></div>
                 @else
                     <div class=" text-center">
-                        <img width="600px" height="400px" src="{{ $data->files_name }}" alt=""
-                            class="img-thumbnail img-fluid">
+                        <img width="600px" height="400px" src="{{ $valor['file_name'] }}" alt=""
+                            class="img-thumbnail  img-fluid">
                     </div>
                 @endif
-            @endif
+            @endforeach
+
+        </div>
+    </div>
+
+
+
+
+    <div class="modal fade " id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-md ">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Aprobar</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Esta seguro que desea aprobar
+                </div>
+                <div class="modal-footer">
+                    <a href="{{ route('approved', $data->_id) }}" type="button" class="btn btn-success">Aprobar</a>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="staticBackdrop2" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Desprobar</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Esta seguro que desea desaprobar
+                </div>
+                <div class="modal-footer">
+                    <a href="{{ route('notapproved', $data->_id) }}" type="button" class="btn btn-danger">Desprobar</a>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
         </div>
     </div>
 @endsection
