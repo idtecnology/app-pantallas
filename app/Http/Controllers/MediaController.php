@@ -335,7 +335,99 @@ class MediaController extends Controller
     public function storeMassive(Request $request)
     {
 
-        return $request;
-        $media = new Media();
+        // return $request;
+
+
+
+
+
+        //! Ya se que guarda. 
+
+        $extensionesPermitidasVideo = ['mp4'];
+        $extensionesPermitidas = ['jpeg', 'png', 'jpg'];
+        $archivos = $request->file('files');
+        $durationInSeconds = [];
+        $rutasLocales = [];
+
+        foreach ($archivos as $ll => $archivo) {
+            $nombreArchivo = uniqid() . '.' . $archivo->getClientOriginalExtension();
+            $archivo->storeAs('public/uploads/tmp', $nombreArchivo);
+            $rutaLocal = storage_path('app/public/uploads/tmp/' . $nombreArchivo);
+
+            //  $rutasLocales[] =;
+
+            if (in_array($archivo->getClientOriginalExtension(), $extensionesPermitidasVideo)) {
+                $ffmpeg = FFMpeg::fromDisk('public')->open('/uploads/tmp/' . $nombreArchivo);
+                $durationInSeconds[] = $ffmpeg->getDurationInSeconds();
+            }
+            if (in_array($archivo->getClientOriginalExtension(), $extensionesPermitidas)) {
+                $durationInSeconds[] = 2;
+            }
+        }
+
+        $sumaDuracion = array_sum($durationInSeconds);
+
+        $tramos = Tramo::where('fecha', '=', $request->fecha)
+            ->where('screen_id', '=', $request->screen_id)
+            ->where('duracion', '>=', $sumaDuracion)
+            ->whereRaw("TIMEDIFF(CONCAT(fecha, ' ', tramos), NOW()) > '00:05:00'")
+            ->orderByRaw('RAND()')
+            ->limit($request->cant)
+            ->get();
+
+
+        foreach ($archivos as $l => $archivo) {
+            $nombreArchivo = uniqid() . '.' . $archivo->getClientOriginalExtension();
+            $archivo->storeAs('public/uploads/tmp', $nombreArchivo);
+            $files_names[] = ['file_name'  => $nombreArchivo, 'duration' => $durationInSeconds[$l]];
+        }
+
+        // return $tramos;
+
+
+        $ids = [];
+
+
+        for ($i = 0; $i < $request->cant; $i++) {
+            // Tramo::where('_id', '=', $tramos[$i]->_id)->update(['duracion' => $resto]);
+            $media = new Media();
+            $media->files_name = json_encode($files_names);
+            $media->screen_id = $request->screen_id;
+            $media->tramo_id = $tramos[$i]->tramo_id;
+            $media->date = $request->fecha;
+            $media->client_id = auth()->user()->id;
+            $media->isPaid = 1;
+            $media->isActive = 1;
+            $media->time = $tramos[$i]->tramos;
+            $media->save();
+
+            $ids[] = $media->_id;
+        }
+
+
+        foreach ($ids as $id) {
+            $dataUpdateMedia = Media::find($id);
+
+            if (is_object(json_decode($dataUpdateMedia->files_name, true)) || is_array(json_decode($dataUpdateMedia->files_name, true))) {
+                $imgs_temp = json_decode($dataUpdateMedia->files_name, true);
+                $files_names2 = [];
+                foreach ($imgs_temp as $img_tmp) {
+                    $rutaLocal = storage_path('app/public/uploads/tmp/' . $img_tmp['file_name']);
+                    $name_file = $request->screen_id . '/' . date('Ymd', strtotime($request->fecha)) . '/' . $img_tmp['file_name'];
+                    $nameF = '/' . date('Ymd', strtotime($request->fecha)) . '/' . $img_tmp['file_name'];
+                    $path = Storage::disk('s3')->put($name_file, file_get_contents($rutaLocal));
+                    $path = Storage::disk('s3')->temporaryUrl($path . $nameF, now()->addMinutes(1440));
+                    // $files_names[] = $path;
+                    $files_names2[] = ['file_name'  => $path, 'duration' => $img_tmp['duration']];
+                }
+
+                $dataUpdateMedia->files_name = json_encode($files_names2);
+                $dataUpdateMedia->save();
+            }
+        }
+        unlink($rutaLocal);
+
+
+        return redirect()->route('sale.index');
     }
 }

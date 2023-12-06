@@ -30,6 +30,12 @@ Route::get('/', function () {
     return view('welcome', compact('screens'));
 });
 
+Route::get('/preguntas-frecuentes', function () {
+
+    return view('layouts.faq');
+})->name('faq');
+
+
 Auth::routes();
 
 

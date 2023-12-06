@@ -24,19 +24,18 @@
                 <div class="p-2">
                     {!! Form::model($user, ['method' => 'PATCH', 'route' => ['users.update', $user->id]]) !!}
                     <div class="row border border-1 shadow-sm mb-3 p-3">
-                        <div class="col-2 mb-0 align-middle">
+                        <div class="col-4 mb-0 align-middle">
                             <label class="fs-5">Fecha de nacimiento:</label>
                         </div>
-                        <div class="col-4">
-
-                            {!! Form::date('birth', null, ['placeholder' => 'Fecha de nacimiento', 'class' => 'form-control']) !!}
+                        <div class="col-8">
+                            <input type="date" name="birth" class="form-control">
                         </div>
                     </div>
                     <div class="row border border-1 shadow-sm mb-3 p-3">
-                        <div class="col-2 mb-0 align-middle">
+                        <div class="col-4 mb-0 align-middle">
                             <label class="fs-5">Telefono:</label>
                         </div>
-                        <div class="col-4">
+                        <div class="col-8">
 
                             {!! Form::text('phone', null, ['placeholder' => 'Telefono', 'class' => 'form-control']) !!}
                         </div>
