@@ -420,6 +420,7 @@ class MediaController extends Controller
                             $media->date = $fechaActual;
                             $media->client_id = auth()->user()->id;
                             $media->isPaid = 1;
+                            $media->approved = 1;
                             $media->isActive = 1;
                             $media->time = $tramos[$p]->tramos;
                             $media->campania_id = $campania_id;
@@ -469,7 +470,6 @@ class MediaController extends Controller
         if (!empty($media)) {
             if ($media->reproducido !== 1) {
                 $rep = Media::where('_id', '=', $id)->update(['reproducido' => 1]);
-
                 if ($rep == 1) {
                     return response()->json(['status' => 'success', 'code' => 200, 'message' => 'actualizacion exitosa'], 200);
                 } else {
