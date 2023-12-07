@@ -154,7 +154,7 @@
                                 <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                                     <li><a class="dropdown-item"
                                             href="{{ route('users.profile', Auth::user()->id) }}">Perfil</a></li>
-                                    <li><a class="dropdown-item" href="#">Preguntas Frecuentes</a></li>
+                                    <li><a class="dropdown-item" href="{{ route('faq') }}">Preguntas Frecuentes</a></li>
                                     <li>
                                         <hr class="dropdown-divider">
                                     </li>

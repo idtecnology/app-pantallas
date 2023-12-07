@@ -14,7 +14,7 @@
                     <strong>Punto de venta:</strong>
                     <select class='form-select' name="screen_id" id="screen_id">
                         @foreach ($pos as $p)
-                            <option value="{{ $p->_id }}">{{ $p->name }}</option>
+                            <option value="{{ $p->_id }}">{{ $p->nombre }}</option>
                         @endforeach
                     </select>
 

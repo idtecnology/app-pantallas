@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Campania;
 use App\Models\Media;
 use App\Models\Screen;
 use App\Models\Tramo;
+use DateInterval;
+use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use MercadoPago\Item;
@@ -337,14 +340,31 @@ class MediaController extends Controller
 
         // return $request;
 
+        $campania = new Campania();
 
 
+        $campania->name = $request->name;
+        $campania->screen_id = $request->screen_id;
+        $campania->fecha_inicio = $request->fecha_inicio;
+        $campania->fecha_fin = $request->fecha_fin;
+        $campania->hora_inicio = $request->hora_inicio;
+        $campania->hora_fin = $request->hora_fin;
+        $campania->cant = $request->cant;
+        $campania->save();
 
+        $campania_id = $campania->_id;
 
-        //! Ya se que guarda. 
-
-        $extensionesPermitidasVideo = ['mp4'];
-        $extensionesPermitidas = ['jpeg', 'png', 'jpg'];
+        $fechaInicio = new DateTime($request->fecha_inicio);
+        $fechaFin = new DateTime($request->fecha_fin);
+        $intervalo = $fechaInicio->diff($fechaFin);
+        $diferenciaEnDias = $intervalo->days;
+        $horaInicio = new DateTime($request->hora_inicio);
+        $horaFin = new DateTime($request->hora_fin);
+        $intervaloHoras = $horaInicio->diff($horaFin);
+        $diferenciaEnHoras = $intervaloHoras->h;
+        $fechaActual = $request->fecha_inicio;
+        $extensionesPermitidasVideo = ['mp4', 'mov'];
+        $extensionesPermitidas = ['jpeg', 'png', 'jpg', 'webp'];
         $archivos = $request->file('files');
         $durationInSeconds = [];
         $rutasLocales = [];
@@ -353,9 +373,6 @@ class MediaController extends Controller
             $nombreArchivo = uniqid() . '.' . $archivo->getClientOriginalExtension();
             $archivo->storeAs('public/uploads/tmp', $nombreArchivo);
             $rutaLocal = storage_path('app/public/uploads/tmp/' . $nombreArchivo);
-
-            //  $rutasLocales[] =;
-
             if (in_array($archivo->getClientOriginalExtension(), $extensionesPermitidasVideo)) {
                 $ffmpeg = FFMpeg::fromDisk('public')->open('/uploads/tmp/' . $nombreArchivo);
                 $durationInSeconds[] = $ffmpeg->getDurationInSeconds();
@@ -363,70 +380,82 @@ class MediaController extends Controller
             if (in_array($archivo->getClientOriginalExtension(), $extensionesPermitidas)) {
                 $durationInSeconds[] = 2;
             }
+
+            $files_names[] = ['file_name'  => $nombreArchivo, 'duration' => $durationInSeconds[$ll]];
+            $rutasLocales[] = $rutaLocal;
         }
+
 
         $sumaDuracion = array_sum($durationInSeconds);
-
-        $tramos = Tramo::where('fecha', '=', $request->fecha)
-            ->where('screen_id', '=', $request->screen_id)
-            ->where('duracion', '>=', $sumaDuracion)
-            ->whereRaw("TIMEDIFF(CONCAT(fecha, ' ', tramos), NOW()) > '00:05:00'")
-            ->orderByRaw('RAND()')
-            ->limit($request->cant)
-            ->get();
-
-
-        foreach ($archivos as $l => $archivo) {
-            $nombreArchivo = uniqid() . '.' . $archivo->getClientOriginalExtension();
-            $archivo->storeAs('public/uploads/tmp', $nombreArchivo);
-            $files_names[] = ['file_name'  => $nombreArchivo, 'duration' => $durationInSeconds[$l]];
-        }
-
-        // return $tramos;
-
 
         $ids = [];
 
 
-        for ($i = 0; $i < $request->cant; $i++) {
-            // Tramo::where('_id', '=', $tramos[$i]->_id)->update(['duracion' => $resto]);
-            $media = new Media();
-            $media->files_name = json_encode($files_names);
-            $media->screen_id = $request->screen_id;
-            $media->tramo_id = $tramos[$i]->tramo_id;
-            $media->date = $request->fecha;
-            $media->client_id = auth()->user()->id;
-            $media->isPaid = 1;
-            $media->isActive = 1;
-            $media->time = $tramos[$i]->tramos;
-            $media->save();
+        for ($i = 0; $i <= $diferenciaEnDias; $i++) {
+            $tramos = Tramo::select('tramos', 'tramo_id')->where('fecha', '=', $fechaActual)
+                ->where('screen_id', '=', $request->screen_id)
+                ->where('duracion', '>', $sumaDuracion)
+                ->where('tramos', '>=', $request->hora_inicio)
+                ->where('tramos', '<', $request->hora_fin)
+                ->get();
 
-            $ids[] = $media->_id;
+
+            if (!empty($tramos)) {
+                $tramosPorFecha = [];
+                $j = 0;
+                $h = 0;
+
+                for ($t = 0; $t < $diferenciaEnHoras; $t++) {
+                    while ($j < $request->cant) {
+                        for ($p = $h; $p < (6 + $h); $p++) {
+                            if ($j == $request->cant) {
+                                $j++;
+                                break;
+                            }
+                            $tramosPorFecha[] = $tramos[$p]->tramos;
+                            $media = new Media();
+                            $media->files_name = json_encode($files_names);
+                            $media->screen_id = $request->screen_id;
+                            $media->tramo_id = $tramos[$p]->tramo_id;
+                            $media->date = $fechaActual;
+                            $media->client_id = auth()->user()->id;
+                            $media->isPaid = 1;
+                            $media->isActive = 1;
+                            $media->time = $tramos[$p]->tramos;
+                            $media->campania_id = $campania_id;
+                            $media->save();
+                            $ids[] = $media->_id;
+                            $j++;
+                        }
+                    }
+                    $h += 6;
+                    $j = 0;
+                }
+            }
+            if ($fechaActual == $request->fecha_inicio) {
+                $fechaActual = $fechaInicio->add(new DateInterval('P1D'));
+                $fechaActual = $fechaActual->format('Y-m-d');
+            }
         }
 
 
         foreach ($ids as $id) {
-            $dataUpdateMedia = Media::find($id);
-
-            if (is_object(json_decode($dataUpdateMedia->files_name, true)) || is_array(json_decode($dataUpdateMedia->files_name, true))) {
-                $imgs_temp = json_decode($dataUpdateMedia->files_name, true);
-                $files_names2 = [];
-                foreach ($imgs_temp as $img_tmp) {
-                    $rutaLocal = storage_path('app/public/uploads/tmp/' . $img_tmp['file_name']);
-                    $name_file = $request->screen_id . '/' . date('Ymd', strtotime($request->fecha)) . '/' . $img_tmp['file_name'];
-                    $nameF = '/' . date('Ymd', strtotime($request->fecha)) . '/' . $img_tmp['file_name'];
-                    $path = Storage::disk('s3')->put($name_file, file_get_contents($rutaLocal));
-                    $path = Storage::disk('s3')->temporaryUrl($path . $nameF, now()->addMinutes(1440));
-                    // $files_names[] = $path;
-                    $files_names2[] = ['file_name'  => $path, 'duration' => $img_tmp['duration']];
-                }
-
-                $dataUpdateMedia->files_name = json_encode($files_names2);
-                $dataUpdateMedia->save();
+            $data = Media::find($id);
+            $files_names2 = [];
+            foreach (json_decode($data->files_name, true) as $filename) {
+                $rutaLocal3 = storage_path('app/public/uploads/tmp/' . $filename['file_name']);
+                $name_file2 = $data->screen_id . '/' . date('Ymd', strtotime($data->date)) . '/' . $filename['file_name'];
+                $nameF2 = '/' . date('Ymd', strtotime($data->date)) . '/' . $filename['file_name'];
+                $path2 = Storage::disk('s3')->put($name_file2, file_get_contents($rutaLocal3));
+                $path2 = Storage::disk('s3')->temporaryUrl($path2 . $nameF2, now()->addMinutes(1440));
+                $files_names2[] = ['file_name'  => $path2, 'duration' => $filename['duration']];
             }
+            Media::where('_id', '=', $id)->update(['files_name' => json_encode($files_names2)]);
+            $x[$id][] = json_encode($files_names2);
         }
-        unlink($rutaLocal);
-
+        foreach ($rutasLocales as $ruta2) {
+            unlink($ruta2);
+        }
 
         return redirect()->route('sale.index');
     }

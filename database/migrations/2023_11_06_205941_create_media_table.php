@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('media', function (Blueprint $table) {
             $table->id('_id');
+            $table->integer('campania_id')->nullable();
             $table->integer('client_id')->nullable();
             $table->string('tramo_id')->nullable();
             $table->integer('screen_id')->nullable();
@@ -24,7 +25,7 @@ return new class extends Migration
             $table->text('files_name');
             $table->tinyInteger('approved')->default(0);
             $table->tinyInteger('isPaid')->default(0);
-            $table->tinyInteger('downloaded')->default(0);
+            $table->tinyInteger('reproducido')->default(0);
             $table->boolean('isActive')->default(0);
             $table->timestamps();
         });
