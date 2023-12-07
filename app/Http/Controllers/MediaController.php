@@ -459,4 +459,27 @@ class MediaController extends Controller
 
         return redirect()->route('sale.index');
     }
+
+
+    public function reproducido($id)
+    {
+        $media = Media::find($id);
+
+
+        if (!empty($media)) {
+            if ($media->reproducido !== 1) {
+                $rep = Media::where('_id', '=', $id)->update(['reproducido' => 1]);
+
+                if ($rep == 1) {
+                    return response()->json(['status' => 'success', 'code' => 200, 'message' => 'actualizacion exitosa'], 200);
+                } else {
+                    return response()->json(['status' => 'error', 'code' => 400, 'message' => 'Ocurrio un error en la actualizacion'], 400);
+                }
+            } else {
+                return response()->json(['status' => 'error', 'code' => 400, 'message' => 'La media ya se encuentra actualizada'], 400);
+            }
+        } else {
+            return response()->json(['status' => 'error', 'code' => 404, 'message' => 'Media no encontrada'], 404);
+        }
+    }
 }
