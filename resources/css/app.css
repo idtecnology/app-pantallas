@@ -31,3 +31,44 @@
         transform: rotate(360deg);
     }
 }
+
+.bg-violeta {
+    background-color: #ECE6F3;
+}
+
+.bshadow {
+    box-shadow: 0px 0px 10px #A6A6A6;
+}
+
+.text-1 {
+    position: absolute;
+    top: 55%;
+    color: white;
+    font-weight: bold;
+    font-size: 24px;
+    margin-left: 10px;
+}
+
+.text-2 {
+    position: absolute;
+    top: 68%;
+    color: white;
+    left: 10px;
+}
+
+
+
+.selects-price {
+    position: absolute;
+    top: 83%;
+    left: 3%;
+    width: 100%;
+}
+
+.ml-4p {
+    margin-left: 4px;
+}
+
+.bg-primario {
+    background-color: #674fa3;
+}

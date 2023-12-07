@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:title" content="AdsUpp">
     <meta property="og:description" content="Publicar nunca fue tan facil">
-    <link rel="shortcut icon" href="../images/logo_cuadrado.ico">
+    <link rel="shortcut icon" href="/images/logo_cuadrado.ico">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
 
@@ -49,7 +49,7 @@
         <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
             <div class="container">
                 <a class="navbar-brand" href="/">
-                    <img src="../images/logo2.jpg" alt="Logo adsupp" width="101px" height="48px">
+                    <img src="/images/logo2.jpg" alt="Logo adsupp" width="101px" height="48px">
                 </a>
                 <button class="navbar-toggler rounded btn-dark rounded-circle py-2 px-2 bg-primary text-white"
                     type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasWithBothOptions"
@@ -179,7 +179,7 @@
             </div>
         </nav>
 
-        <main class="py-4 container">
+        <main class="py-1 container">
             <div class="row">
                 <div class="col-12 col-sm-12">
                     @yield('content')

@@ -69,6 +69,7 @@ class ScreenController extends Controller
     {
         $screen = Screen::find($id);
 
+
         $prices = [
             ['seconds' => 15, 'amount' => 10000],
             ['seconds' => 30, 'amount' => 20000],

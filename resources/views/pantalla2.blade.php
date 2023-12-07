@@ -20,7 +20,7 @@
     <input type="hidden" id="amount" name="amount" value="{{ $datas->prices['amount'] }}" />
 
     <div class="" id="multimedia">
-        <span class="fs-4">Tu multimedia</span>
+        <span class="fs-4 fw-bold">Tu Contenido</span>
         <input style="display: none;" type="file" name="file[]" id="archivos" accept="image/*,video/*" multiple>
         <div id="archivosPrevisualizacion"></div>
         <div class="row ms-1 mt-4 text-center justify-content-center" id="mediaaas">
@@ -53,7 +53,7 @@
     </div>
 
     <div id="horario-text" class="mb-2 d-flex flex-column">
-        <span class="fs-4 mb-2">Elegí tu horario</span>
+        <span class="fs-4 mb-1 fw-bold">Elegí tu horario</span>
         <span class="fs-6">Tu publicación saldrá dentro de los 5 minutos siguientes al horario seleccionado.</span>
     </div>
     <div id="horario-select" class="">
@@ -80,7 +80,7 @@
         <div class="d-flex flex-column">
             <span>Tu publicacion sera de {{ $time }} segundos</span>
             <span id="fehca_visualizacion"></span>
-            <span>Total: {{ $datas->prices['amount'] }}
+            <span>Total: ${{ $datas->prices['amount'] }}
             </span>
         </div>
         <div class="mt-2"><button type="submit" id="pagar"

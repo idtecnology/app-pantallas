@@ -13,9 +13,18 @@ return new class extends Migration
     {
         Schema::create('screens', function (Blueprint $table) {
             $table->id('_id');
-            $table->string('name');
-            $table->string('location');
-            $table->double('price', 8, 2)->nullable();
+            $table->string('nombre');
+            $table->string('direccion');
+            $table->text('imagen');
+            $table->time('hora_encendido');
+            $table->time('horario_apagado');
+            $table->text('url_google_maps');
+            $table->string('proximo_horario_disponible');
+            $table->string('ultimo_dia_compra');
+            $table->string('aspect_ratio');
+            $table->json('dimension_px');
+            $table->json('dimension_mts_marco');
+            $table->json('dimension_mts_pantalla');
             $table->boolean('isActive')->default(1);
             $table->timestamps();
         });
