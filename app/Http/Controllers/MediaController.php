@@ -28,9 +28,13 @@ class MediaController extends Controller
     {
         $user = auth()->user();
         if ($user->can('admin-list')) {
-            $data = Media::select('media.*', 'users.email')->where('isPaid', '=', 1)->join('users', 'users.id', '=', 'media.client_id')->get();
+            $data = Media::select('media.*', 'users.email')
+                ->where('isPaid', '=', 1)
+                ->whereNull('campania_id')
+                ->join('users', 'users.id', '=', 'media.client_id')
+                ->paginate(20);
         } else {
-            $data = Media::where('client_id', '=', $user->id)->where('isPaid', '=', 1)->get();
+            $data = Media::where('client_id', '=', $user->id)->where('isPaid', '=', 1)->paginate(20);
         }
         return view('media.index', compact('data'));
     }
@@ -308,7 +312,6 @@ class MediaController extends Controller
 
     public function grilla(Request $request)
     {
-
         $data = Media::select('media._id as media_id', 'media.client_id as media_client_id', 'media.reproducido as media_reproducido', 'media.time as media_time', 'media.date as media_date', 'media.duration as media_duration', 'media.files_name as media_files_name', 'media.isActive as media_isActive', 'users.email', 'campanias.name as campania_name', 'screens.nombre as screen_name')
             ->where('media.approved', '=', 1)
             ->where('media.date', '=', date('Y-m-d'))
