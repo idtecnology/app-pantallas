@@ -316,9 +316,9 @@ class MediaController extends Controller
             ->join('campanias', 'campanias._id', '=', 'media.campania_id', 'left outer')
             ->join('screens', 'screens._id', '=', 'media.screen_id')
             ->orderBy('media_time', 'ASC')
-            ->paginate(30);
+            ->paginate(20);
         // return $data;
-        return view('media.grilla', compact('data'))->with('i', ($request->input('page', 1) - 1) * 30);
+        return view('media.grilla', compact('data'))->with('i', ($request->input('page', 1) - 1) * 20);
     }
 
 
