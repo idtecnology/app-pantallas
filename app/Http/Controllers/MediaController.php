@@ -309,10 +309,34 @@ class MediaController extends Controller
     public function grilla()
     {
 
-        $data = Media::select('media.*', 'users.email')->where('approved', '=', 1)->where('isPaid', '=', 1)->join('users', 'users.id', '=', 'media.client_id')->get();
-
+        $data = Media::select('media._id as media_id', 'media.client_id as media_client_id', 'media.reproducido as media_reproducido', 'media.time as media_time', 'media.date as media_date', 'media.duration as media_duration', 'media.files_name as media_files_name', 'media.isActive as media_isActive', 'users.email', 'campanias.name as campania_name', 'screens.nombre as screen_name')
+            ->where('media.approved', '=', 1)
+            ->where('media.date', '=', date('Y-m-d'))
+            ->join('users', 'users.id', '=', 'media.client_id')
+            ->join('campanias', 'campanias._id', '=', 'media.campania_id', 'left outer')
+            ->join('screens', 'screens._id', '=', 'media.screen_id')
+            ->get();
         // return $data;
         return view('media.grilla', compact('data'));
+    }
+
+
+    public function disabledMedia($id)
+    {
+        $data = Media::find($id);
+        if (!empty($data)) {
+            if ($data->isActive == 1) {
+                $data->isActive = 0;
+                $data->save();
+                return response()->json(['status' => 'success', 'code' => 200, 'message' => 'Desactivado con exito', 'isActive' =>  $data->isActive], 200);
+            } else {
+                $data->isActive = 1;
+                $data->save();
+                return response()->json(['status' => 'success', 'code' => 200, 'message' => 'Activado con exito', 'isActive' =>  $data->isActive], 200);
+            }
+        } else {
+            return response()->json(['status' => 'error', 'code' => 404, 'message' => 'Media no encontrada'], 404);
+        }
     }
 
 

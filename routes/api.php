@@ -24,3 +24,4 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::post('/tramo', [TramoController::class, 'index']);
 Route::post('/availability-dates', [TramoController::class, 'getAvailabilityDates']);
 Route::get('/reproducido/{id}', [MediaController::class, 'reproducido']);
+Route::get('/disabled-media/{id}', [MediaController::class, 'disabledMedia'])->name('disabled-media');
