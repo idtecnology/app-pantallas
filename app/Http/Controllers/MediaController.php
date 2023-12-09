@@ -306,7 +306,7 @@ class MediaController extends Controller
         }
     }
 
-    public function grilla()
+    public function grilla(Request $request)
     {
 
         $data = Media::select('media._id as media_id', 'media.client_id as media_client_id', 'media.reproducido as media_reproducido', 'media.time as media_time', 'media.date as media_date', 'media.duration as media_duration', 'media.files_name as media_files_name', 'media.isActive as media_isActive', 'users.email', 'campanias.name as campania_name', 'screens.nombre as screen_name')
@@ -316,9 +316,9 @@ class MediaController extends Controller
             ->join('campanias', 'campanias._id', '=', 'media.campania_id', 'left outer')
             ->join('screens', 'screens._id', '=', 'media.screen_id')
             ->orderBy('media_time', 'ASC')
-            ->get();
+            ->paginate(30);
         // return $data;
-        return view('media.grilla', compact('data'));
+        return view('media.grilla', compact('data'))->with('i', ($request->input('page', 1) - 1) * 30);
     }
 
 

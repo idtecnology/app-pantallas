@@ -54,6 +54,9 @@
                 @endforeach
             </tbody>
         </table>
+        <div class="text-center">
+            {!! $data->render() !!}
+        </div>
     </div>
 @endsection
 
