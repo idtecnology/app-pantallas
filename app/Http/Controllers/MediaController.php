@@ -315,6 +315,7 @@ class MediaController extends Controller
             ->join('users', 'users.id', '=', 'media.client_id')
             ->join('campanias', 'campanias._id', '=', 'media.campania_id', 'left outer')
             ->join('screens', 'screens._id', '=', 'media.screen_id')
+            ->orderBy('media_time', 'ASC')
             ->get();
         // return $data;
         return view('media.grilla', compact('data'));
