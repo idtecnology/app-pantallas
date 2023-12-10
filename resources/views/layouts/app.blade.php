@@ -135,7 +135,7 @@
 
                                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                                         <li><a class="dropdown-item" href="{{ route('sale.index') }}">Videos</a></li>
-                                        <li><a class="dropdown-item" href="{{ route('grilla') }}">Grilla</a></li>
+                                        <li><a class="dropdown-item" href="{{ route('grilla', [0]) }}">Grilla</a></li>
                                         <li><a class="dropdown-item" href="{{ route('screen.index') }}">Pantallas</a></li>
                                         <li><a class="dropdown-item" href="{{ route('pagos.index') }}">Pagos</a></li>
                                         <li><a class="dropdown-item" href="{{ route('users.index') }}">Usuarios</a></li>

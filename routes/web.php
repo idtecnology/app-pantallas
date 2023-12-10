@@ -8,10 +8,9 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\ScreenController;
 use App\Http\Controllers\TramoController;
 use App\Http\Controllers\UserController;
-use App\Models\Media;
 use App\Models\Screen;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Http\Request;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,6 +22,13 @@ use Illuminate\Http\Request;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+
+
+Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $r) {
+    $r->fulfill();
+
+    return redirect('/home');
+})->middleware(['auth', 'signed'])->name('verification.verify');
 
 Route::get('/', function () {
     $screens = Screen::all();
@@ -36,7 +42,7 @@ Route::get('/preguntas-frecuentes', function () {
 })->name('faq');
 
 
-Auth::routes();
+Auth::routes(['verify' => true]);
 
 
 Route::get('/home', [HomeController::class, 'index'])->name('home');
@@ -60,7 +66,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::resource('/sale', MediaController::class);
     Route::get('/sale/programar/{id}', [MediaController::class, 'programar'])->name('sale.programar');
     Route::post('/sale/store-massive', [MediaController::class, 'storeMassive'])->name('sale.store-massive');
-    Route::get('/grilla', [MediaController::class, 'grilla'])->name('grilla');
+    Route::get('/grilla/{id}', [MediaController::class, 'grilla'])->name('grilla');
     Route::get('/approved/{id}', [MediaController::class, 'approved'])->name('approved');
     Route::get('/notapproved/{id}', [MediaController::class, 'notApproved'])->name('notapproved');
 
