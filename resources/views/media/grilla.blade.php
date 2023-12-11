@@ -34,8 +34,8 @@
                     <tr>
                         <th>Hora</th>
                         <th>Campania/Email</th>
-                        <th>Reproducido</th>
-                        <th>Estado</th>
+                        <th>Duracion</th>
+                        <th>Accion</th>
                     </tr>
                 </thead>
                 <tbody id="tableBody"></tbody>
@@ -52,6 +52,10 @@
 @section('js')
     <script>
         const csrfToken = "{{ csrf_token() }}";
+        var prevButton = document.getElementById('prevButton');
+        var nextButton = document.getElementById('nextButton');
+        var datos;
+        var totalPages;
 
         function consultaProgramacion(page = 0) {
             var tableBody = document.querySelector('#tableBody')
@@ -61,6 +65,8 @@
             var pos = document.querySelector('#screen_id')
             // var page = page
             var itemsPerPage = 10;
+
+
 
 
 
@@ -79,6 +85,7 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.data.data.length > 0) {
+                        datos = data.data
                         updateUI(data);
                         updatePagination(data);
                     } else {
@@ -107,6 +114,7 @@
                 const timeRow = document.createElement('tr');
                 const timeCell = document.createElement('td');
                 timeCell.setAttribute('rowspan', data.arr1[time].length + 1);
+                timeCell.classList = 'align-middle'
                 timeCell.textContent = time;
                 timeRow.appendChild(timeCell);
                 tableBody.appendChild(timeRow);
@@ -119,7 +127,8 @@
                     row.appendChild(campaniaEmailCell);
 
                     const reproducidoCell = document.createElement('td');
-                    reproducidoCell.textContent = dato.media_reproducido === 1 ? 'Si' : 'No';
+                    reproducidoCell.textContent = dato.media_duration === null ? '15 segundos' : `${dato
+                        .media_duration} segundos`;
                     row.appendChild(reproducidoCell);
 
                     const estadoCell = document.createElement('td');
@@ -133,9 +142,13 @@
                     switchInput.setAttribute('role', 'switch');
                     switchInput.checked = dato.media_isActive === 1;
 
-                    if (new Date().getHours() >= parseInt(dato.media_time.split(':')[0])) {
+                    if (new Date().getHours() >= parseInt(dato.media_time.split(':')[0]) &&
+                        new Date().toDateString() === new Date(dato.media_date).toDateString()) {
                         switchInput.setAttribute('disabled', true);
                     }
+
+                    console.log(dato.media_date)
+
 
                     const switchLabel = document.createElement('label');
                     switchLabel.setAttribute('id', `label_check_${dato.media_id}`);
@@ -158,31 +171,36 @@
 
         }
 
+
+        console.log(datos)
+
         function updatePagination(data) {
-            var datos = data.data
-            var totalPages = datos.last_page;
+            // var datos = data.data
+
+            totalPages = datos.last_page;
 
 
-            var prevButton = document.getElementById('prevButton');
-            var nextButton = document.getElementById('nextButton');
 
-            prevButton.addEventListener('click', function() {
-                if (datos.current_page > 1) {
-                    datos.current_page--;
-                    consultaProgramacion(datos.current_page);
-                }
-            });
 
-            nextButton.addEventListener('click', function() {
-                if (datos.current_page < totalPages) {
-                    datos.current_page++;
-                    consultaProgramacion(datos.current_page);
-                }
-            });
 
             // Puedes deshabilitar los botones si estás en la primera o última página
             prevButton.disabled = (datos.current_page === 1);
             nextButton.disabled = (datos.current_page === totalPages);
         }
+
+
+        prevButton.addEventListener('click', function() {
+            if (datos.current_page > 1) {
+                datos.current_page--;
+                consultaProgramacion(datos.current_page);
+            }
+        });
+
+        nextButton.addEventListener('click', function() {
+            if (datos.current_page < totalPages) {
+                datos.current_page++;
+                consultaProgramacion(datos.current_page);
+            }
+        });
     </script>
 @endsection
