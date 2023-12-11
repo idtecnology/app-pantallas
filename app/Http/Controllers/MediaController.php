@@ -33,7 +33,7 @@ class MediaController extends Controller
         if ($user->can('admin-list')) {
             $data = Media::select('media.*', 'users.email')
                 ->where('isPaid', '=', 1)
-                // ->whereNull('campania_id')
+                ->whereNull('campania_id')
                 ->join('users', 'users.id', '=', 'media.client_id')
                 ->paginate(20);
         } else {
