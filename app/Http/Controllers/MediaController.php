@@ -33,7 +33,7 @@ class MediaController extends Controller
         if ($user->can('admin-list')) {
             $data = Media::select('media.*', 'users.email')
                 ->where('isPaid', '=', 1)
-                ->whereNull('campania_id')
+                // ->whereNull('campania_id')
                 ->join('users', 'users.id', '=', 'media.client_id')
                 ->paginate(20);
         } else {
@@ -316,7 +316,34 @@ class MediaController extends Controller
 
     public function searchProgramation(Request $request)
     {
-        return response()->json($request);
+        // $data = ['fecha' => , 'screen_id' => ];
+        $page = $request->input('page', 1);
+        $itemsPerPage = $request->input('itemsPerPage', 10);
+
+
+        $data = Media::select('media._id as media_id', 'media.client_id as media_client_id', 'media.reproducido as media_reproducido', 'media.time as media_time', 'media.date as media_date', 'media.duration as media_duration', 'media.files_name as media_files_name', 'media.isActive as media_isActive', 'users.email', 'campanias.name as campania_name', 'screens.nombre as screen_name')
+            ->where('media.approved', '=', 1)
+            ->where('media.date', '=', $request->fecha)
+            ->where('media.screen_id', '=', $request->screen_id)
+            ->join('users', 'users.id', '=', 'media.client_id')
+            ->join('campanias', 'campanias._id', '=', 'media.campania_id', 'left outer')
+            ->join('screens', 'screens._id', '=', 'media.screen_id')
+            ->orderBy('media_time', 'ASC')
+            ->orderBy('media_id', 'ASC')
+            ->paginate($itemsPerPage);
+
+        $arr1 = [];
+        $arr2 = [];
+
+
+        foreach ($data as $media) {
+            $arr1[$media->media_time][] = $media;
+            $arr2[] = $media->media_time;
+        }
+
+        $arr3 = array_values(array_unique($arr2));
+
+        return response()->json(['data' => $data, 'arr3' => $arr3, 'arr1' => $arr1], 200);
     }
 
     public function grilla(Request $request)

@@ -12,7 +12,6 @@
                     </div>
                     <div class="col-xs-12 mb-3">
                         <select class='form-select' name="screen_id" id="screen_id">
-
                             <option value="0">Seleccione</option>
                             @foreach ($pos as $p)
                                 <option value="{{ $p->_id }}">{{ $p->nombre }}</option>
@@ -28,9 +27,25 @@
             </div>
         </div>
     </div>
-    <div class="col-12">
+    <div class="col-xs-12 text-center">
+        <div id="programacion">
+            <table class="table table-sm mb-0 mt-3  table-bordered">
+                <thead>
+                    <tr>
+                        <th>Hora</th>
+                        <th>Campania/Email</th>
+                        <th>Reproducido</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody"></tbody>
+            </table>
 
-
+        </div>
+        <div class="mt-3" id="pag">
+            <button class="btn btn-sm btn-primary" id="prevButton"> pre </button>
+            <button class="btn btn-sm btn-primary" id="nextButton"> next </button>
+        </div>
     </div>
 @endsection
 
@@ -38,32 +53,136 @@
     <script>
         const csrfToken = "{{ csrf_token() }}";
 
-        function consultaProgramacion() {
+        function consultaProgramacion(page = 0) {
+            var tableBody = document.querySelector('#tableBody')
 
-            var fecha = document.querySelector('#fecha_programacion').value
-            var pos = document.querySelector('#screen_id').value
+            tableBody.innerHTML = ''
+            var fecha = document.querySelector('#fecha_programacion')
+            var pos = document.querySelector('#screen_id')
+            // var page = page
+            var itemsPerPage = 10;
 
 
 
 
-            fetch("{{ route('search-programation') }}", {
+            fetch("/api/search-programation?page=" + page + " &itemsPerPage=" + itemsPerPage, {
                     method: 'POST',
                     body: JSON.stringify({
-                        fecha: fecha,
-                        screen_id: pos
+                        fecha: fecha.value,
+                        screen_id: pos.value
                     }),
                     headers: {
+                        'Content-Type': 'application/json',
                         'X-CSRF-TOKEN': csrfToken
                     }
                 })
                 .then(response => response.json())
                 .then(data => {
-                    console.log(data)
+                    if (data.data.data.length > 0) {
+                        updateUI(data);
+                        updatePagination(data);
+                    } else {
+                        tableBody.innerHTML = `<div class="alert alert-danger mt-4" role="alert">Sin Registros</div>`
+                    }
+
+
+
+
                 })
                 .catch(error => {
                     console.error('Error:', error);
                 });
 
+        }
+
+        function updateUI(data) {
+
+
+            // var datos = data.data.data
+            var arr3 = data.arr3
+            var arr1 = data.arr1
+            const tableBody = document.getElementById('tableBody');
+
+            data.arr3.forEach(time => {
+                const timeRow = document.createElement('tr');
+                const timeCell = document.createElement('td');
+                timeCell.setAttribute('rowspan', data.arr1[time].length + 1);
+                timeCell.textContent = time;
+                timeRow.appendChild(timeCell);
+                tableBody.appendChild(timeRow);
+
+                data.arr1[time].forEach(dato => {
+                    const row = document.createElement('tr');
+
+                    const campaniaEmailCell = document.createElement('td');
+                    campaniaEmailCell.textContent = dato.campania_name ? dato.campania_name : dato.email;
+                    row.appendChild(campaniaEmailCell);
+
+                    const reproducidoCell = document.createElement('td');
+                    reproducidoCell.textContent = dato.media_reproducido === 1 ? 'Si' : 'No';
+                    row.appendChild(reproducidoCell);
+
+                    const estadoCell = document.createElement('td');
+                    const switchDiv = document.createElement('div');
+                    switchDiv.classList.add('form-check', 'form-switch');
+
+                    const switchInput = document.createElement('input');
+                    switchInput.setAttribute('id', `check_${dato.media_id}`);
+                    switchInput.setAttribute('onchange', `disabledMedia(${dato.media_id});`);
+                    switchInput.setAttribute('type', 'checkbox');
+                    switchInput.setAttribute('role', 'switch');
+                    switchInput.checked = dato.media_isActive === 1;
+
+                    if (new Date().getHours() >= parseInt(dato.media_time.split(':')[0])) {
+                        switchInput.setAttribute('disabled', true);
+                    }
+
+                    const switchLabel = document.createElement('label');
+                    switchLabel.setAttribute('id', `label_check_${dato.media_id}`);
+                    switchLabel.classList.add('form-check-label');
+                    switchLabel.setAttribute('for', `check_${dato.media_id}`);
+                    switchLabel.textContent = dato.media_isActive === 1 ? 'Activo' : 'Inactivo';
+
+                    switchDiv.appendChild(switchInput);
+                    switchDiv.appendChild(switchLabel);
+                    estadoCell.appendChild(switchDiv);
+                    row.appendChild(estadoCell);
+
+                    tableBody.appendChild(row);
+                });
+            });
+
+
+            var paginacion = document.querySelector('#pag')
+            pag.style.display = '';
+
+        }
+
+        function updatePagination(data) {
+            var datos = data.data
+            var totalPages = datos.last_page;
+
+
+            var prevButton = document.getElementById('prevButton');
+            var nextButton = document.getElementById('nextButton');
+
+            prevButton.addEventListener('click', function() {
+                if (datos.current_page > 1) {
+                    datos.current_page--;
+                    consultaProgramacion(datos.current_page);
+                }
+            });
+
+            nextButton.addEventListener('click', function() {
+                if (datos.current_page < totalPages) {
+                    datos.current_page++;
+                    consultaProgramacion(datos.current_page);
+                }
+            });
+
+            // Puedes deshabilitar los botones si estás en la primera o última página
+            prevButton.disabled = (datos.current_page === 1);
+            nextButton.disabled = (datos.current_page === totalPages);
         }
     </script>
 @endsection
