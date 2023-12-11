@@ -7,6 +7,7 @@ use App\Models\Campania;
 use App\Models\Media;
 use App\Models\Screen;
 use App\Models\Tramo;
+use App\Models\User;
 use DateInterval;
 use DateTime;
 use Illuminate\Http\Request;
@@ -445,12 +446,14 @@ class MediaController extends Controller
 
     public function notApproved($id)
     {
-        Media::where('_id', '=', $id)->update(['approved' => 0]);
-        //Enviamos mail aprobado.
+        $media = Media::find($id);
+        $client = User::find($media->client_id);
 
+        $media->approved = 0;
+        $media->save();
 
-        $to_name = 'test_rechazo';
-        $to_email = 'jehfebles@gmail.com';
+        $to_name = $client->name . ' ' . $client->last_name;
+        $to_email = $client->email;
 
 
         $data = [];

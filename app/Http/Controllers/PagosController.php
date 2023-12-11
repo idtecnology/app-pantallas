@@ -134,7 +134,7 @@ class PagosController extends Controller
             $screen = Screen::find($media_data->screen_id);
 
             $to_name = $client->name . ' ' . $client->last_name;
-            $to_email = 'jehfebles@gmail.com';
+            $to_email = $client->email;
             $data = [
                 'screen_name' => $screen->nombre,
                 'screen_location' => $screen->direccion,
@@ -154,7 +154,6 @@ class PagosController extends Controller
             });
 
 
-            // Mail::to("jehfebles@gmail.com")->send(new AprobadoMail($objDemo));
 
 
 
