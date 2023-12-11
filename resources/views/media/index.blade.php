@@ -3,7 +3,7 @@
 
 
 @section('content')
-    <div class="col-12">
+    <div class="col-xs-12 overflow-scroll" width='100vw' height='98vh'>
         <table class="table table-bordered table-sm mb-0 text-center">
             <thead class="text-uppercase table-dark">
                 <tr>
@@ -33,8 +33,12 @@
                                     <span class="text-success">Aprobado</span>
                                 @break
 
+                                @case(1)
+                                    <span class="text-success">Por aprobar</span>
+                                @break
+
                                 @default
-                                    <span class="text-danger">Por aprobar</span>
+                                    <span class="text-danger">No aprobado</span>
                             @endswitch
                         </td>
 

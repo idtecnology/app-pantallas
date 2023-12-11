@@ -26,3 +26,5 @@ Route::post('/availability-dates', [TramoController::class, 'getAvailabilityDate
 Route::get('/reproducido/{id}', [MediaController::class, 'reproducido']);
 Route::get('/disabled-media/{id}', [MediaController::class, 'disabledMedia'])->name('disabled-media');
 Route::get('/select-screen/{id}', [MediaController::class, 'selectScreen'])->name('select-screen');
+
+Route::post('/search-programation', [MediaController::class, 'searchProgramation'])->name('search-programation');

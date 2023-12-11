@@ -23,7 +23,7 @@ return new class extends Migration
             $table->date('date')->nullable();
             $table->integer('duration')->nullable();
             $table->text('files_name');
-            $table->tinyInteger('approved')->default(0);
+            $table->tinyInteger('approved')->default(2);
             $table->tinyInteger('isPaid')->default(0);
             $table->tinyInteger('reproducido')->default(0);
             $table->boolean('isActive')->default(0);

@@ -38,24 +38,30 @@
                                                 <span class="text-success">Aprobado</span>
                                             @break
 
+                                            @case(2)
+                                                <span class="text-success">Por Aprobar</span>
+                                            @break
+
                                             @default
-                                                <span class="text-danger">Por aprobar</span>
+                                                <span class="text-danger">No aprobado</span>
                                         @endswitch
                                     </td>
                                 </tr>
                                 @can('admin-list')
-                                    <tr class="text-center">
-                                        <td>
-                                            <a data-bs-toggle="modal" data-bs-toggle="modal" data-bs-target="#staticBackdrop"
-                                                type="button"
-                                                class="btn btn-success btn-sm @if ($data->approved == 1) disabled @endif">Aprobar</a>
-                                        </td>
-                                        <td>
-                                            <a data-bs-toggle="modal" data-bs-toggle="modal" data-bs-target="#staticBackdrop2"
-                                                type="button"
-                                                class="btn btn-danger btn-sm @if ($data->approved == 0) disabled @endif">Desaprobar</a>
-                                        </td>
-                                    </tr>
+                                    @if ($data->approved == 2)
+                                        <tr class="text-center">
+                                            <td>
+                                                <a data-bs-toggle="modal" data-bs-toggle="modal"
+                                                    data-bs-target="#staticBackdrop" type="button"
+                                                    class="btn btn-success btn-sm">Aprobar</a>
+                                            </td>
+                                            <td>
+                                                <a data-bs-toggle="modal" data-bs-toggle="modal"
+                                                    data-bs-target="#staticBackdrop2" type="button"
+                                                    class="btn btn-danger btn-sm">Desaprobar</a>
+                                            </td>
+                                        </tr>
+                                    @endif
                                 @endcan
                             </table>
                         </div>
@@ -64,8 +70,7 @@
             </div>
         </div>
 
-        <div class="col-sm-8 col-xs-12">
-            {{-- @dd($data->files_name) --}}
+        <div class="col-sm-8 col-xs-12 mt-4">
 
             @foreach ($data->files_name as $k => $valor)
                 @if ($arr[$k] === 'mp4')

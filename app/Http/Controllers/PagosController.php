@@ -2,14 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\AprobadoMail;
 use App\Models\Media;
 use App\Models\Pagos;
+use App\Models\Screen;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use MercadoPago\Item;
 use MercadoPago\Preference;
 use MercadoPago\SDK;
 use GuzzleHttp\Client;
+use Illuminate\Support\Facades\Mail;
 
 class PagosController extends Controller
 {
@@ -121,6 +125,38 @@ class PagosController extends Controller
             $media->isPaid = 1;
             $media->isActive = 1;
             $media->save();
+
+
+
+            //Enviamos mail aprobado.
+
+            $client = User::find($media_data->client_id);
+            $screen = Screen::find($media_data->screen_id);
+
+            $to_name = $client->name . ' ' . $client->last_name;
+            $to_email = 'jehfebles@gmail.com';
+            $data = [
+                'screen_name' => $screen->nombre,
+                'screen_location' => $screen->direccion,
+                'media_time' => $media->time,
+                'media_date' => $media->date,
+                'media_duration' => $media->duration,
+            ];
+
+
+
+
+
+            Mail::send('email.aprobado', $data, function ($message) use ($to_name, $to_email) {
+                $message->to($to_email, $to_name)
+                    ->subject('Recibimos tu pago correctamente');
+                $message->from('no-responder@adsupp.com', 'AdsUpp');
+            });
+
+
+            // Mail::to("jehfebles@gmail.com")->send(new AprobadoMail($objDemo));
+
+
 
             return view('pagos.success');
         }

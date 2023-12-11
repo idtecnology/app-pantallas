@@ -135,7 +135,7 @@
 
                                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                                         <li><a class="dropdown-item" href="{{ route('sale.index') }}">Videos</a></li>
-                                        <li><a class="dropdown-item" href="{{ route('grilla', [0]) }}">Grilla</a></li>
+                                        <li><a class="dropdown-item" href="{{ route('grilla') }}">Programacion</a></li>
                                         <li><a class="dropdown-item" href="{{ route('screen.index') }}">Pantallas</a></li>
                                         <li><a class="dropdown-item" href="{{ route('pagos.index') }}">Pagos</a></li>
                                         <li><a class="dropdown-item" href="{{ route('users.index') }}">Usuarios</a></li>
@@ -217,12 +217,21 @@
                         <a class="nav-link" target="_blank" href="{{ route('faq') }}">Preguntas Frecuentes FAQ'S</a>
                     </li>
                 @else
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('users.profile', Auth::user()->id) }}">Perfil</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Preguntas Frecuentes FAQ'S</a>
-                    </li>
+                    @can('admin-list')
+                        <li class="nav-item"><a class="nav-link" href="{{ route('sale.index') }}">Videos</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ route('grilla') }}">Programacion</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ route('pagos.index') }}">Pagos</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ route('users.index') }}">Usuarios</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ route('clients.index') }}">Clientes</li>
+                    @endcan
+                    @can('clien-list')
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('users.profile', Auth::user()->id) }}">Perfil</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Preguntas Frecuentes FAQ'S</a>
+                        </li>
+                    @endcan
 
                     <li class="nav-item"><a class="nav-link" href="{{ route('logout') }}"
                             onclick="event.preventDefault();
