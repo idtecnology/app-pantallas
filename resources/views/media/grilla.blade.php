@@ -28,7 +28,7 @@
         </div>
     </div>
     <div class="col-xs-12 text-center">
-        <div id="programacion">
+        <div style="display: none;" id="programacion">
             <table class="table table-sm mb-0 mt-3  table-bordered">
                 <thead>
                     <tr>
@@ -42,9 +42,9 @@
             </table>
 
         </div>
-        <div class="mt-3" id="pag">
-            <button class="btn btn-sm btn-primary" id="prevButton"> pre </button>
-            <button class="btn btn-sm btn-primary" id="nextButton"> next </button>
+        <div style="display: none;" class="mt-3" id="pag">
+            <button class="btn btn-sm btn-primary" id="prevButton"> Siguiente </button>
+            <button class="btn btn-sm btn-primary" id="nextButton"> Anterior </button>
         </div>
     </div>
 @endsection
@@ -57,21 +57,54 @@
         var datos;
         var totalPages;
 
+        function disabledMedia(id) {
+
+            var url = @json(route('disabled-media', ['id' => '__id__']));
+            url = url.replace('__id__', id);
+
+            fetch(url, {
+                    method: 'GET',
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status == 200) {
+                        if (data.isActive == 0) {
+                            document.querySelector(`#label_check_${id}`).innerHTML = 'Inactivo'
+                            alert(data.message);
+
+                        } else {
+                            document.querySelector(`#label_check_${id}`).innerHTML = 'Activo'
+                            alert(data.message);
+                        }
+                    } else {
+                        alert(data.message);
+                        if (!document.querySelector(`#check_${id}`).checked == true) {
+                            document.querySelector(`#check_${id}`).checked = !true
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            setTimeout(function() {
+                consultaProgramacion()
+            }, 1000);
+
+
+        }
+
         function consultaProgramacion(page = 0) {
             var tableBody = document.querySelector('#tableBody')
+            var programacion = document.querySelector('#programacion')
 
+            programacion.style.display = '';
             tableBody.innerHTML = ''
             var fecha = document.querySelector('#fecha_programacion')
             var pos = document.querySelector('#screen_id')
             // var page = page
             var itemsPerPage = 10;
 
-
-
-
-
-
-            fetch("/api/search-programation?page=" + page + " &itemsPerPage=" + itemsPerPage, {
+            fetch("{{ route('search-programation') }}?page=" + page + "&itemsPerPage=" + itemsPerPage, {
                     method: 'POST',
                     body: JSON.stringify({
                         fecha: fecha.value,
@@ -91,10 +124,6 @@
                     } else {
                         tableBody.innerHTML = `<div class="alert alert-danger mt-4" role="alert">Sin Registros</div>`
                     }
-
-
-
-
                 })
                 .catch(error => {
                     console.error('Error:', error);
@@ -103,9 +132,6 @@
         }
 
         function updateUI(data) {
-
-
-            // var datos = data.data.data
             var arr3 = data.arr3
             var arr1 = data.arr1
             const tableBody = document.getElementById('tableBody');
@@ -121,46 +147,39 @@
 
                 data.arr1[time].forEach(dato => {
                     const row = document.createElement('tr');
-
                     const campaniaEmailCell = document.createElement('td');
                     campaniaEmailCell.textContent = dato.campania_name ? dato.campania_name : dato.email;
                     row.appendChild(campaniaEmailCell);
-
                     const reproducidoCell = document.createElement('td');
                     reproducidoCell.textContent = dato.media_duration === null ? '15 segundos' : `${dato
                         .media_duration} segundos`;
                     row.appendChild(reproducidoCell);
-
                     const estadoCell = document.createElement('td');
                     const switchDiv = document.createElement('div');
                     switchDiv.classList.add('form-check', 'form-switch');
-
                     const switchInput = document.createElement('input');
                     switchInput.setAttribute('id', `check_${dato.media_id}`);
                     switchInput.setAttribute('onchange', `disabledMedia(${dato.media_id});`);
                     switchInput.setAttribute('type', 'checkbox');
                     switchInput.setAttribute('role', 'switch');
+                    switchInput.classList = 'form-check-input'
                     switchInput.checked = dato.media_isActive === 1;
+
 
                     if (new Date().getHours() >= parseInt(dato.media_time.split(':')[0]) &&
                         new Date().toDateString() === new Date(dato.media_date).toDateString()) {
                         switchInput.setAttribute('disabled', true);
                     }
 
-                    console.log(dato.media_date)
-
-
                     const switchLabel = document.createElement('label');
                     switchLabel.setAttribute('id', `label_check_${dato.media_id}`);
                     switchLabel.classList.add('form-check-label');
                     switchLabel.setAttribute('for', `check_${dato.media_id}`);
-                    switchLabel.textContent = dato.media_isActive === 1 ? 'Activo' : 'Inactivo';
-
+                    switchLabel.textContent = dato.media_isActive === 1 ? ' Activo' : ' Inactivo';
                     switchDiv.appendChild(switchInput);
                     switchDiv.appendChild(switchLabel);
                     estadoCell.appendChild(switchDiv);
                     row.appendChild(estadoCell);
-
                     tableBody.appendChild(row);
                 });
             });
@@ -172,18 +191,8 @@
         }
 
 
-        console.log(datos)
-
         function updatePagination(data) {
-            // var datos = data.data
-
             totalPages = datos.last_page;
-
-
-
-
-
-            // Puedes deshabilitar los botones si estás en la primera o última página
             prevButton.disabled = (datos.current_page === 1);
             nextButton.disabled = (datos.current_page === totalPages);
         }

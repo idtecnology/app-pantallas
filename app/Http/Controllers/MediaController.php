@@ -316,8 +316,6 @@ class MediaController extends Controller
 
     public function searchProgramation(Request $request)
     {
-        // $data = ['fecha' => , 'screen_id' => ];
-        $page = $request->input('page', 1);
         $itemsPerPage = $request->input('itemsPerPage', 10);
 
 
@@ -350,69 +348,7 @@ class MediaController extends Controller
     {
 
         $pos = Screen::all();
-
         return view('media.grilla', compact('pos'));
-
-
-        // return $request;
-
-
-        // if (gettype($id) == 'string') {
-
-        //     return true;
-        // } else {
-        // }
-
-        // if ($id == 0) {
-        //     $data = Media::select('media._id as media_id', 'media.client_id as media_client_id', 'media.reproducido as media_reproducido', 'media.time as media_time', 'media.date as media_date', 'media.duration as media_duration', 'media.files_name as media_files_name', 'media.isActive as media_isActive', 'users.email', 'campanias.name as campania_name', 'screens.nombre as screen_name')
-        //         ->where('media.approved', '=', 1)
-        //         ->where('media.date', '=', date('Y-m-d'))
-        //         ->join('users', 'users.id', '=', 'media.client_id')
-        //         ->join('campanias', 'campanias._id', '=', 'media.campania_id', 'left outer')
-        //         ->join('screens', 'screens._id', '=', 'media.screen_id')
-        //         ->orderBy('media_time', 'ASC')
-        //         ->orderBy('media_id', 'ASC')
-        //         ->paginate(20);
-        // } else {
-        //     $data = Media::select('media._id as media_id', 'media.client_id as media_client_id', 'media.reproducido as media_reproducido', 'media.time as media_time', 'media.date as media_date', 'media.duration as media_duration', 'media.files_name as media_files_name', 'media.isActive as media_isActive', 'users.email', 'campanias.name as campania_name', 'screens.nombre as screen_name')
-        //         ->where('media.approved', '=', 1)
-        //         ->where('media.date', '=', date('Y-m-d'))
-        //         ->where('media.screen_id', '=', $id)
-        //         ->join('users', 'users.id', '=', 'media.client_id')
-        //         ->join('campanias', 'campanias._id', '=', 'media.campania_id', 'left outer')
-        //         ->join('screens', 'screens._id', '=', 'media.screen_id')
-        //         ->orderBy('media_time', 'ASC')
-        //         ->orderBy('media_id', 'ASC')
-        //         ->paginate(20);
-        // }
-
-
-
-        // // return $data;
-
-        // $arr1 = [];
-        // $arr2 = [];
-
-
-        // foreach ($data as $media) {
-        //     $arr1[$media->media_time][] = $media;
-        //     $arr2[] = $media->media_time;
-        // }
-
-        // $arr3 = array_values(array_unique($arr2));
-
-
-        // $pos = Screen::all();
-
-        // $scren = Screen::find($id);
-
-
-
-
-
-
-
-        // return view('media.grilla', compact('data', 'arr3', 'arr1', 'pos', 'scren', 'id'))->with('i', ($request->input('page', 1) - 1) * 20);
     }
 
 
