@@ -30,6 +30,7 @@ class CreateAdminUserSeeder extends Seeder
             'last_name' => 'Admin',
             'email' => 'admin@1.com',
             'password' => bcrypt('123'),
+            'email_verified_at' => '2023-12-12 13:18:00',
             'isUser' => 1
         ]);
 
@@ -38,6 +39,7 @@ class CreateAdminUserSeeder extends Seeder
             'last_name' => 'cliente',
             'email' => 'client@1.com',
             'password' => bcrypt('123'),
+            'email_verified_at' => '2023-12-12 13:18:00',
             'isUser' => 0
         ]);
 
