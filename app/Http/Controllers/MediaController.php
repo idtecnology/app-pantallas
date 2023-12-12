@@ -495,7 +495,8 @@ class MediaController extends Controller
 
 
         for ($i = 0; $i <= $diferenciaEnDias; $i++) {
-            $tramos = Tramo::select('tramos', 'tramo_id')->where('fecha', '=', $fechaActual)
+            $tramos = Tramo::select('tramos', 'tramo_id', '_id', 'duracion')
+                ->where('fecha', '=', $fechaActual)
                 ->where('screen_id', '=', $request->screen_id)
                 ->where('duracion', '>', $sumaDuracion)
                 ->where('tramos', '>=', $request->hora_inicio)
@@ -516,7 +517,9 @@ class MediaController extends Controller
                                 $j++;
                                 break;
                             }
-                            $tramosPorFecha[] = $tramos[$p]->tramos;
+                            // $tramosPorFecha[] = $tramos[$p]->tramos;
+                            $resto = $tramos[$p]->duracion - 15;
+                            Tramo::where('_id', '=', $tramos[$p]->_id)->update(['duracion' => $resto]);
                             $media = new Media();
                             $media->files_name = json_encode($files_names);
                             $media->screen_id = $request->screen_id;
