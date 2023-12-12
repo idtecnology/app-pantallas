@@ -10,6 +10,7 @@ class ScreenController extends Controller
     function __construct()
 
     {
+        $this->middleware('verified');
         $this->middleware('permission:admin-list|admin-create|admin-edit|admin-delete', ['only' => ['index', 'show']]);
         $this->middleware('permission:admin-create', ['only' => ['create', 'store']]);
         $this->middleware('permission:admin-edit', ['only' => ['edit', 'update']]);
@@ -128,11 +129,6 @@ class ScreenController extends Controller
             $arr[] = $extension;
             $rutaLocal[] = 'storage/uploads/tmp/' . $file_name['file_name'];
         }
-
-
-
-
-
 
 
         return view('pantalla2', compact('id', 'time', 'rutaLocal', 'media_id', 'arr', 'preference_id', 'datas'));

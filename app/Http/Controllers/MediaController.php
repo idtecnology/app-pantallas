@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Mail\AprobadoMail;
 use App\Models\Campania;
 use App\Models\Media;
 use App\Models\Screen;
@@ -22,6 +21,7 @@ class MediaController extends Controller
 {
     function __construct()
     {
+        $this->middleware('verified');
         $this->middleware('permission:admin-list|admin-create|admin-edit|admin-delete|client-list|client-create|client-edit|client-delete', ['only' => ['index', 'show', 'grilla']]);
         $this->middleware('permission:admin-create|client-create', ['only' => ['create', 'store', 'grilla']]);
         $this->middleware('permission:admin-edit|client-edit', ['only' => ['edit', 'update', 'grilla']]);
@@ -44,7 +44,6 @@ class MediaController extends Controller
 
     public function create()
     {
-        // $data = Tramo::where('tramos', '>=', date('H:i'))->where('fecha', '>=', $request->fecha)->where('fecha', '<=', date('Y-m-d'))->where('duracion', '>', 15)->get();
         $pos = Screen::all();
         return view('media.create', compact('pos'));
     }
@@ -52,7 +51,7 @@ class MediaController extends Controller
 
     public function guardarData(Request $request)
     {
-        $extensionesPermitidasVideo = ['mp4'];
+        $extensionesPermitidasVideo = ['mp4', 'mov', 'avi'];
         $extensionesPermitidas = ['jpeg', 'png', 'jpg'];
         $archivos = $request->file('archivos');
         $durationInSeconds = [];
@@ -114,35 +113,20 @@ class MediaController extends Controller
 
         // Instanciamos la preferencia: 
         $preference = new Preference();
-        $payment_methods = [
-            'excluded_payment_methods' => [['id' => 'argencard'], ['id' => 'cabal'], ['id' => 'cmr'], ['id' => 'cencosud'], ['id' => 'cordobesa'], ['id' => 'naranja'], ['id' => 'tarshop'], ['id' => 'debcabal']],
-            'excluded_payment_types' => [['id' => 'ticket']],
-            'installments' => 1,
-        ];
-        $back_urls = [
-            'success' => route('success'),
-            'failure' => route('failure'),
-            'pending' => route('pendiente'),
-        ];
 
-        $preference->payment_methods = $payment_methods;
-        $preference->back_urls = $back_urls;
+        $preference->payment_methods = PagosController::paymentMethods();
+        $preference->back_urls = PagosController::backUrls();
 
         // Instanciamos el item
 
-
         $files_names = [];
-
         $archivos = $request->file('archivos');
+
         if ($request->media_id > 0) {
             //Actualizamos los que estan
             $media_update = Media::where('_id', '=', $request->media_id)->get()[0];
-
             if (is_object(json_decode($media_update->files_name, true)) || is_array(json_decode($media_update->files_name, true))) {
-
-
                 $imgs_temp = json_decode($media_update->files_name, true);
-
                 foreach ($imgs_temp as $img_tmp) {
                     $rutaLocal = storage_path('app/public/uploads/tmp/' . $img_tmp['file_name']);
                     unlink($rutaLocal);
@@ -186,8 +170,6 @@ class MediaController extends Controller
             $preference->items = [$item];
             $preference->save();
 
-
-
             $upd_me = Media::find($media->_id);
             $upd_me->preference_id = $preference->id;
             $upd_me->save();
@@ -199,7 +181,7 @@ class MediaController extends Controller
 
     public function store(Request $request)
     {
-        $extensionesPermitidas = ['jpeg', 'png', 'jpg', 'mp4'];
+        $extensionesPermitidas = ['jpeg', 'png', 'jpg', 'mp4', 'mov', 'avi'];
         $tramo = Tramo::where('fecha', '=', $request->fecha)->where('screen_id', '=', $request->screen_id)->where('tramos', '=', $request->tramo_select)->get();
 
         if ($request->media_id != '') {
@@ -258,9 +240,9 @@ class MediaController extends Controller
                         foreach ($imgs_temp as $img_tmp) {
                             $rutaLocal = storage_path('app/public/uploads/tmp/' . $img_tmp['file_name']);
                             $name_file = $request->screen_id . '/' . date('Ymd', strtotime($request->fecha)) . '/' . $img_tmp['file_name'];
-                            $nameF = '/' . date('Ymd', strtotime($request->fecha)) . '/' . $img_tmp['file_name'];
+                            $nameF = $request->screen_id . '/' . date('Ymd', strtotime($request->fecha)) . '/' . $img_tmp['file_name'];
                             $path = Storage::disk('s3')->put($name_file, file_get_contents($rutaLocal));
-                            $path = Storage::disk('s3')->temporaryUrl($path . $nameF, now()->addMinutes(1440));
+                            $path = Storage::disk('s3')->temporaryUrl($nameF, now()->addMinutes(1440));
                             // $files_names[] = $path;
                             $files_names[] = ['file_name'  => $path, 'duration' => $img_tmp['duration']];
                             unlink($rutaLocal);
@@ -268,9 +250,9 @@ class MediaController extends Controller
                     } else {
                         $rutaLocal = storage_path('app/public/uploads/tmp/' . $dataUpdateMedia->files_name);
                         $name_file = $request->screen_id . '/' . date('Ymd', strtotime($request->fecha)) . '/' . $dataUpdateMedia->files_name;
-                        $nameF = '/' . date('Ymd', strtotime($request->fecha)) . '/' . $dataUpdateMedia->files_name;
+                        $nameF = $request->screen_id . '/' . date('Ymd', strtotime($request->fecha)) . '/' . $dataUpdateMedia->files_name;
                         $path = Storage::disk('s3')->put($name_file, file_get_contents($rutaLocal));
-                        $path = Storage::disk('s3')->temporaryUrl($path . $nameF, now()->addMinutes(1440));
+                        $path = Storage::disk('s3')->temporaryUrl($nameF, now()->addMinutes(1440));
                         unlink($rutaLocal);
                     }
                     $dataUpdateMedia->files_name = json_encode($files_names);
@@ -466,7 +448,7 @@ class MediaController extends Controller
         $intervaloHoras = $horaInicio->diff($horaFin);
         $diferenciaEnHoras = $intervaloHoras->h;
         $fechaActual = $request->fecha_inicio;
-        $extensionesPermitidasVideo = ['mp4', 'mov'];
+        $extensionesPermitidasVideo = ['mp4', 'mov', 'avi'];
         $extensionesPermitidas = ['jpeg', 'png', 'jpg', 'webp'];
         $archivos = $request->file('files');
         $durationInSeconds = [];
@@ -540,23 +522,21 @@ class MediaController extends Controller
                     $j = 0;
                 }
             }
-            if ($fechaActual == $request->fecha_inicio) {
-                $fechaActual = $fechaInicio->add(new DateInterval('P1D'));
-                $fechaActual = $fechaActual->format('Y-m-d');
-            }
+            $fechaActual = $fechaInicio->add(new DateInterval('P1D'));
+            $fechaActual = $fechaActual->format('Y-m-d');
         }
 
 
         foreach ($ids as $id) {
             $data = Media::find($id);
             $files_names2 = [];
-            foreach (json_decode($data->files_name, true) as $filename) {
-                $rutaLocal3 = storage_path('app/public/uploads/tmp/' . $filename['file_name']);
-                $name_file2 = $data->screen_id . '/' . date('Ymd', strtotime($data->date)) . '/' . $filename['file_name'];
-                $nameF2 = '/' . date('Ymd', strtotime($data->date)) . '/' . $filename['file_name'];
+            foreach (json_decode($data->files_name, true) as $filenames) {
+                $rutaLocal3 = storage_path('app/public/uploads/tmp/' . $filenames['file_name']);
+                $name_file2 = $data->screen_id . '/' . date('Ymd', strtotime($data->date)) . '/' . $filenames['file_name'];
+                $nameF2 = $data->screen_id . '/' . date('Ymd', strtotime($data->date)) . '/' . $filenames['file_name'];
                 $path2 = Storage::disk('s3')->put($name_file2, file_get_contents($rutaLocal3));
-                $path2 = Storage::disk('s3')->temporaryUrl($path2 . $nameF2, now()->addMinutes(1440));
-                $files_names2[] = ['file_name'  => $path2, 'duration' => $filename['duration']];
+                $path2 = Storage::disk('s3')->temporaryUrl($nameF2, now()->addMinutes(1440));
+                $files_names2[] = ['file_name'  => $path2, 'duration' => $filenames['duration']];
             }
             Media::where('_id', '=', $id)->update(['files_name' => json_encode($files_names2)]);
             $x[$id][] = json_encode($files_names2);

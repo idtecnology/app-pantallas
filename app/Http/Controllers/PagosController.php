@@ -160,4 +160,27 @@ class PagosController extends Controller
             return view('pagos.success');
         }
     }
+
+
+    public static function paymentMethods()
+    {
+
+        return [
+            'excluded_payment_methods' => [['id' => 'argencard'], ['id' => 'cabal'], ['id' => 'cmr'], ['id' => 'cencosud'], ['id' => 'cordobesa'], ['id' => 'naranja'], ['id' => 'tarshop'], ['id' => 'debcabal']],
+            'excluded_payment_types' => [['id' => 'ticket']],
+            'installments' => 1,
+        ];
+    }
+
+
+    public static function backUrls()
+    {
+
+        return
+            [
+                'success' => route('success'),
+                'failure' => route('failure'),
+                'pending' => route('pendiente'),
+            ];
+    }
 }
