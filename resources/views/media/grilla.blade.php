@@ -204,7 +204,7 @@
 
 
                     if (new Date().getHours() > parseInt(dato.media_time.split(':')[0]) &&
-                        new Date().toDateString() === new Date(dato.media_date + 'T00:00:00').toDateString()
+                        new Date().toDateString() <= new Date(dato.media_date + 'T00:00:00').toDateString()
                     ) {
                         switchInput.setAttribute('disabled', true);
                     }
