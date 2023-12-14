@@ -79,7 +79,6 @@
             document.querySelector('#archivos').click();
         }
 
-
         function focus() {
             [].forEach.call(this.options, function(o) {
                 o.textContent = o.getAttribute('value') + ' - ' + o.getAttribute('data-descr');

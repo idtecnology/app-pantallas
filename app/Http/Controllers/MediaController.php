@@ -21,7 +21,7 @@ class MediaController extends Controller
 {
     function __construct()
     {
-        $this->middleware('verified');
+        // $this->middleware('verified');
         $this->middleware('permission:admin-list|admin-create|admin-edit|admin-delete|client-list|client-create|client-edit|client-delete', ['only' => ['index', 'show', 'grilla']]);
         $this->middleware('permission:admin-create|client-create', ['only' => ['create', 'store', 'grilla']]);
         $this->middleware('permission:admin-edit|client-edit', ['only' => ['edit', 'update', 'grilla']]);
