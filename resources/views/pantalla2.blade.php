@@ -73,7 +73,7 @@
 
 
 
-    <div id="resumen" class="mt-4">
+    <div id="resumen" class="my-4">
         <span class="fw-bold fs-4">
             Resumen de tu compra
         </span>

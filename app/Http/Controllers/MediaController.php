@@ -35,9 +35,10 @@ class MediaController extends Controller
                 ->where('isPaid', '=', 1)
                 ->whereNull('campania_id')
                 ->join('users', 'users.id', '=', 'media.client_id')
+                ->orderBy('_id', 'ASC')
                 ->paginate(20);
         } else {
-            $data = Media::where('client_id', '=', $user->id)->where('isPaid', '=', 1)->paginate(20);
+            $data = Media::where('client_id', '=', $user->id)->where('isPaid', '=', 1)->orderBy('_id', 'ASC')->paginate(20);
         }
         return view('media.index', compact('data'));
     }
@@ -545,7 +546,7 @@ class MediaController extends Controller
             unlink($ruta2);
         }
 
-        return redirect()->route('sale.index');
+        return redirect()->route('sale.create');
     }
 
 
