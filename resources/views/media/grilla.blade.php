@@ -12,7 +12,7 @@
                     </div>
                     <div class="col-xs-12 mb-3">
                         <select class='form-select' name="screen_id" id="screen_id">
-                            <option value="0">Seleccione</option>
+                            <option value="">Seleccione</option>
                             @foreach ($pos as $p)
                                 <option value="{{ $p->_id }}">{{ $p->nombre }}</option>
                             @endforeach
@@ -20,7 +20,7 @@
                     </div>
                     <div class="col-xs-6">
                         <button onclick="consultaProgramacion();" class="btn btn-sm btn-primary">Consultar</button>
-                        <button class="btn btn-warning btn-sm">Limpiar</button>
+                        <button onclick="limpiar();" class="btn btn-warning btn-sm">Limpiar</button>
                     </div>
                 </div>
 
@@ -54,8 +54,19 @@
         const csrfToken = "{{ csrf_token() }}";
         var prevButton = document.getElementById('prevButton');
         var nextButton = document.getElementById('nextButton');
+        var fecha_programacion = document.querySelector('#fecha_programacion')
+        var screen_id = document.querySelector('#screen_id')
+
+        fecha_programacion.focus()
         var datos;
         var totalPages;
+
+        function limpiar() {
+            fecha_programacion.value = ''
+            screen_id.value = ''
+            tableBody.innerHTML = ''
+            fecha_programacion.focus()
+        }
 
         function disabledMedia(id) {
 
@@ -93,41 +104,66 @@
 
         }
 
+        function validateInputs() {
+
+
+
+            if (fecha_programacion.value == '') {
+                swal('Error en el formulario', 'Debe seleccionar una fecha', 'error')
+                fecha_programacion.focus()
+                return false;
+            }
+
+            if (screen_id.value == '') {
+                swal('Error en el formulario', 'Debe seleccionar una pantalla', 'error')
+                screen_id.focus()
+                return false;
+            }
+
+            return true
+        }
+
         function consultaProgramacion(page = 0) {
-            var tableBody = document.querySelector('#tableBody')
-            var programacion = document.querySelector('#programacion')
+            var validate = validateInputs()
+            if (validate === true) {
+                var tableBody = document.querySelector('#tableBody')
+                var programacion = document.querySelector('#programacion')
+                programacion.style.display = '';
+                tableBody.innerHTML = ''
+                var fecha = document.querySelector('#fecha_programacion')
+                var pos = document.querySelector('#screen_id')
+                // var page = page
+                var itemsPerPage = 10;
 
-            programacion.style.display = '';
-            tableBody.innerHTML = ''
-            var fecha = document.querySelector('#fecha_programacion')
-            var pos = document.querySelector('#screen_id')
-            // var page = page
-            var itemsPerPage = 10;
+                fetch("{{ route('search-programation') }}?page=" + page + "&itemsPerPage=" + itemsPerPage, {
+                        method: 'POST',
+                        body: JSON.stringify({
+                            fecha: fecha.value,
+                            screen_id: pos.value
+                        }),
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': csrfToken
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.data.data.length > 0) {
+                            datos = data.data
+                            updateUI(data);
+                            updatePagination(data);
+                        } else {
+                            swal('Error en el formulario', 'No hay registros que coincidan con los datos introducidos',
+                                'error')
+                            tableBody.innerHTML =
 
-            fetch("{{ route('search-programation') }}?page=" + page + "&itemsPerPage=" + itemsPerPage, {
-                    method: 'POST',
-                    body: JSON.stringify({
-                        fecha: fecha.value,
-                        screen_id: pos.value
-                    }),
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': csrfToken
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.data.data.length > 0) {
-                        datos = data.data
-                        updateUI(data);
-                        updatePagination(data);
-                    } else {
-                        tableBody.innerHTML = `<div class="alert alert-danger mt-4" role="alert">Sin Registros</div>`
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                });
+                                `<tr><td colspan='4'><div class="alert alert-danger mt-4" role="alert">Sin Registros</div></td></tr>`
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+            }
 
         }
 
@@ -166,8 +202,10 @@
                     switchInput.checked = dato.media_isActive === 1;
 
 
-                    if (new Date().getHours() >= parseInt(dato.media_time.split(':')[0]) &&
-                        new Date().toDateString() === new Date(dato.media_date).toDateString()) {
+
+                    if (new Date().getHours() > parseInt(dato.media_time.split(':')[0]) &&
+                        new Date().toDateString() === new Date(dato.media_date + 'T00:00:00').toDateString()
+                    ) {
                         switchInput.setAttribute('disabled', true);
                     }
 
