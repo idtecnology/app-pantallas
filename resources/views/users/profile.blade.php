@@ -41,7 +41,7 @@
                         </div>
                     </div>
                     <div class="col-12 text-center">
-                        <button class="btn btn-success px-4 py-2 rounded-pill">Actualizar</button>
+                        <button class="btn btn-primary px-4 py-2 rounded-pill">Actualizar</button>
                     </div>
                 </div>
 

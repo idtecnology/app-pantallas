@@ -66,7 +66,8 @@
                 <span class="px-2 py-1 my-1 mx-2 bg-warning rounded-2">Difamacion o calumnia</span>
                 <span class="px-2 py-1 my-1 mx-2 bg-warning rounded-2">Violencia grafica</span>
             </div>
-            <p>Mira estas recomendaciones para tu publicación</p>
+            <p>Mira estas <a target="_blank" href="https://adsupp.com/recomendaciones">recomendaciones</a> para tu
+                publicación</p>
         </div>
     </div>
 

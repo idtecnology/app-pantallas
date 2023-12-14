@@ -53,8 +53,9 @@ class MediaController extends Controller
     public function guardarData(Request $request)
     {
 
-        $extensionesPermitidasVideo = ['mp4', 'mov', 'avi'];
-        $extensionesPermitidas = ['jpeg', 'png', 'jpg'];
+
+        $extensionesPermitidasVideo = ['mp4', 'mov', 'avi', 'MOV', 'AVI', 'MP4', 'webm', 'WEBM'];
+        $extensionesPermitidas = ['jpeg', 'png', 'jpg', 'JPG', 'JPEG', 'PNG', 'WEBP', 'webp'];
         $archivos = $request->file('archivos');
         $durationInSeconds = [];
         foreach ($archivos as $ll => $archivo) {
@@ -183,7 +184,7 @@ class MediaController extends Controller
 
     public function store(Request $request)
     {
-        $extensionesPermitidas = ['jpeg', 'png', 'jpg', 'mp4', 'mov', 'avi'];
+        $extensionesPermitidas = ['jpeg', 'png', 'jpg', 'JPG', 'JPEG', 'PNG', 'WEBP', 'webp', 'mp4', 'mov', 'avi', 'MOV', 'AVI', 'MP4', 'webm', 'WEBM'];
         $tramo = Tramo::where('fecha', '=', $request->fecha)->where('screen_id', '=', $request->screen_id)->where('tramos', '=', $request->tramo_select)->get();
 
         if ($request->media_id != '') {

@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1">
     <meta property="og:title" content="AdsUpp">
     <meta property="og:description" content="Publicar nunca fue tan facil">
     <link rel="shortcut icon" href="/images/logo_cuadrado.ico">
@@ -46,15 +46,13 @@
 
 <body>
     <div id="app">
-        <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
+        <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm sticky-top">
 
             <div class="container">
                 @if (request()->route()->uri !== '/')
                     <a href="{{ url()->previous() }}" class="" type="button">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="black"
-                            class="bi bi-arrow-left" viewBox="0 0 16 16">
-                            <path fill-rule="evenodd"
-                                d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8" />
+                        <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
+                            <path d="M400-80 0-480l400-400 71 71-329 329 329 329-71 71Z" />
                         </svg>
                     </a>
                 @else
@@ -166,7 +164,8 @@
                                 <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                                     <li><a class="dropdown-item"
                                             href="{{ route('users.profile', Auth::user()->id) }}">Perfil</a></li>
-                                    <li><a class="dropdown-item" href="{{ route('faq') }}">Preguntas Frecuentes</a></li>
+                                    <li><a class="dropdown-item" href="https://adsupp.com/preguntas-frecuentes">Preguntas
+                                            Frecuentes</a></li>
                                     <li>
                                         <hr class="dropdown-divider">
                                     </li>
@@ -233,7 +232,8 @@
                         </li>
                     @endif
                     <li class="nav-item">
-                        <a class="nav-link" target="_blank" href="{{ route('faq') }}">Preguntas Frecuentes FAQ'S</a>
+                        <a class="nav-link" target="_blank" href="https://adsupp.com/preguntas-frecuentes">Preguntas
+                            Frecuentes FAQ'S</a>
                     </li>
                 @else
                     @can('admin-list')
@@ -248,7 +248,8 @@
                             <a class="nav-link" href="{{ route('users.profile', Auth::user()->id) }}">Perfil</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" target="_blank" href="{{ route('faq') }}">Preguntas Frecuentes FAQ'S</a>
+                            <a class="nav-link" target="_blank" href="https://adsupp.com/preguntas-frecuentes">Preguntas
+                                Frecuentes FAQ'S</a>
                         </li>
                     @endcan
 
