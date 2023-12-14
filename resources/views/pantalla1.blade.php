@@ -10,7 +10,7 @@
                     url('{{ $screen->imagen }}');
                 background-size: cover;
                 width: 100%;
-                max-width: 450px;
+                max-width: 100vw;
                 height: 300px;
                 border-radius: 0 0 2rem 2rem;
             }
@@ -125,7 +125,7 @@
 
             spinner.removeAttribute('hidden');
 
-            fetch("/guardarData", {
+            fetch("/api/guardarData", {
                     method: 'POST',
                     body: formData,
                     headers: {
@@ -134,7 +134,7 @@
                 })
                 .then(response => response.json())
                 .then(data => {
-                    // console.log(data)
+                    console.log(data)
                     if (data.status == 0) {
                         spinner.setAttribute('hidden', '');
                         // alert()

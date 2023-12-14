@@ -190,11 +190,16 @@
                 </div>
             </div>
         </nav>
+        {{-- @dd(re?quest()->route()->uri) --}}
+        @if (preg_match('/p1\/\{id\}/', request()->route()->uri))
+            <main class="container">
+            @else
+                <main class="container mt-4">
+        @endif
 
-        <main class="container mt-4">
-            <div class="row">
-                @yield('content')
-            </div>
+        <div class="row">
+            @yield('content')
+        </div>
 
         </main>
     </div>
@@ -204,8 +209,12 @@
         id="offcanvasWithBothOptions" aria-labelledby="offcanvasWithBothOptionsLabel">
         <div class="offcanvas-header">
             <h4 class="offcanvas-title text-center" id="offcanvasExampleLabel">Cuenta</h4>
-            <button data-bs-dismiss="offcanvas" aria-label="Close" class="btn btn-danger align-self-start ml-1">
-                <i class="fas fa-times-circle"></i>
+            <button data-bs-dismiss="offcanvas" aria-label="Close" class="btn rounded rounded-circle">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                    class="bi bi-x-lg" viewBox="0 0 16 16">
+                    <path
+                        d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z" />
+                </svg>
             </button>
         </div>
         <div class="offcanvas-body">
@@ -234,12 +243,12 @@
                         <li class="nav-item"><a class="nav-link" href="{{ route('users.index') }}">Usuarios</a></li>
                         <li class="nav-item"><a class="nav-link" href="{{ route('clients.index') }}">Clientes</li>
                     @endcan
-                    @can('clien-list')
+                    @can('client-list')
                         <li class="nav-item">
                             <a class="nav-link" href="{{ route('users.profile', Auth::user()->id) }}">Perfil</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Preguntas Frecuentes FAQ'S</a>
+                            <a class="nav-link" target="_blank" href="{{ route('faq') }}">Preguntas Frecuentes FAQ'S</a>
                         </li>
                     @endcan
 

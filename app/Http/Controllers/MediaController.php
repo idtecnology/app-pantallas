@@ -52,6 +52,7 @@ class MediaController extends Controller
 
     public function guardarData(Request $request)
     {
+
         $extensionesPermitidasVideo = ['mp4', 'mov', 'avi'];
         $extensionesPermitidas = ['jpeg', 'png', 'jpg'];
         $archivos = $request->file('archivos');
@@ -79,7 +80,7 @@ class MediaController extends Controller
         if ($sumaDuracion > $request->tiempo) {
             $rutaLocal = storage_path('app/public/uploads/tmp/' . $nombreArchivo);
             unlink($rutaLocal);
-            return response()->json(['status' => 0, 'error' => 'tiempo excedido'], 404);
+            return response()->json(['status' => 0, 'error' => 'tiempo excedido'], 400);
         }
 
 
@@ -494,15 +495,21 @@ class MediaController extends Controller
                 $h = 0;
 
                 for ($t = 0; $t < $diferenciaEnHoras; $t++) {
+
                     while ($j < $request->cant) {
                         for ($p = $h; $p < (6 + $h); $p++) {
                             if ($j == $request->cant) {
                                 $j++;
                                 break;
                             }
-                            // $tramosPorFecha[] = $tramos[$p]->tramos;
-                            $resto = $tramos[$p]->duracion - 15;
-                            Tramo::where('_id', '=', $tramos[$p]->_id)->update(['duracion' => $resto]);
+
+                            $resto = 0;
+                            $discountTramo = Tramo::find($tramos[$p]->_id);
+                            $resto = $discountTramo->duracion - 15;
+                            $discountTramo->duracion = $resto;
+                            $discountTramo->save();
+
+
                             $media = new Media();
                             $media->files_name = json_encode($files_names);
                             $media->screen_id = $request->screen_id;
@@ -517,6 +524,8 @@ class MediaController extends Controller
                             $media->save();
                             $ids[] = $media->_id;
                             $j++;
+                            // $resto = ;
+                            // Tramo::where('_id', '=', $tramos[$p]->_id)->update(['duracion' => ($tramos[$p]->duracion - 15)]);
                         }
                     }
                     $h += 6;
@@ -526,6 +535,8 @@ class MediaController extends Controller
             $fechaActual = $fechaInicio->add(new DateInterval('P1D'));
             $fechaActual = $fechaActual->format('Y-m-d');
         }
+
+        // return $tramosPorFecha;
 
 
         foreach ($ids as $id) {

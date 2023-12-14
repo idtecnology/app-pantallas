@@ -28,10 +28,10 @@
             @foreach ($arr as $llave => $ext)
                 <div class="col-4">
                     @if ($ext == 'mp4')
-                        <div class="col-3"><video class="img-fluid img-thumbnail" width="320" height="240" controls>
-                                <source src="{{ asset($rutaLocal[$llave]) }}" type="video/mp4">
-                                Your browser does not support the video tag.
-                            </video></div>
+                        <video class="img-fluid img-thumbnail" width="320" height="240" controls>
+                            <source src="{{ asset($rutaLocal[$llave]) }}" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
                     @else
                         <img class="img-fluid img-thumbnail" width="200px" height="200px"
                             src="{{ asset($rutaLocal[$llave]) }}" alt="">
