@@ -61,14 +61,18 @@
 .selects-price {
     position: absolute;
     top: 83%;
-    left: 3%;
     width: 100%;
 }
 
 .ml-4p {
     margin-left: 4px;
+    font-size: 0.80rem;
 }
 
 .bg-primario {
     background-color: #674fa3;
+}
+
+#img-pantalla {
+    background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.7));
 }

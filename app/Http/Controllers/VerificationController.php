@@ -6,8 +6,6 @@ use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\RedirectsUsers;
 use Illuminate\Foundation\Auth\VerifiesEmails;
 
-use App\Notifications\VerifyEmailNotification;
-
 
 class VerificationController extends Controller
 {

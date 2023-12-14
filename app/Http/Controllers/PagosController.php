@@ -2,16 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Mail\AprobadoMail;
 use App\Models\Media;
 use App\Models\Pagos;
 use App\Models\Screen;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Session;
-use MercadoPago\Item;
-use MercadoPago\Preference;
-use MercadoPago\SDK;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Mail;
 
@@ -39,7 +34,7 @@ class PagosController extends Controller
         $client = new Client();
 
         $url = 'https://api.mercadopago.com/v1/payments/' . $datos->payment_id;
-        $token = env('MP_SECRET');
+        $token = env('TEST_MP_SECRET');
         $contentType = 'application/json';
 
         try {
@@ -144,18 +139,11 @@ class PagosController extends Controller
             ];
 
 
-
-
-
             Mail::send('email.aprobado', $data, function ($message) use ($to_name, $to_email) {
                 $message->to($to_email, $to_name)
                     ->subject('Recibimos tu pago correctamente');
                 $message->from('no-responder@adsupp.com', 'AdsUpp');
             });
-
-
-
-
 
             return view('pagos.success');
         }

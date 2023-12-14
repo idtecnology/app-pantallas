@@ -179,11 +179,9 @@
             </div>
         </nav>
 
-        <main class="py-1 container">
+        <main class="container">
             <div class="row">
-                <div class="col-12 col-sm-12">
-                    @yield('content')
-                </div>
+                @yield('content')
             </div>
 
         </main>
@@ -250,6 +248,7 @@
         </div>
     </div>
     <!-- end sidebar -->
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     @yield('js')
 
     <!-- Nav tabs -->
