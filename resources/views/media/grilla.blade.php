@@ -203,11 +203,19 @@
 
 
 
-                    if (new Date().getHours() > parseInt(dato.media_time.split(':')[0]) &&
-                        new Date().toDateString() <= new Date(dato.media_date + 'T00:00:00').toDateString()
-                    ) {
+                    if (new Date().toDateString() <= new Date(dato.media_date + 'T00:00:00')
+                        .toDateString()) {
                         switchInput.setAttribute('disabled', true);
+                    } else {
+                        if (new Date().getHours() > parseInt(dato.media_time.split(':')[0])) {
+                            switchInput.setAttribute('disabled', true);
+
+                        }
                     }
+
+                    console.log(new Date().toDateString() < new Date(dato.media_date + 'T00:00:00')
+                        .toDateString())
+
 
                     const switchLabel = document.createElement('label');
                     switchLabel.setAttribute('id', `label_check_${dato.media_id}`);
