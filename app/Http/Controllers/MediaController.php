@@ -33,6 +33,7 @@ class MediaController extends Controller
         if ($user->can('admin-list')) {
             $data = Media::select('media.*', 'users.email')
                 ->where('isPaid', '=', 1)
+                ->where('approved', '=', 2)
                 ->whereNull('campania_id')
                 ->join('users', 'users.id', '=', 'media.client_id')
                 ->orderBy('_id', 'ASC')
@@ -71,7 +72,7 @@ class MediaController extends Controller
             } else {
                 $rutaLocal = storage_path('app/public/uploads/tmp/' . $nombreArchivo);
                 unlink($rutaLocal);
-                return response()->json(['status' => 0, 'error' => 'hubo un error con la carga, puede que alguno de los formatos no sea permitido [' . $archivo->getClientOriginalExtension() . '], Formatos permitidos: png, jpg, jepg, mp4'], 404);
+                return response()->json(['status' => 0, 'error' => 'hubo un error con la carga, puede que alguno de los formatos no sea permitido [' . $archivo->getClientOriginalExtension() . '], Formatos permitidos: png, jpg, jepg, mp4'], 200);
             }
         }
 
@@ -81,7 +82,7 @@ class MediaController extends Controller
         if ($sumaDuracion > $request->tiempo) {
             $rutaLocal = storage_path('app/public/uploads/tmp/' . $nombreArchivo);
             unlink($rutaLocal);
-            return response()->json(['status' => 0, 'error' => 'tiempo excedido'], 400);
+            return response()->json(['status' => 0, 'error' => "El tiempo seleccionado es de: $request->tiempo segundos, y la multimedia subida tiene un tiempo de:  $sumaDuracion segundos, por favor verifique o seleccione un mayor tiempo."], 200);
         }
 
 

@@ -17,8 +17,7 @@
 
     <title>{{ config('app.name', 'AdsUpp') }}</title>
 
-    <link rel="preload" href="https://adsupp-reproductor-pantallas.s3.amazonaws.com/img-emails/pago-rechazo/img1.jpeg"
-        as="image">
+    <link rel="preload" href="/images/logo2.jpg" as="image">
     <link rel="prefetch" href="https://sdk.mercadopago.com/js/v2" />
 
     <!-- Fonts -->
@@ -131,11 +130,6 @@
                                 </li>
                             @endif
                         @else
-                            <li class="nav-item">
-                                <a class="nav-link" href="#"><span class="material-symbols-outlined">
-                                        inbox
-                                    </span></a>
-                            </li>
                             @can('admin-list')
                                 <li class="nav-item dropdown">
                                     <a id="navbarDropdown2" class="nav-link dropdown-toggle" href="#" role="button"
@@ -144,9 +138,9 @@
                                     </a>
 
                                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                        <li><a class="dropdown-item" href="{{ route('sale.index') }}">Videos</a></li>
+                                        <li><a class="dropdown-item" href="{{ route('sale.index') }}">Por aprobar</a></li>
                                         <li><a class="dropdown-item" href="{{ route('grilla') }}">Programacion</a></li>
-                                        <li><a class="dropdown-item" href="{{ route('screen.index') }}">Pantallas</a></li>
+                                        {{-- <li><a class="dropdown-item" href="{{ route('screen.index') }}">Pantallas</a></li> --}}
                                         <li><a class="dropdown-item" href="{{ route('pagos.index') }}">Pagos</a></li>
                                         <li><a class="dropdown-item" href="{{ route('users.index') }}">Usuarios</a></li>
                                         <li><a class="dropdown-item" href="{{ route('clients.index') }}">Clientes</a></li>
@@ -231,13 +225,16 @@
                             <a class="nav-link" href="{{ route('register') }}">Crear Cuenta</a>
                         </li>
                     @endif
+
                     <li class="nav-item">
                         <a class="nav-link" target="_blank" href="https://adsupp.com/preguntas-frecuentes">Preguntas
                             Frecuentes FAQ'S</a>
                     </li>
                 @else
                     @can('admin-list')
-                        <li class="nav-item"><a class="nav-link" href="{{ route('sale.index') }}">Videos</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ route('sale.create') }}">Cargar multimedia</a>
+                        </li>
+                        <li class="nav-item"><a class="nav-link" href="{{ route('sale.index') }}">Por aprobar</a></li>
                         <li class="nav-item"><a class="nav-link" href="{{ route('grilla') }}">Programacion</a></li>
                         <li class="nav-item"><a class="nav-link" href="{{ route('pagos.index') }}">Pagos</a></li>
                         <li class="nav-item"><a class="nav-link" href="{{ route('users.index') }}">Usuarios</a></li>
@@ -246,6 +243,9 @@
                     @can('client-list')
                         <li class="nav-item">
                             <a class="nav-link" href="{{ route('users.profile', Auth::user()->id) }}">Perfil</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('sale.index') }}">Mi publicaciones</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" target="_blank" href="https://adsupp.com/preguntas-frecuentes">Preguntas
@@ -270,7 +270,7 @@
         </div>
     </div>
     <!-- end sidebar -->
-    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     @yield('js')
 
     <!-- Nav tabs -->

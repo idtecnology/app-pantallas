@@ -71,20 +71,20 @@
         </div>
 
         <div class="col-sm-8 col-xs-12 mt-4">
-
-            @foreach ($data->files_name as $k => $valor)
-                @if ($arr[$k] === 'mp4')
-                    <div class="col-3"><video width="600px" height="400px" controls>
-                            <source src="{{ $valor['file_name'] }}" type="video/mp4">
-                            Your browser does not support the video tag.
-                        </video></div>
-                @else
-                    <div class=" text-center">
-                        <img width="600px" height="400px" src="{{ $valor['file_name'] }}" alt=""
-                            class="img-thumbnail  img-fluid">
-                    </div>
-                @endif
-            @endforeach
+            @if ($data->date > date('Y-m-d'))
+                @foreach ($data->files_name as $k => $valor)
+                    @if ($arr[$k] === 'mp4')
+                        <div class="col-3"><video width="600px" height="400px" controls>
+                                <source src="{{ $valor['file_name'] }}" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video></div>
+                    @else
+                        <div class=" text-center">
+                            <img width="600px" height="400px" src="{{ $valor['file_name'] }}" alt=""
+                                class="img-thumbnail  img-fluid">
+                        </div>
+                    @endif
+                @endforeach
 
         </div>
     </div>

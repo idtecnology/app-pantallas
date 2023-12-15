@@ -27,13 +27,13 @@
 
             @foreach ($arr as $llave => $ext)
                 <div class="col-4">
-                    @if ($ext == 'mp4')
+                    @if ($ext == 'mp4' || $ext == 'mov')
                         <video class="img-fluid img-thumbnail" width="320" height="240" controls>
-                            <source src="{{ asset($rutaLocal[$llave]) }}" type="video/mp4">
+                            <source src="{{ asset($rutaLocal[$llave]) }}" type="video/{{ $ext }}">
                             Your browser does not support the video tag.
                         </video>
                     @else
-                        <img class="img-fluid img-thumbnail" width="200px" height="200px"
+                        <img class="img-fluid img-thumbnail" width="50px" height="50px"
                             src="{{ asset($rutaLocal[$llave]) }}" alt="">
                     @endif
                 </div>

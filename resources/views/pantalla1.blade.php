@@ -123,8 +123,9 @@
             formData.append('screen_id', {{ $id }});
             formData.append('tiempo', tiempo);
             formData.append('client_id', {{ auth()->id() }});
+            Swal.showLoading();
 
-            spinner.removeAttribute('hidden');
+            // spinner.removeAttribute('hidden');
 
             fetch("/api/guardarData", {
                     method: 'POST',
@@ -135,19 +136,21 @@
                 })
                 .then(response => response.json())
                 .then(data => {
-                    console.log(data)
+                    // console.log(data)
                     if (data.status == 0) {
-                        spinner.setAttribute('hidden', '');
-                        // alert()
-                        swal('Cargando datos', data.error, 'error');
-                        document.querySelector('#archivos').click();
+                        Swal.hideLoading()
+                        Swal.fire({
+                            title: 'Cargando datos!',
+                            text: data.error,
+                            icon: 'error',
+                        })
+                        document.getElementById('archivos').value = ''
                     } else {
-                        spinner.setAttribute('hidden', '');
+                        Swal.hideLoading(Swal.disableButtons())
                         var urlConParametro =
                             `/p2/{{ $id }}/${tiempo}/${data.media_id}/${data.preference_id}`
                         window.location.href = urlConParametro;
                     }
-
 
                 })
                 .catch(error => {
