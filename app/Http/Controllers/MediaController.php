@@ -457,6 +457,12 @@ class MediaController extends Controller
         $archivos = $request->file('files');
         $durationInSeconds = [];
         $rutasLocales = [];
+        $files_names = [];
+
+
+
+
+
 
         foreach ($archivos as $ll => $archivo) {
             $nombreArchivo = uniqid() . '.' . $archivo->getClientOriginalExtension();
@@ -475,28 +481,58 @@ class MediaController extends Controller
         }
 
 
+
+
         $sumaDuracion = array_sum($durationInSeconds);
 
         $ids = [];
 
 
         for ($i = 0; $i <= $diferenciaEnDias; $i++) {
-            $tramos = Tramo::select('tramos', 'tramo_id', '_id', 'duracion')
-                ->where('fecha', '=', $fechaActual)
-                ->where('screen_id', '=', $request->screen_id)
-                ->where('duracion', '>', $sumaDuracion)
-                ->where('tramos', '>=', $request->hora_inicio)
-                ->where('tramos', '<', $request->hora_fin)
-                ->get();
+
+            if ($horaFin < $horaInicio) {
+
+                $tramos_1 = Tramo::select('tramos', 'tramo_id', '_id', 'fecha', 'duracion')
+                    ->where('fecha', '=', $fechaActual)
+                    ->where('screen_id', '=', $request->screen_id)
+                    ->where('duracion', '>', 2)
+                    ->where('tramos', '>=', $horaInicio->format('H:i'))
+                    ->where('tramos', '<=', '23:50')
+                    ->orderBy('_id', 'asc');
+
+                $fechaSiguiente = $fechaInicio->modify('+1 day');
+
+
+                $tramos = Tramo::select('tramos', 'tramo_id', '_id', 'fecha', 'duracion')
+                    ->where('fecha', '=', $fechaSiguiente->format('Y-m-d'))
+                    ->where('screen_id', '=', $request->screen_id)
+                    ->where('duracion', '>', 2)
+                    ->where('tramos', '>=', '00:00')
+                    ->where('tramos', '<=', $horaFin->format('H:i'))
+                    ->union($tramos_1)
+                    ->orderBy('_id', 'asc')
+                    ->get();
+            } else {
+                $tramos = Tramo::select('tramos', 'tramo_id', '_id', 'fecha', 'duracion')
+                    ->where('fecha', '=', $fechaActual)
+                    ->where('screen_id', '=', $request->screen_id)
+                    ->where('duracion', '>', 2)
+                    ->where('tramos', '>=', $request->hora_inicio)
+                    ->where('tramos', '<', $request->hora_fin)
+                    ->get();
+            }
 
             // return $tramos;
+
+            $tramosCounter = count($tramos) / 6;
+
 
             if (!empty($tramos)) {
                 $tramosPorFecha = [];
                 $j = 0;
                 $h = 0;
 
-                for ($t = 0; $t < $diferenciaEnHoras; $t++) {
+                for ($t = 0; $t < (int)$tramosCounter; $t++) {
 
                     while ($j < $request->cant) {
                         for ($p = $h; $p < (6 + $h); $p++) {
@@ -504,7 +540,6 @@ class MediaController extends Controller
                                 $j++;
                                 break;
                             }
-
                             $resto = 0;
                             $discountTramo = Tramo::find($tramos[$p]->_id);
                             $resto = $discountTramo->duracion - 15;
@@ -516,7 +551,7 @@ class MediaController extends Controller
                             $media->files_name = json_encode($files_names);
                             $media->screen_id = $request->screen_id;
                             $media->tramo_id = $tramos[$p]->tramo_id;
-                            $media->date = $fechaActual;
+                            $media->date = $tramos[$p]->fecha;
                             $media->client_id = auth()->user()->id;
                             $media->isPaid = 1;
                             $media->approved = 1;
@@ -526,38 +561,35 @@ class MediaController extends Controller
                             $media->save();
                             $ids[] = $media->_id;
                             $j++;
-                            // $resto = ;
-                            // Tramo::where('_id', '=', $tramos[$p]->_id)->update(['duracion' => ($tramos[$p]->duracion - 15)]);
                         }
                     }
                     $h += 6;
                     $j = 0;
                 }
             }
-            $fechaActual = $fechaInicio->add(new DateInterval('P1D'));
-            $fechaActual = $fechaActual->format('Y-m-d');
-        }
-
-        // return $tramosPorFecha;
 
 
-        foreach ($ids as $id) {
-            $data = Media::find($id);
-            $files_names2 = [];
-            foreach (json_decode($data->files_name, true) as $filenames) {
-                $rutaLocal3 = storage_path('app/public/uploads/tmp/' . $filenames['file_name']);
-                $name_file2 = $data->screen_id . '/' . date('Ymd', strtotime($data->date)) . '/' . $filenames['file_name'];
-                $nameF2 = $data->screen_id . '/' . date('Ymd', strtotime($data->date)) . '/' . $filenames['file_name'];
-                $path2 = Storage::disk('s3')->put($name_file2, file_get_contents($rutaLocal3));
-                $path2 = Storage::disk('s3')->temporaryUrl($nameF2, now()->addMinutes(1440));
-                $files_names2[] = ['file_name'  => $path2, 'duration' => $filenames['duration']];
+            $this->updateS3($rutasLocales, $campania_id, $fechaActual, $files_names, $request->screen_id, $i);
+
+            if ($horaFin < $horaInicio) {
+                $fechaActual = $fechaSiguiente; // $fechaInicio->add(new DateInterval('P1D'));
+                $fechaActual = $fechaActual->format('Y-m-d');
+            } else {
+                $fechaActual = $fechaInicio->add(new DateInterval('P1D'));
+                $fechaActual = $fechaActual->format('Y-m-d');
             }
-            Media::where('_id', '=', $id)->update(['files_name' => json_encode($files_names2)]);
-            $x[$id][] = json_encode($files_names2);
         }
-        foreach ($rutasLocales as $ruta2) {
-            unlink($ruta2);
+
+        if ($horaFin < $horaInicio) {
+            $this->updateS3($rutasLocales, $campania_id, $fechaActual, $files_names, $request->screen_id, $i);
         }
+
+        return $tramosPorFecha;
+
+
+
+
+        return ['bien'];
 
         return redirect()->route('sale.create');
     }
@@ -582,5 +614,26 @@ class MediaController extends Controller
         } else {
             return response()->json(['status' => 'error', 'code' => 404, 'message' => 'Media no encontrada'], 404);
         }
+    }
+
+
+
+
+    protected function updateS3($arr_rutas, $campania_id, $fechaActual, $file_names, $screen_id, $contador)
+    {
+        $fecha = new DateTime($fechaActual);
+
+        $rutaLocal3 = storage_path('app/public/uploads/tmp/' . $file_names[0]['file_name']);
+        $nameF2 = $screen_id . '/' . $fecha->format('Ymd') . '/' . $file_names[0]['file_name'];
+        $rutaBase = '';
+        if ($contador > 0) {
+            $path2 = Storage::disk('s3')->put($nameF2, file_get_contents($rutaLocal3));
+            $rutaBase = $path2;
+        } else {
+            $path2 = Storage::disk('s3')->copy($rutaBase, $nameF2);
+        }
+        $path2 = Storage::disk('s3')->temporaryUrl($nameF2, now()->addMinutes(1440));
+        $files_names2[] = ['file_name'  => $path2, 'duration' => $file_names[0]['duration']];
+        Media::where('campania_id', '=', $campania_id)->where('date', '=', $fecha->format('Y-m-d'))->update(['files_name' => json_encode($files_names2)]);
     }
 }

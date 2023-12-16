@@ -78,7 +78,7 @@
                         <ul class="navbar-nav me-auto">
                             @can('admin-list')
                                 <li>
-                                    <a class="dropdown-item" href="{{ route('sale.create') }}">Cargar multimedia</a>
+                                    <a class="dropdown-item" href="{{ route('sale.create') }}">Cargar Campaña</a>
                                 </li>
                             @endcan
                             @can('client-list')
@@ -94,7 +94,7 @@
                                     </a>
                                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                                         <li><a class="dropdown-item" href="{{ route('sale.index') }}">Mi Multimedia</a></li>
-                                        <li><a class="dropdown-item" href="{{ route('sale.create') }}">Cargar multimedia</a>
+                                        <li><a class="dropdown-item" href="{{ route('sale.create') }}">Cargar Campaña</a>
                                         </li>
                                         <li><a class="dropdown-item" href="{{ route('sale.create') }}">Multimedia programada</a>
                                         </li>
@@ -232,7 +232,7 @@
                     </li>
                 @else
                     @can('admin-list')
-                        <li class="nav-item"><a class="nav-link" href="{{ route('sale.create') }}">Cargar multimedia</a>
+                        <li class="nav-item"><a class="nav-link" href="{{ route('sale.create') }}">Cargar Campaña</a>
                         </li>
                         <li class="nav-item"><a class="nav-link" href="{{ route('sale.index') }}">Por aprobar</a></li>
                         <li class="nav-item"><a class="nav-link" href="{{ route('grilla') }}">Programacion</a></li>
