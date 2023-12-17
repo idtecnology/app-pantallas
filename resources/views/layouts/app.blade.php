@@ -17,6 +17,8 @@
 
     <title>{{ config('app.name', 'AdsUpp') }}</title>
 
+    <link rel='manifest' href='/manifest.json'>
+
     <link rel="preload" href="/images/logo2.jpg" as="image">
     <link rel="prefetch" href="https://sdk.mercadopago.com/js/v2" />
 
