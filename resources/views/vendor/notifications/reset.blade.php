@@ -31,8 +31,7 @@
                 <td style="padding: 14px 0 4px;">
                     <table width="100%" style="border-spacing: 0;">
                         <tr>
-                            <td
-                                style="display: flex; flex-flow: row wrap; justify-content: space-between; font-size: 0;padding: 10px;">
+                            <td style="display: flex; justify-content: space-between; padding: 10px;">
                                 <table>
                                     <tr>
                                         <td style="padding: 0 0px 10px;">
