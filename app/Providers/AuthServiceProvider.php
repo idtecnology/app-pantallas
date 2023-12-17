@@ -28,6 +28,7 @@ class AuthServiceProvider extends ServiceProvider
         VerifyEmail::toMailUsing(function (object $notifiable, string $url) {
             return (new MailMessage)
                 ->subject('Verifica tu email')
+                ->from('no-responder@adsupp.com', 'AdsUpp')
                 ->view('vendor.notifications.verify', ['url' => $url]);
         });
 
@@ -37,14 +38,8 @@ class AuthServiceProvider extends ServiceProvider
 
             return (new MailMessage)
                 ->subject('Recupera tu contraseña')
+                ->from('no-responder@adsupp.com', 'AdsUpp')
                 ->view('vendor.notifications.reset', ['url' => $url]);
         });
-
-
-        // ResetPassword::createUrlUsing(function (User $user, string $token) {
-        //     $email_endoce = urlencode($user->email);
-        //     return env('APP_URL') . ':8000' . "/password/reset/?$token?email=" . $email_endoce;
-        //     http: //localhost:8000/password/reset/95c2b47de63ba5c32d37765b8f499b7ba83ada0529cc5703c2479da2d1b8a0ff?email=jehfebles%40gmail.com
-        // });
     }
 }

@@ -48,19 +48,21 @@
                                     </td>
                                 </tr>
                                 @can('admin-list')
-                                    @if ($data->approved == 2)
-                                        <tr class="text-center">
-                                            <td>
-                                                <a data-bs-toggle="modal" data-bs-toggle="modal"
-                                                    data-bs-target="#staticBackdrop" type="button"
-                                                    class="btn btn-success btn-sm">Aprobar</a>
-                                            </td>
-                                            <td>
-                                                <a data-bs-toggle="modal" data-bs-toggle="modal"
-                                                    data-bs-target="#staticBackdrop2" type="button"
-                                                    class="btn btn-danger btn-sm">Desaprobar</a>
-                                            </td>
-                                        </tr>
+                                    @if ($data->date >= date('Y-m-d'))
+                                        @if ($data->approved == 2)
+                                            <tr class="text-center">
+                                                <td>
+                                                    <a data-bs-toggle="modal" data-bs-toggle="modal"
+                                                        data-bs-target="#staticBackdrop" type="button"
+                                                        class="btn btn-success btn-sm">Aprobar</a>
+                                                </td>
+                                                <td>
+                                                    <a data-bs-toggle="modal" data-bs-toggle="modal"
+                                                        data-bs-target="#staticBackdrop2" type="button"
+                                                        class="btn btn-danger btn-sm">Desaprobar</a>
+                                                </td>
+                                            </tr>
+                                        @endif
                                     @endif
                                 @endcan
                             </table>
@@ -71,20 +73,20 @@
         </div>
 
         <div class="col-sm-8 col-xs-12 mt-4">
-            @if ($data->date > date('Y-m-d'))
-                @foreach ($data->files_name as $k => $valor)
-                    @if ($arr[$k] === 'mp4')
-                        <div class="col-3"><video width="600px" height="400px" controls>
-                                <source src="{{ $valor['file_name'] }}" type="video/mp4">
-                                Your browser does not support the video tag.
-                            </video></div>
-                    @else
-                        <div class=" text-center">
-                            <img width="600px" height="400px" src="{{ $valor['file_name'] }}" alt=""
-                                class="img-thumbnail  img-fluid">
-                        </div>
-                    @endif
-                @endforeach
+
+            @foreach ($data->files_name as $k => $valor)
+                @if ($arr[$k] === 'mp4')
+                    <div class="col-3"><video width="600px" height="400px" controls>
+                            <source src="{{ $valor['file_name'] }}" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video></div>
+                @else
+                    <div class=" text-center">
+                        <img width="600px" height="400px" src="{{ $valor['file_name'] }}" alt=""
+                            class="img-thumbnail  img-fluid">
+                    </div>
+                @endif
+            @endforeach
 
         </div>
     </div>

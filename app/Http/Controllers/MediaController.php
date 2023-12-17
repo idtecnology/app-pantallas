@@ -542,11 +542,11 @@ class MediaController extends Controller
                                 $j++;
                                 break;
                             }
-                            // $resto = 0;
-                            // $discountTramo = Tramo::find($tramos[$p]->_id);
-                            // $resto = $discountTramo->duracion - 15;
-                            // $discountTramo->duracion = $resto;
-                            // $discountTramo->save();
+                            $resto = 0;
+                            $discountTramo = Tramo::find($tramos[$p]->_id);
+                            $resto = $discountTramo->duracion - 15;
+                            $discountTramo->duracion = $resto;
+                            $discountTramo->save();
 
 
                             // $media = new Media();
