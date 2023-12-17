@@ -556,7 +556,7 @@ class MediaController extends Controller
                             $insert_media[$p]['screen_id'] = $request->screen_id;
                             $insert_media[$p]['time'] = $tramos[$p]->tramos;
                             $insert_media[$p]['date'] = $tramos[$p]->fecha;
-                            $insert_media[$p]['duration'] = 1;
+                            $insert_media[$p]['duration'] = 15;
                             $insert_media[$p]['approved'] = 1;
                             $insert_media[$p]['files_name'] = json_encode($files_names);
                             $insert_media[$p]['approved'] = 1;
