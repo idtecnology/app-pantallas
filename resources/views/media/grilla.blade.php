@@ -35,6 +35,7 @@
                         <th>Hora</th>
                         <th>Campania/Email</th>
                         <th>Duracion</th>
+                        <th>Reproducido</th>
                         <th>Accion</th>
                     </tr>
                 </thead>
@@ -190,6 +191,9 @@
                     reproducidoCell.textContent = dato.media_duration === null ? '15 segundos' : `${dato
                         .media_duration} segundos`;
                     row.appendChild(reproducidoCell);
+                    const repro = document.createElement('td');
+                    repro.textContent = dato.media_reproducido === 1 ? 'Reproducido' : '';
+                    row.appendChild(repro);
                     const estadoCell = document.createElement('td');
                     const switchDiv = document.createElement('div');
                     switchDiv.classList.add('form-check', 'form-switch');
