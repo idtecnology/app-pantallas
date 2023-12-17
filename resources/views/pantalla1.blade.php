@@ -136,12 +136,15 @@
                 })
                 .then(response => response.json())
                 .then(data => {
+                    Swal.hideLoading()
                     // console.log(data)
+                    // return;
+
                     if (data.status == 0) {
                         Swal.hideLoading()
                         Swal.fire({
                             title: 'Cargando datos!',
-                            text: data.error,
+                            text: data.mensaje,
                             icon: 'error',
                         })
                         document.getElementById('archivos').value = ''

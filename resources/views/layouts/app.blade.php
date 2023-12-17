@@ -78,47 +78,14 @@
                     @guest
                     @else
                         <ul class="navbar-nav me-auto">
-                            @can('admin-list')
-                                <li>
-                                    <a class="dropdown-item" href="{{ route('sale.create') }}">Cargar Campaña</a>
-                                </li>
-                            @endcan
                             @can('client-list')
                                 <li>
                                     <a class="dropdown-item" href="{{ route('sale.index') }}">Mi publicaciones</a>
                                 </li>
                             @endcan
-                            {{-- @can('client-list')
-                                <li class="nav-item dropdown">
-                                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
-                                        data-bs-toggle="dropdown" aria-expanded="false">
-                                        Multimedia
-                                    </a>
-                                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                        <li><a class="dropdown-item" href="{{ route('sale.index') }}">Mi Multimedia</a></li>
-                                        <li><a class="dropdown-item" href="{{ route('sale.create') }}">Cargar Campaña</a>
-                                        </li>
-                                        <li><a class="dropdown-item" href="{{ route('sale.create') }}">Multimedia programada</a>
-                                        </li>
-                                    </ul>
-                                </li>
-                                <li class="nav-item dropdown">
-                                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
-                                        data-bs-toggle="dropdown" aria-expanded="false">
-                                        Pagos
-                                    </a>
-                                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                        <li><a class="dropdown-item" href="#">Mis Pagos</a></li>
-                                        <li><a class="dropdown-item" href="">Pagos pendientes</a>
-                                        </li>
-                                    </ul>
-                                </li>
-                            @endcan --}}
                         </ul>
                     @endguest
-                    <!-- Right Side Of Navbar -->
                     <ul class="navbar-nav ms-auto">
-                        <!-- Authentication Links -->
                         @guest
                             @if (Route::has('login'))
                                 <li class="nav-item">
@@ -141,6 +108,7 @@
 
                                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                                         <li><a class="dropdown-item" href="{{ route('sale.index') }}">Por aprobar</a></li>
+                                        <li><a class="dropdown-item" href="{{ route('sale.create') }}">Cargar Video</a></li>
                                         <li><a class="dropdown-item" href="{{ route('grilla') }}">Programacion</a></li>
                                         {{-- <li><a class="dropdown-item" href="{{ route('screen.index') }}">Pantallas</a></li> --}}
                                         <li><a class="dropdown-item" href="{{ route('pagos.index') }}">Pagos</a></li>
@@ -234,8 +202,7 @@
                     </li>
                 @else
                     @can('admin-list')
-                        <li class="nav-item"><a class="nav-link" href="{{ route('sale.create') }}">Cargar Campaña</a>
-                        </li>
+                        <li class="nav-item"><a class="nav-link" href="{{ route('sale.create') }}">Cargar Video</a></li>
                         <li class="nav-item"><a class="nav-link" href="{{ route('sale.index') }}">Por aprobar</a></li>
                         <li class="nav-item"><a class="nav-link" href="{{ route('grilla') }}">Programacion</a></li>
                         <li class="nav-item"><a class="nav-link" href="{{ route('pagos.index') }}">Pagos</a></li>
