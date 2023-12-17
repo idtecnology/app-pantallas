@@ -421,6 +421,7 @@ class MediaController extends Controller
                 Media::insert($insert_media);
                 //Actualizamos s3 y borramos del tmp
                 $this->updateS3($validarArchivos['rutasLocales'], $campania_id, $fechaActual, $files_names, $request->screen_id, $i);
+
                 if ($horaFin < $horaInicio) {
                     $fechaActual = $fechaSiguiente;
                     $fechaActual = $fechaActual->format('Y-m-d');
@@ -591,7 +592,7 @@ class MediaController extends Controller
         $rutaLocal3 = storage_path('app/public/uploads/tmp/' . $file_names[0]['file_name']);
         $nameF2 = $screen_id . '/' . $fecha->format('Ymd') . '/' . $file_names[0]['file_name'];
         $rutaBase = '';
-        if ($contador > 0) {
+        if ($contador == 0) {
             $path2 = Storage::disk('s3')->put($nameF2, file_get_contents($rutaLocal3));
             $rutaBase = $path2;
         } else {
