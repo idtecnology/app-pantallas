@@ -9,6 +9,7 @@
                 background: linear-gradient(to top, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0)),
                     url('{{ $screen->imagen }}');
                 background-size: cover;
+                background-position: 50%;
                 width: 100%;
                 max-width: 100vw;
                 height: 300px;
