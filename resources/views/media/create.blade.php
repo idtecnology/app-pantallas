@@ -1,8 +1,6 @@
 @extends('layouts.app')
 @section('content')
-    @if ($errors)
-        <span class="text-danger">{{ $errors }}</span>
-    @endif
+ 
 
     <div class="col-12">
         {!! Form::open([

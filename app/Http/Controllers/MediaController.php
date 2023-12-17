@@ -487,6 +487,8 @@ class MediaController extends Controller
 
         $ids = [];
 
+        $insert_media = [];
+
 
         for ($i = 0; $i <= $diferenciaEnDias; $i++) {
 
@@ -540,26 +542,27 @@ class MediaController extends Controller
                                 $j++;
                                 break;
                             }
-                            $resto = 0;
-                            $discountTramo = Tramo::find($tramos[$p]->_id);
-                            $resto = $discountTramo->duracion - 15;
-                            $discountTramo->duracion = $resto;
-                            $discountTramo->save();
+                            // $resto = 0;
+                            // $discountTramo = Tramo::find($tramos[$p]->_id);
+                            // $resto = $discountTramo->duracion - 15;
+                            // $discountTramo->duracion = $resto;
+                            // $discountTramo->save();
 
 
-                            $media = new Media();
-                            $media->files_name = json_encode($files_names);
-                            $media->screen_id = $request->screen_id;
-                            $media->tramo_id = $tramos[$p]->tramo_id;
-                            $media->date = $tramos[$p]->fecha;
-                            $media->client_id = auth()->user()->id;
-                            $media->isPaid = 1;
-                            $media->approved = 1;
-                            $media->isActive = 1;
-                            $media->time = $tramos[$p]->tramos;
-                            $media->campania_id = $campania_id;
-                            $media->save();
-                            $ids[] = $media->_id;
+                            // $media = new Media();
+                            $insert_media[$p]['campania_id'] = $campania_id;
+                            $insert_media[$p]['client_id'] = auth()->user()->id;
+                            $insert_media[$p]['tramo_id'] = $tramos[$p]->tramo_id;
+                            $insert_media[$p]['screen_id'] = $request->screen_id;
+                            $insert_media[$p]['time'] = $tramos[$p]->tramos;
+                            $insert_media[$p]['date'] = $tramos[$p]->fecha;
+                            $insert_media[$p]['duration'] = 1;
+                            $insert_media[$p]['approved'] = 1;
+                            $insert_media[$p]['files_name'] = json_encode($files_names);
+                            $insert_media[$p]['approved'] = 1;
+                            $insert_media[$p]['isPaid'] = 1;
+                            $insert_media[$p]['isActive'] = 1;
+
                             $j++;
                         }
                     }
@@ -567,6 +570,10 @@ class MediaController extends Controller
                     $j = 0;
                 }
             }
+
+
+            Media::insert($insert_media);
+
 
 
             $this->updateS3($rutasLocales, $campania_id, $fechaActual, $files_names, $request->screen_id, $i);
