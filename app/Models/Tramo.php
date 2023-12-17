@@ -11,6 +11,14 @@ class Tramo extends Model
 
     protected $primaryKey = '_id';
 
+    protected $fillable = [
+        'tramo_id',
+        'screen_id',
+        'fecha',
+        'duracion',
+        'tramos',
+    ];
+
 
     public function getTramos(string $date, int $duration, int $screen_id)
     {

@@ -456,156 +456,142 @@ class MediaController extends Controller
         $extensionesPermitidas = ['jpeg', 'png', 'jpg', 'webp'];
         $archivos = $request->file('files');
         $durationInSeconds = [];
-        $rutasLocales = [];
-        $files_names = [];
+
+        // Validamos los formatos de la multimedia.
+        $validarArchivos = $this->validaFormatomultimedia($archivos);
+
+        if ($validarArchivos != false) {
+            $files_names = $validarArchivos['files_names'];
+            $sumaDuracion = array_sum($durationInSeconds);
+            $insert_media = [];
+            $discount = [];
+            for ($i = 0; $i <= $diferenciaEnDias; $i++) {
+                if ($horaFin < $horaInicio) {
+                    $tramos_1 = Tramo::select('tramos', 'tramo_id', '_id', 'fecha', 'duracion')
+                        ->where('fecha', '=', $fechaActual)
+                        ->where('screen_id', '=', $request->screen_id)
+                        ->where('duracion', '>', $sumaDuracion)
+                        ->where('tramos', '>=', $horaInicio->format('H:i'))
+                        ->where('tramos', '<=', '23:50')
+                        ->orderBy('_id', 'asc');
+
+                    $fechaSiguiente = $fechaInicio->modify('+1 day');
+
+                    $tramos = Tramo::select('tramos', 'tramo_id', '_id', 'fecha', 'duracion')
+                        ->where('fecha', '=', $fechaSiguiente->format('Y-m-d'))
+                        ->where('screen_id', '=', $request->screen_id)
+                        ->where('duracion', '>', $sumaDuracion)
+                        ->where('tramos', '>=', '00:00')
+                        ->where('tramos', '<=', $horaFin->format('H:i'))
+                        ->union($tramos_1)
+                        ->orderBy('_id', 'asc')
+                        ->get();
+                } else {
+                    $tramos = Tramo::select('tramos', 'tramo_id', '_id', 'fecha', 'duracion')
+                        ->where('fecha', '=', $fechaActual)
+                        ->where('screen_id', '=', $request->screen_id)
+                        ->where('duracion', '>', 2)
+                        ->where('tramos', '>=', $request->hora_inicio)
+                        ->where('tramos', '<', $request->hora_fin)
+                        ->get();
+                }
+
+                $tramosCounter = count($tramos) / 6;
+                if (!empty($tramos)) {
+                    $j = 0;
+                    $h = 0;
+                    for ($t = 0; $t < (int)$tramosCounter; $t++) {
+                        while ($j < $request->cant) {
+                            for ($p = $h; $p < (6 + $h); $p++) {
+                                if ($j == $request->cant) {
+                                    $j++;
+                                    break;
+                                }
+                                $discount[$tramos[$p]->_id]['ids'][] = $tramos[$p]->_id;
+                                $discount[$tramos[$p]->_id]['duracion'] = $tramos[$p]->duracion;
+                                $insert_media[$p]['campania_id'] = $campania_id;
+                                $insert_media[$p]['client_id'] = auth()->user()->id;
+                                $insert_media[$p]['tramo_id'] = $tramos[$p]->tramo_id;
+                                $insert_media[$p]['screen_id'] = $request->screen_id;
+                                $insert_media[$p]['time'] = $tramos[$p]->tramos;
+                                $insert_media[$p]['date'] = $tramos[$p]->fecha;
+                                $insert_media[$p]['duration'] = 15;
+                                $insert_media[$p]['approved'] = 1;
+                                $insert_media[$p]['files_name'] = json_encode($validarArchivos['files_names'][0]);
+                                $insert_media[$p]['approved'] = 1;
+                                $insert_media[$p]['isPaid'] = 1;
+                                $insert_media[$p]['isActive'] = 1;
+                                $j++;
+                            }
+                        }
+                        $h += 6;
+                        $j = 0;
+                    }
+                }
+                // Insertamos los registros
+                Media::insert($insert_media);
+                //Actualizamos s3 y borramos del tmp
+                $this->updateS3($validarArchivos['rutasLocales'], $campania_id, $fechaActual, $files_names, $request->screen_id, $i);
+                if ($horaFin < $horaInicio) {
+                    $fechaActual = $fechaSiguiente;
+                    $fechaActual = $fechaActual->format('Y-m-d');
+                } else {
+                    $fechaActual = $fechaInicio->add(new DateInterval('P1D'));
+                    $fechaActual = $fechaActual->format('Y-m-d');
+                }
+            }
+
+            if ($horaFin < $horaInicio) {
+                $this->updateS3($validarArchivos['rutasLocales'], $campania_id, $fechaActual, $files_names, $request->screen_id, $i);
+            }
+            $keys = array_keys($discount);
+            for ($k = 0; $k < count($discount); $k++) {
+                $calculoResto = $discount[$keys[$k]]['duracion'] - (count($discount[$keys[$k]]['ids']) * 15);
+                Tramo::where('_id', '=', $keys[$k])->update(['duracion' => $calculoResto]);
+            }
+            $this->eliminaTemp($validarArchivos['rutasLocales']);
+            return response()->json(['status' => 'success', 'code' => 200, 'message' => 'Masividad cargada con exito'], 200);
+        } else {
+            return response()->json(['status' => 'error', 'code' => 200, 'message' => 'formato no valido'], 200);
+        }
+    }
 
 
 
-
-
-
+    protected function validaFormatomultimedia($archivos)
+    {
         foreach ($archivos as $ll => $archivo) {
             $nombreArchivo = uniqid() . '.' . $archivo->getClientOriginalExtension();
             $archivo->storeAs('public/uploads/tmp', $nombreArchivo);
             $rutaLocal = storage_path('app/public/uploads/tmp/' . $nombreArchivo);
-            if (in_array($archivo->getClientOriginalExtension(), $extensionesPermitidasVideo)) {
+            if (in_array($archivo->getClientOriginalExtension(), config('ext_aviable.EXTENSIONES_PERMITIDAS_VIDEO'))) {
                 $ffmpeg = FFMpeg::fromDisk('public')->open('/uploads/tmp/' . $nombreArchivo);
                 $durationInSeconds[] = $ffmpeg->getDurationInSeconds();
-            }
-            if (in_array($archivo->getClientOriginalExtension(), $extensionesPermitidas)) {
+            } else if (in_array($archivo->getClientOriginalExtension(), config('ext_aviable.EXTENSIONES_PERMITIDAS_IMAGEN'))) {
                 $durationInSeconds[] = 2;
+            } else {
+                unlink($rutaLocal);
+                return false;
             }
-
             $files_names[] = ['file_name'  => $nombreArchivo, 'duration' => $durationInSeconds[$ll]];
             $rutasLocales[] = $rutaLocal;
+            return ['files_names' => $files_names, 'rutasLocales' => $rutasLocales];
         }
-
-
-
-
-        $sumaDuracion = array_sum($durationInSeconds);
-
-        $ids = [];
-
-        $insert_media = [];
-
-
-        for ($i = 0; $i <= $diferenciaEnDias; $i++) {
-
-            if ($horaFin < $horaInicio) {
-
-                $tramos_1 = Tramo::select('tramos', 'tramo_id', '_id', 'fecha', 'duracion')
-                    ->where('fecha', '=', $fechaActual)
-                    ->where('screen_id', '=', $request->screen_id)
-                    ->where('duracion', '>', 2)
-                    ->where('tramos', '>=', $horaInicio->format('H:i'))
-                    ->where('tramos', '<=', '23:50')
-                    ->orderBy('_id', 'asc');
-
-                $fechaSiguiente = $fechaInicio->modify('+1 day');
-
-
-                $tramos = Tramo::select('tramos', 'tramo_id', '_id', 'fecha', 'duracion')
-                    ->where('fecha', '=', $fechaSiguiente->format('Y-m-d'))
-                    ->where('screen_id', '=', $request->screen_id)
-                    ->where('duracion', '>', 2)
-                    ->where('tramos', '>=', '00:00')
-                    ->where('tramos', '<=', $horaFin->format('H:i'))
-                    ->union($tramos_1)
-                    ->orderBy('_id', 'asc')
-                    ->get();
-            } else {
-                $tramos = Tramo::select('tramos', 'tramo_id', '_id', 'fecha', 'duracion')
-                    ->where('fecha', '=', $fechaActual)
-                    ->where('screen_id', '=', $request->screen_id)
-                    ->where('duracion', '>', 2)
-                    ->where('tramos', '>=', $request->hora_inicio)
-                    ->where('tramos', '<', $request->hora_fin)
-                    ->get();
-            }
-
-            // return $tramos;
-
-            $tramosCounter = count($tramos) / 6;
-
-
-            if (!empty($tramos)) {
-                $tramosPorFecha = [];
-                $j = 0;
-                $h = 0;
-
-                for ($t = 0; $t < (int)$tramosCounter; $t++) {
-
-                    while ($j < $request->cant) {
-                        for ($p = $h; $p < (6 + $h); $p++) {
-                            if ($j == $request->cant) {
-                                $j++;
-                                break;
-                            }
-                            $resto = 0;
-                            $discountTramo = Tramo::find($tramos[$p]->_id);
-                            $resto = $discountTramo->duracion - 15;
-                            $discountTramo->duracion = $resto;
-                            $discountTramo->save();
-
-
-                            // $media = new Media();
-                            $insert_media[$p]['campania_id'] = $campania_id;
-                            $insert_media[$p]['client_id'] = auth()->user()->id;
-                            $insert_media[$p]['tramo_id'] = $tramos[$p]->tramo_id;
-                            $insert_media[$p]['screen_id'] = $request->screen_id;
-                            $insert_media[$p]['time'] = $tramos[$p]->tramos;
-                            $insert_media[$p]['date'] = $tramos[$p]->fecha;
-                            $insert_media[$p]['duration'] = 15;
-                            $insert_media[$p]['approved'] = 1;
-                            $insert_media[$p]['files_name'] = json_encode($files_names);
-                            $insert_media[$p]['approved'] = 1;
-                            $insert_media[$p]['isPaid'] = 1;
-                            $insert_media[$p]['isActive'] = 1;
-
-                            $j++;
-                        }
-                    }
-                    $h += 6;
-                    $j = 0;
-                }
-            }
-
-
-            Media::insert($insert_media);
-
-
-
-            $this->updateS3($rutasLocales, $campania_id, $fechaActual, $files_names, $request->screen_id, $i);
-
-            if ($horaFin < $horaInicio) {
-                $fechaActual = $fechaSiguiente; // $fechaInicio->add(new DateInterval('P1D'));
-                $fechaActual = $fechaActual->format('Y-m-d');
-            } else {
-                $fechaActual = $fechaInicio->add(new DateInterval('P1D'));
-                $fechaActual = $fechaActual->format('Y-m-d');
-            }
-        }
-
-        if ($horaFin < $horaInicio) {
-            $this->updateS3($rutasLocales, $campania_id, $fechaActual, $files_names, $request->screen_id, $i);
-        }
-
-        return $tramosPorFecha;
-
-
-
-
-        return ['bien'];
-
-        return redirect()->route('sale.create');
     }
+
+
+    protected function eliminaTemp($rutasLocales)
+    {
+        foreach ($rutasLocales as $tmp) {
+            unlink($tmp);
+        }
+    }
+
 
 
     public function reproducido($id)
     {
         $media = Media::find($id);
-
 
         if (!empty($media)) {
             if ($media->reproducido !== 1) {
