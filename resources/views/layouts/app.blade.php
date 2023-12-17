@@ -7,6 +7,7 @@
     <meta property="og:title" content="AdsUpp">
     <meta property="og:description" content="Publicar nunca fue tan facil">
     <link rel="shortcut icon" href="/images/logo_cuadrado.ico">
+
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
 
@@ -18,6 +19,11 @@
     <title>{{ config('app.name', 'AdsUpp') }}</title>
 
     <link rel='manifest' href='/manifest.json'>
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <link rel="apple-touch-icon" sizes="512x512" href="icons/adsupp512.png">
+    <meta name="apple-mobile-web-app-status-bar-style" content="#ffffff">
+    <meta name="theme-color" content="#dd5757">
+    <meta name="apple-mobile-web-app-status-bar-style" content="Black-translucent">
 
     <link rel="preload" href="/images/logo2.jpg" as="image">
     <link rel="prefetch" href="https://sdk.mercadopago.com/js/v2" />
