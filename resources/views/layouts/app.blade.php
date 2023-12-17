@@ -108,7 +108,7 @@
 
                                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                                         <li><a class="dropdown-item" href="{{ route('sale.index') }}">Por aprobar</a></li>
-                                        <li><a class="dropdown-item" href="{{ route('sale.create') }}">Cargar Video</a></li>
+                                        <li><a class="dropdown-item" href="{{ route('sale.create') }}">Cargar Campaña</a></li>
                                         <li><a class="dropdown-item" href="{{ route('grilla') }}">Programacion</a></li>
                                         {{-- <li><a class="dropdown-item" href="{{ route('screen.index') }}">Pantallas</a></li> --}}
                                         <li><a class="dropdown-item" href="{{ route('pagos.index') }}">Pagos</a></li>
@@ -202,7 +202,7 @@
                     </li>
                 @else
                     @can('admin-list')
-                        <li class="nav-item"><a class="nav-link" href="{{ route('sale.create') }}">Cargar Video</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ route('sale.create') }}">Cargar Campaña</a></li>
                         <li class="nav-item"><a class="nav-link" href="{{ route('sale.index') }}">Por aprobar</a></li>
                         <li class="nav-item"><a class="nav-link" href="{{ route('grilla') }}">Programacion</a></li>
                         <li class="nav-item"><a class="nav-link" href="{{ route('pagos.index') }}">Pagos</a></li>
