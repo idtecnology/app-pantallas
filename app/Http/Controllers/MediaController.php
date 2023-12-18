@@ -396,6 +396,7 @@ class MediaController extends Controller
                                     $j++;
                                     break;
                                 }
+                                $insert_media = [];
                                 $discount[$tramos[$p]->_id]['ids'][] = $tramos[$p]->_id;
                                 $discount[$tramos[$p]->_id]['duracion'] = $tramos[$p]->duracion;
                                 $insert_media[$p]['campania_id'] = $campania_id;
@@ -411,14 +412,15 @@ class MediaController extends Controller
                                 $insert_media[$p]['isPaid'] = 1;
                                 $insert_media[$p]['isActive'] = 1;
                                 $j++;
+                                // Insertamos los registros
+                                Media::insert($insert_media);
                             }
                         }
                         $h += 6;
                         $j = 0;
                     }
                 }
-                // Insertamos los registros
-                Media::insert($insert_media);
+
                 //Actualizamos s3 y borramos del tmp
                 $this->updateS3($validarArchivos['rutasLocales'], $campania_id, $fechaActual, $files_names, $request->screen_id, $i);
 
@@ -434,6 +436,7 @@ class MediaController extends Controller
             if ($horaFin < $horaInicio) {
                 $this->updateS3($validarArchivos['rutasLocales'], $campania_id, $fechaActual, $files_names, $request->screen_id, $i);
             }
+
             $keys = array_keys($discount);
             for ($k = 0; $k < count($discount); $k++) {
                 $calculoResto = $discount[$keys[$k]]['duracion'] - (count($discount[$keys[$k]]['ids']) * 15);
