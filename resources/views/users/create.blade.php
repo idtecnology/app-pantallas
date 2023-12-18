@@ -5,10 +5,10 @@
     <div class="row">
         <div class="col-lg-12 margin-tb">
             <div class="pull-left">
-                <h2>Create New User</h2>
+                <h2>Nuevo usuario</h2>
             </div>
             <div class="pull-right">
-                <a class="btn btn-primary" href="{{ route('users.index') }}"> Back</a>
+                <a class="btn btn-dark" href="{{ route('users.index') }}"> Regresar </a>
             </div>
         </div>
     </div>
@@ -29,38 +29,44 @@
 
     {!! Form::open(['route' => 'users.store', 'method' => 'POST']) !!}
     <div class="row">
-        <div class="col-xs-12 col-sm-12 col-md-12">
+        <div class="col-xs-6 col-sm-6 col-md-6 mb-2">
             <div class="form-group">
-                <strong>Name:</strong>
-                {!! Form::text('name', null, ['placeholder' => 'Name', 'class' => 'form-control']) !!}
+                <strong>Nombres:</strong>
+                {!! Form::text('name', null, ['placeholder' => 'Nombres', 'class' => 'form-control']) !!}
             </div>
         </div>
-        <div class="col-xs-12 col-sm-12 col-md-12">
+        <div class="col-xs-6 col-sm-6 col-md-6 mb-2">
             <div class="form-group">
-                <strong>Email:</strong>
-                {!! Form::text('email', null, ['placeholder' => 'Email', 'class' => 'form-control']) !!}
+                <strong>Apellidos:</strong>
+                {!! Form::text('last_name', null, ['placeholder' => 'Apellidos', 'class' => 'form-control']) !!}
             </div>
         </div>
-        <div class="col-xs-12 col-sm-12 col-md-12">
+        <div class="col-xs-12 col-sm-12 col-md-12 mb-2">
             <div class="form-group">
-                <strong>Password:</strong>
-                {!! Form::password('password', ['placeholder' => 'Password', 'class' => 'form-control']) !!}
+                <strong>Correo:</strong>
+                {!! Form::text('email', null, ['placeholder' => 'Correo', 'class' => 'form-control']) !!}
             </div>
         </div>
-        <div class="col-xs-12 col-sm-12 col-md-12">
-            <div class="form-group">
-                <strong>Confirm Password:</strong>
-                {!! Form::password('confirm-password', ['placeholder' => 'Confirm Password', 'class' => 'form-control']) !!}
+        <div class="col-xs-6 col-sm-6 col-md-6 mb-2 ">
+            <div class="form-group ">
+                <strong>Contraseña:</strong>
+                {!! Form::password('password', ['placeholder' => 'Contraseña', 'class' => 'form-control']) !!}
             </div>
         </div>
-        <div class="col-xs-12 col-sm-12 col-md-12">
+        <div class="col-xs-6 col-sm-6 col-md-6">
             <div class="form-group">
-                <strong>Role:</strong>
-                {!! Form::select('roles[]', $roles, [], ['class' => 'form-control', 'multiple']) !!}
+                <strong>Confirmar contraseña:</strong>
+                {!! Form::password('confirm-password', ['placeholder' => 'Confirmar contraseña', 'class' => 'form-control']) !!}
             </div>
         </div>
-        <div class="col-xs-12 col-sm-12 col-md-12 text-center">
-            <button type="submit" class="btn btn-primary">Submit</button>
+        <div class="col-xs-4 col-sm-4 col-md-4 mb-2">
+            <div class="form-group">
+                <strong>Rol:</strong>
+                {!! Form::select('roles[]', $roles, [], ['class' => 'form-select', 'multiple']) !!}
+            </div>
+        </div>
+        <div class="col-xs-12 col-sm-12 col-md-12 text-center mt-3">
+            <button type="submit" class="btn btn-primary rounded-pill px-4">Guardar</button>
         </div>
     </div>
     {!! Form::close() !!}

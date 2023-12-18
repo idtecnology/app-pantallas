@@ -32,7 +32,7 @@
                     <table width="100%" style="border-spacing: 0;">
                         <tr>
                             <td style="display: flex; justify-content: space-between; padding: 10px;">
-                                <table>
+                                <table style="width:80%;">
                                     <tr>
                                         <td style="padding: 0 0px 10px;">
                                             <a href="https://adsupp-reproductor-pantallas.s3.amazonaws.com/img-emails/bienvenida/img1.jpeg"
@@ -43,7 +43,7 @@
                                         </td>
                                     </tr>
                                 </table>
-                                <table class="column">
+                                <table style="width:19%;" class="column">
                                     <tr>
                                         <td>
                                             <a href="https://adsupp-reproductor-pantallas.s3.amazonaws.com/img-emails/bienvenida/img2.jpeg"

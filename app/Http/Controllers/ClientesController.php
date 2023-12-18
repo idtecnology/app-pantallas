@@ -47,21 +47,25 @@ class ClientesController extends Controller
     {
 
 
+
         $this->validate($request, [
             'name' => 'required',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|same:confirm-password',
-            'roles' => 'required'
         ]);
 
         $input = $request->all();
         $input['password'] = Hash::make($input['password']);
+        $input['isUser'] = 0;
+        $input['discounts'] = $request->discounts;
+
+
 
         $user = User::create($input);
-        $user->assignRole(2);
+        $user->assignRole('client');
 
         return redirect()->route('clients.index')
-            ->with('success', 'User created successfully');
+            ->with('success', 'Creado con exito');
     }
 
     /**
@@ -85,8 +89,6 @@ class ClientesController extends Controller
     public function edit($id): View
     {
         $user = User::find($id);
-        $roles = Role::pluck('name', 'name')->all();
-        $userRole = $user->roles->pluck('name', 'name')->all();
 
         return view('clients.edit', compact('user', 'roles', 'userRole'));
     }
@@ -104,7 +106,6 @@ class ClientesController extends Controller
             'name' => 'required',
             'email' => 'required|email|unique:users,email,' . $id,
             'password' => 'same:confirm-password',
-            'roles' => 'required'
         ]);
 
         $input = $request->all();

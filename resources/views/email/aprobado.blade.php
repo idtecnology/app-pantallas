@@ -32,7 +32,7 @@
                         <tr>
                             <td
                                 style="display: flex; flex-flow: row wrap; justify-content: space-between; font-size: 0;padding: 10px;">
-                                <table>
+                                <table style="width:80%;">
                                     <tr>
                                         <td style="padding: 0 0px 10px;">
                                             <a href="http://adsupp.com" target="_blank">
@@ -42,7 +42,7 @@
                                         </td>
                                     </tr>
                                 </table>
-                                <table class="column">
+                                <table style="width:19%;" class="column">
                                     <tr>
                                         <td>
                                             <a href="https://www.instagram.com/ads.upp" target="_blank">
