@@ -347,10 +347,11 @@ class MediaController extends Controller
         $durationInSeconds = [];
 
         // Validamos los formatos de la multimedia.
-        $validarArchivos = $this->validaFormatomultimedia($archivos);
+        $validarArchivos = $this->validaFormatomultimedia($archivos, $request->name);
+        $x = [];
 
         if ($validarArchivos != false) {
-            $files_names = $validarArchivos['files_names'];
+            $files_names = $validarArchivos['files_names'][0];
             $sumaDuracion = array_sum($durationInSeconds);
             $insert_media = [];
             $discount = [];
@@ -407,7 +408,7 @@ class MediaController extends Controller
                                 $insert_media[$p]['date'] = $tramos[$p]->fecha;
                                 $insert_media[$p]['duration'] = 15;
                                 $insert_media[$p]['approved'] = 1;
-                                $insert_media[$p]['files_name'] = json_encode($validarArchivos['files_names'][0]);
+                                $insert_media[$p]['files_name'] = json_encode($files_names);
                                 $insert_media[$p]['approved'] = 1;
                                 $insert_media[$p]['isPaid'] = 1;
                                 $insert_media[$p]['isActive'] = 1;
@@ -451,10 +452,10 @@ class MediaController extends Controller
 
 
 
-    protected function validaFormatomultimedia($archivos)
+    protected function validaFormatomultimedia($archivos, $name_campania)
     {
         foreach ($archivos as $ll => $archivo) {
-            $nombreArchivo = uniqid() . '.' . $archivo->getClientOriginalExtension();
+            $nombreArchivo = uniqid() . '_' . $name_campania . '.' . $archivo->getClientOriginalExtension();
             $archivo->storeAs('public/uploads/tmp', $nombreArchivo);
             $rutaLocal = storage_path('app/public/uploads/tmp/' . $nombreArchivo);
             if (in_array($archivo->getClientOriginalExtension(), config('ext_aviable.EXTENSIONES_PERMITIDAS_VIDEO'))) {
@@ -590,19 +591,13 @@ class MediaController extends Controller
 
     protected function updateS3($arr_rutas, $campania_id, $fechaActual, $file_names, $screen_id, $contador)
     {
-        $fecha = new DateTime($fechaActual);
 
-        $rutaLocal3 = storage_path('app/public/uploads/tmp/' . $file_names[0]['file_name']);
-        $nameF2 = $screen_id . '/' . $fecha->format('Ymd') . '/' . $file_names[0]['file_name'];
-        $rutaBase = '';
-        if ($contador == 0) {
-            $path2 = Storage::disk('s3')->put($nameF2, file_get_contents($rutaLocal3));
-            $rutaBase = $path2;
-        } else {
-            $path2 = Storage::disk('s3')->copy($rutaBase, $nameF2);
-        }
+        $fecha = new DateTime($fechaActual);
+        $rutaLocal3 = storage_path('app/public/uploads/tmp/' . $file_names['file_name']);
+        $nameF2 = $screen_id . '/' . $fecha->format('Ymd') . '/' . $file_names['file_name'];
+        $path2 = Storage::disk('s3')->put($nameF2, file_get_contents($rutaLocal3));
         $path2 = Storage::disk('s3')->temporaryUrl($nameF2, now()->addMinutes(1440));
-        $files_names2[] = ['file_name'  => $path2, 'duration' => $file_names[0]['duration']];
+        $files_names2[] = ['file_name'  => $path2, 'duration' => $file_names['duration']];
         Media::where('campania_id', '=', $campania_id)->where('date', '=', $fecha->format('Y-m-d'))->update(['files_name' => json_encode($files_names2)]);
     }
 }
