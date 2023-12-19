@@ -613,7 +613,7 @@ class MediaController extends Controller
         Media::where('campania_id', '=', $campania_id)->where('date', '=', $fechaInicio->format('Y-m-d'))->update(['files_name' => json_encode($files_names2)]);
 
         for ($upd = 0; $upd <= $diferenciaEnDias; $upd++) {
-
+            $files_names2 = [];
             // $fechaInicio = $fechaInicio->add(new DateInterval('P1D'));
             $fecha_siguiente = $fechaInicio->modify('+1 day');
 
@@ -623,7 +623,7 @@ class MediaController extends Controller
 
             $path3 = Storage::disk('s3')->temporaryUrl($nameF3, now()->addMinutes(1440));
 
-            $files_names2 = ['file_name'  => $path3, 'duration' => $datas['duration']];
+            $files_names2[] = ['file_name'  => $path3, 'duration' => $datas['duration']];
 
             Media::where('campania_id', '=', $campania_id)->where('date', '=', $fecha_siguiente->format('Y-m-d'))->update(['files_name' => json_encode($files_names2)]);
         }
