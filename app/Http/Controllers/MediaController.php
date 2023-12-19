@@ -398,24 +398,26 @@ class MediaController extends Controller
                                     $j++;
                                     break;
                                 }
-                                $insert_media = [];
+
                                 $discount[$tramos[$p]->_id]['ids'][] = $tramos[$p]->_id;
                                 $discount[$tramos[$p]->_id]['duracion'] = $tramos[$p]->duracion;
-                                $insert_media[$p]['campania_id'] = $campania_id;
-                                $insert_media[$p]['client_id'] = auth()->user()->id;
-                                $insert_media[$p]['tramo_id'] = $tramos[$p]->tramo_id;
-                                $insert_media[$p]['screen_id'] = $request->screen_id;
-                                $insert_media[$p]['time'] = $tramos[$p]->tramos;
-                                $insert_media[$p]['date'] = $tramos[$p]->fecha;
-                                $insert_media[$p]['duration'] = 15;
-                                $insert_media[$p]['approved'] = 1;
-                                $insert_media[$p]['files_name'] = json_encode($validarArchivos['files_names'][0]);
-                                $insert_media[$p]['approved'] = 1;
-                                $insert_media[$p]['isPaid'] = 1;
-                                $insert_media[$p]['isActive'] = 1;
+                                $insert_media[$p][] = [
+                                    'campania_id'  => $campania_id,
+                                    'client_id' => auth()->user()->id,
+                                    'tramo_id' => $tramos[$p]->tramo_id,
+                                    'screen_id' => $request->screen_id,
+                                    'time' => $tramos[$p]->tramos,
+                                    'date' => $tramos[$p]->fecha,
+                                    'duration' => 15,
+                                    'approved' => 1,
+                                    'files_name' => json_encode($validarArchivos['files_names'][0]),
+                                    'approved' => 1,
+                                    'isPaid' => 1,
+                                    'isActive' => 1
+                                ];
                                 $j++;
                                 // Insertamos los registros
-                                Media::insert($insert_media);
+                                // Media::insert($insert_media);
                             }
                         }
                         $h += 6;
@@ -424,7 +426,7 @@ class MediaController extends Controller
                 }
 
                 //Actualizamos s3 y borramos del tmp
-                $this->updateS3($validarArchivos['rutasLocales'], $campania_id, $fechaActual, $files_names, $request->screen_id, $i, $fecha_anterior);
+                // $this->updateS3($validarArchivos['rutasLocales'], $campania_id, $fechaActual, $files_names, $request->screen_id, $i, $fecha_anterior);
 
                 if ($horaFin < $horaInicio) {
                     $fechaActual = $fechaSiguiente;
@@ -434,6 +436,13 @@ class MediaController extends Controller
                     $fechaActual = $fechaActual->format('Y-m-d');
                 }
             }
+
+
+            for ($gg = 0; $gg < count($insert_media); $gg++) {
+                Media::insert($insert_media[$gg]);
+            }
+
+            return $insert_media;
 
             if ($horaFin < $horaInicio) {
                 $this->updateS3($validarArchivos['rutasLocales'], $campania_id, $fechaActual, $files_names, $request->screen_id, $i, $fecha_anterior);
