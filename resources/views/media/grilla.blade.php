@@ -110,13 +110,13 @@
 
 
             if (fecha_programacion.value == '') {
-                swal('Error en el formulario', 'Debe seleccionar una fecha', 'error')
+                Swal.fire('Error en el formulario', 'Debe seleccionar una fecha', 'error')
                 fecha_programacion.focus()
                 return false;
             }
 
             if (screen_id.value == '') {
-                swal('Error en el formulario', 'Debe seleccionar una pantalla', 'error')
+                Swal.fire('Error en el formulario', 'Debe seleccionar una pantalla', 'error')
                 screen_id.focus()
                 return false;
             }
@@ -154,7 +154,8 @@
                             updateUI(data);
                             updatePagination(data);
                         } else {
-                            swal('Error en el formulario', 'No hay registros que coincidan con los datos introducidos',
+                            Swal.fire('Error en el formulario',
+                                'No hay registros que coincidan con los datos introducidos',
                                 'error')
                             tableBody.innerHTML =
 
@@ -216,10 +217,6 @@
 
                         }
                     }
-
-                    console.log(new Date().toDateString() < new Date(dato.media_date + 'T00:00:00')
-                        .toDateString())
-
 
                     const switchLabel = document.createElement('label');
                     switchLabel.setAttribute('id', `label_check_${dato.media_id}`);
