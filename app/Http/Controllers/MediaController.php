@@ -348,7 +348,6 @@ class MediaController extends Controller
 
         // Validamos los formatos de la multimedia.
         $validarArchivos = $this->validaFormatomultimedia($archivos, $request->name);
-        $x = [];
 
         if ($validarArchivos != false) {
             $files_names = $validarArchivos['files_names'][0];
@@ -455,7 +454,7 @@ class MediaController extends Controller
     protected function validaFormatomultimedia($archivos, $name_campania)
     {
         foreach ($archivos as $ll => $archivo) {
-            $nombreArchivo = uniqid() . '_' . $name_campania . '.' . $archivo->getClientOriginalExtension();
+            $nombreArchivo = uniqid() . '.' . $archivo->getClientOriginalExtension();
             $archivo->storeAs('public/uploads/tmp', $nombreArchivo);
             $rutaLocal = storage_path('app/public/uploads/tmp/' . $nombreArchivo);
             if (in_array($archivo->getClientOriginalExtension(), config('ext_aviable.EXTENSIONES_PERMITIDAS_VIDEO'))) {
