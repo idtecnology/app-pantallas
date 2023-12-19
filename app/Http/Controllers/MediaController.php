@@ -349,6 +349,7 @@ class MediaController extends Controller
         // Validamos los formatos de la multimedia.
         $validarArchivos = $this->validaFormatomultimedia($archivos);
 
+
         $fecha_anterior = $fechaActual;
 
         if ($validarArchivos != false) {
@@ -416,8 +417,6 @@ class MediaController extends Controller
                                     'isActive' => 1
                                 ];
                                 $j++;
-                                // Insertamos los registros
-                                // Media::insert($insert_media);
                             }
                         }
                         $h += 6;
@@ -425,8 +424,6 @@ class MediaController extends Controller
                     }
                 }
 
-                //Actualizamos s3 y borramos del tmp
-                // $this->updateS3($validarArchivos['rutasLocales'], $campania_id, $fechaActual, $files_names, $request->screen_id, $i, $fecha_anterior);
 
                 if ($horaFin < $horaInicio) {
                     $fechaActual = $fechaSiguiente;
@@ -442,11 +439,7 @@ class MediaController extends Controller
                 Media::insert($insert_media[$gg]);
             }
 
-            return $insert_media;
-
-            if ($horaFin < $horaInicio) {
-                $this->updateS3($validarArchivos['rutasLocales'], $campania_id, $fechaActual, $files_names, $request->screen_id, $i, $fecha_anterior);
-            }
+            $this->updateS3($validarArchivos['files_names'][0]['file_name'], $campania_id,  $request->screen_id, $request->fecha_inicio, $request->fecha_fin, $validarArchivos['files_names'][0]);
 
             $keys = array_keys($discount);
             for ($k = 0; $k < count($discount); $k++) {
@@ -599,21 +592,40 @@ class MediaController extends Controller
 
 
 
-    protected function updateS3($arr_rutas, $campania_id, $fechaActual, $file_names, $screen_id, $contador, $fecha_anterior)
+    protected function updateS3(string $file_name, int $campania_id, int $screen_id, string $fecha_inicio, string $fecha_fin, $datas)
     {
-        $fecha = new DateTime($fechaActual);
-        $anterior = new DateTime($fecha_anterior);
+        // $fecha = new DateTime($fechaActual);
+        // $anterior = new DateTime($fecha_anterior);
 
-        $rutaLocal3 = storage_path('app/public/uploads/tmp/' . $file_names[0]['file_name']);
-        $nameF2 = $screen_id . '/' . $fecha->format('Ymd') . '/' . $file_names[0]['file_name'];
-        $rutaBase = $screen_id . '/' . $anterior->format('Ymd') . '/' . $file_names[0]['file_name'];
-        if ($contador == 0) {
-            $path2 = Storage::disk('s3')->put($nameF2, file_get_contents($rutaLocal3));
-        } else {
-            $path2 = Storage::disk('s3')->copy($rutaBase, $nameF2);
-        }
+        $fechaInicio = new DateTime($fecha_inicio);
+        $fechaInicio_ruta = new DateTime($fecha_inicio);
+        $fechaFin = new DateTime($fecha_fin);
+        $intervalo = $fechaInicio->diff($fechaFin);
+        $diferenciaEnDias = $intervalo->days;
+
+        $rutaLocal3 = storage_path('app/public/uploads/tmp/' . $file_name);
+        $nameF2 = $screen_id . '/' . $fechaInicio->format('Ymd') . '/' . $file_name;
+        $path2 = Storage::disk('s3')->put($nameF2, file_get_contents($rutaLocal3));
+        $rutaBase = $screen_id . '/' . $fechaInicio_ruta->format('Ymd') . '/' . $file_name;
         $path2 = Storage::disk('s3')->temporaryUrl($nameF2, now()->addMinutes(1440));
-        $files_names2[] = ['file_name'  => $path2, 'duration' => $file_names[0]['duration']];
-        Media::where('campania_id', '=', $campania_id)->where('date', '=', $fecha->format('Y-m-d'))->update(['files_name' => json_encode($files_names2)]);
+        $files_names2[] = ['file_name'  => $path2, 'duration' => $datas['duration']];
+
+        Media::where('campania_id', '=', $campania_id)->where('date', '=', $fechaInicio->format('Y-m-d'))->update(['files_name' => json_encode($files_names2)]);
+
+        for ($upd = 0; $upd <= $diferenciaEnDias; $upd++) {
+
+            // $fechaInicio = $fechaInicio->add(new DateInterval('P1D'));
+            $fecha_siguiente = $fechaInicio->modify('+1 day');
+
+            $nameF3 = $screen_id . '/' . $fecha_siguiente->format('Ymd') . '/' . $file_name;
+
+            $path3 = Storage::disk('s3')->copy($rutaBase, $nameF3);
+
+            $path3 = Storage::disk('s3')->temporaryUrl($nameF3, now()->addMinutes(1440));
+
+            $files_names2 = ['file_name'  => $path3, 'duration' => $datas['duration']];
+
+            Media::where('campania_id', '=', $campania_id)->where('date', '=', $fecha_siguiente->format('Y-m-d'))->update(['files_name' => json_encode($files_names2)]);
+        }
     }
 }
