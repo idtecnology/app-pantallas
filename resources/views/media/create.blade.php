@@ -57,7 +57,7 @@
             <div class="col-12 col-md-4 mb-3">
                 <div class="form-group">
                     <strong>Cantidad por hora:</strong>
-                    <input type="text" class="form-control" name="cant" id="cant">
+                    <input type="number" maxlength="3" class="form-control" name="cant" id="cant" max="240">
                 </div>
             </div>
             <div class="col-12 mb-3">

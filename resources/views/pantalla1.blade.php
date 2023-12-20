@@ -77,9 +77,9 @@
 
 @section('js')
     <script>
-        function openFiles() {
-            document.querySelector('#archivos').click();
-        }
+        // function openFiles() {
+        //     document.querySelector('#archivos').click();
+        // }
 
         function focus() {
             [].forEach.call(this.options, function(o) {
