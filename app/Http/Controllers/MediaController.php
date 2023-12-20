@@ -382,7 +382,7 @@ class MediaController extends Controller
                     $tramos = Tramo::select('tramos', 'tramo_id', '_id', 'fecha', 'duracion')
                         ->where('fecha', '=', $fechaActual)
                         ->where('screen_id', '=', $request->screen_id)
-                        ->where('duracion', '>', 2)
+                        ->where('duracion', '>',  $sumaDuracion)
                         ->where('tramos', '>=', $request->hora_inicio)
                         ->where('tramos', '<', $request->hora_fin)
                         ->get();
