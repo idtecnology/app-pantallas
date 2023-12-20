@@ -32,18 +32,20 @@
                     @endforeach
                 </select>
             </div>
-            <div class="w-50">
-                <a onclick="openFiles()" id="mienlace" class="btn btn-primary w-100 rounded-pill text-center">
-                    <div class="d-flex align-middle justify-content-center align-items-center">
-                        <span class="material-symbols-outlined md-18 ">
-                            photo_camera
-                        </span>
-                        <span class="ml-4p">Agrega contenido</span>
-                    </div>
+            @can('admin-list')
+                <div class="w-50">
+                    <a onclick="openFiles()" id="mienlace" class="btn btn-primary w-100 rounded-pill text-center">
+                        <div class="d-flex align-middle justify-content-center align-items-center">
+                            <span class="material-symbols-outlined md-18 ">
+                                photo_camera
+                            </span>
+                            <span class="ml-4p">Agrega contenido</span>
+                        </div>
 
-                </a>
-                <input style="display: none" type="file" id="archivos" multiple>
-            </div>
+                    </a>
+                    <input style="display: none" type="file" id="archivos" multiple>
+                </div>
+            @endcan
         </div>
     </div>
     <div class="d-flex flex-column">
@@ -77,9 +79,9 @@
 
 @section('js')
     <script>
-        // function openFiles() {
-        //     document.querySelector('#archivos').click();
-        // }
+        function openFiles() {
+            document.querySelector('#archivos').click();
+        }
 
         function focus() {
             [].forEach.call(this.options, function(o) {
