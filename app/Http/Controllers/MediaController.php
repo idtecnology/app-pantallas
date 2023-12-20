@@ -83,7 +83,7 @@ class MediaController extends Controller
             $price = reset($matchingPrices);
 
 
-            SDK::setAccessToken(env('TEST_MP_SECRET'));
+            SDK::setAccessToken(env('MP_SECRET'));
 
 
 

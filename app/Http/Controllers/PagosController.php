@@ -34,7 +34,7 @@ class PagosController extends Controller
         $client = new Client();
 
         $url = 'https://api.mercadopago.com/v1/payments/' . $datos->payment_id;
-        $token = env('TEST_MP_SECRET');
+        $token = env('MP_SECRET');
         $contentType = 'application/json';
 
         try {
