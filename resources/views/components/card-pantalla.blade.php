@@ -1,7 +1,7 @@
 <div class="col-md-6 col-sm-12 my-3">
     <div class="d-flex bg-violeta rounded-4 bshadow">
         <img class="rounded-start-4 img-fluid w-50" src="{{ $img ?? 'https://placehold.co/148x106' }}" alt="">
-        <div class="ms-3 text-center">
+        <div class="ms-3 text-center mb-3">
             <div class="text-start mt-2">
                 <span class="font-bold fs-4">{{ $title ?? 'Title POS' }}</span>
                 <div class="clear-fix"></div>
