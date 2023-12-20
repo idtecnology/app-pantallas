@@ -165,11 +165,9 @@
             @else
                 <main class="container mt-4">
         @endif
-
         <div class="row">
             @yield('content')
         </div>
-
         </main>
     </div>
 
