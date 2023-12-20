@@ -5,7 +5,7 @@
     <div class="row">
         <div class="col-lg-12 margin-tb">
             <div class="pull-left">
-                <h2>Nuevo usuario</h2>
+                <h2>Nuevo clientes</h2>
             </div>
             <div class="pull-right">
                 <a class="btn btn-dark" href="{{ route('clients.index') }}"> Regresar </a>
@@ -63,7 +63,7 @@
         <div class="col-xs-4 col-sm-4 col-md-4">
             <div class="form-group">
                 <strong>Descuento:</strong>
-                {!! Form::number('discounts', null, ['placeholder' => 'Descuento', 'class' => 'form-control']) !!}
+                {!! Form::number('discounts', null, ['placeholder' => 'Descuento', 'class' => 'form-control', 'max' => '100']) !!}
             </div>
         </div>
 

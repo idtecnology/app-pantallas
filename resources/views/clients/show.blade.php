@@ -5,7 +5,7 @@
     <div class="row">
         <div class="col-lg-12 margin-tb">
             <div class="pull-left">
-                <h2> Usuario:</h2>
+                <h2> Cliente:</h2>
             </div>
             <div class="pull-right">
                 <a class="btn btn-dark" href="{{ route('users.index') }}"> Regresar</a>

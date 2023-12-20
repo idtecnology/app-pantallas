@@ -27,7 +27,8 @@
                                             <div class="col-md-6">
                                                 <input id="name" type="text"
                                                     class="form-control @error('name') is-invalid @enderror" name="name"
-                                                    value="{{ old('name') }}" required autocomplete="name" autofocus>
+                                                    value="{{ old('name') }}" required autocomplete="given-name"
+                                                    autofocus>
                                             </div>
                                         </div>
                                         <div class="row mb-3">
@@ -86,15 +87,19 @@
                                                         id="remember" {{ old('remember') ? 'checked' : '' }}>
 
                                                     <label class="form-check-label" for="remember">
-                                                        Acepto las <a class="fw-bold">Politicas de Privacidad</a> y <a
-                                                            class="fw-bold" href="">Terminos y Condiciones</a>
+                                                        Acepto las <a target="_blank"
+                                                            href="https://adsupp.com/politicas-de-privacidad"
+                                                            class="fw-bold">Politicas de Privacidad</a> y <a class="fw-bold"
+                                                            target="_blank"
+                                                            href="https://adsupp.com/terminos-y-condiciones">Terminos y
+                                                            Condiciones</a>
                                                     </label>
                                                 </div>
                                             </div>
                                         </div>
 
                                         <div class="row mb-0">
-                                            <div class="col-md-6 offset-md-4">
+                                            <div class="col-md-12 text-center">
                                                 <button type="submit" class="btn btn-primary rounded-pill px-4">
                                                     {{ __('Register') }}
                                                 </button>
@@ -114,8 +119,9 @@
 
                                             <div class="col-md-6">
                                                 <input id="email" type="email"
-                                                    class="form-control @error('email') is-invalid @enderror" name="email"
-                                                    value="{{ old('email') }}" required autocomplete="email" autofocus>
+                                                    class="form-control @error('email') is-invalid @enderror"
+                                                    name="email" value="{{ old('email') }}" required
+                                                    autocomplete="email" autofocus>
                                                 <span id="validacionCorreo"></span>
 
                                                 @error('email')
