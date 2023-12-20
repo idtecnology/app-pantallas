@@ -71,13 +71,7 @@ class ScreenController extends Controller
         $screen = Screen::find($id);
 
 
-        $prices = [
-            ['seconds' => 15, 'amount' => 10000],
-            ['seconds' => 30, 'amount' => 20000],
-            ['seconds' => 45, 'amount' => 30000],
-            ['seconds' => 60, 'amount' => 40000],
-            ['seconds' => 120, 'amount' => 80000],
-        ];
+        $prices = config('price-list.PRICE_LIST');
 
         if (isset(auth()->user()->discounts) && auth()->user()->discounts > 0) {
             $descuento = auth()->user()->discounts;
@@ -97,13 +91,7 @@ class ScreenController extends Controller
         $datas = $data::getDataMedia($media_id);
 
 
-        $prices = [
-            ['seconds' => 15, 'amount' => 10000],
-            ['seconds' => 30, 'amount' => 20000],
-            ['seconds' => 45, 'amount' => 30000],
-            ['seconds' => 60, 'amount' => 40000],
-            ['seconds' => 120, 'amount' => 80000],
-        ];
+        $prices = config('price-list.PRICE_LIST');
 
         if (isset(auth()->user()->discounts) && auth()->user()->discounts > 0) {
             $descuento = auth()->user()->discounts;
