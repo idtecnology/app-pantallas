@@ -77,6 +77,10 @@
 
 @section('js')
     <script>
+        window.onload = function() {
+            blur();
+        };
+
         function openFiles() {
             document.querySelector('#archivos').click();
         }
