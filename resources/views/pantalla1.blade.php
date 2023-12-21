@@ -93,7 +93,7 @@
             });
         }
         [].forEach.call(document.querySelectorAll('.shortened-select'), function(s) {
-            s.addEventListener('focus', focus);
+            // s.addEventListener('focus', focus);
             s.addEventListener('blur', blur);
             blur.call(s);
         });
