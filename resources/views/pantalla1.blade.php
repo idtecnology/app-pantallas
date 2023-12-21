@@ -81,19 +81,19 @@
             document.querySelector('#archivos').click();
         }
 
-        // function focus() {
-        //     [].forEach.call(this.options, function(o) {
-        //         o.textContent = o.getAttribute('value') + ' - ' + o.getAttribute('data-descr');
-        //     });
-        // }
+        function focus() {
+            [].forEach.call(this.options, function(o) {
+                o.textContent = o.getAttribute('value') + ' Segundos '
+            });
+        }
 
         function blur() {
             [].forEach.call(this.options, function(o) {
-                o.textContent = o.getAttribute('value') + ' Segundos';
+                o.textContent = o.getAttribute('value') + ' Segundos -' + o.getAttribute('data-descr');
             });
         }
         [].forEach.call(document.querySelectorAll('.shortened-select'), function(s) {
-            // s.addEventListener('focus', focus);
+            s.addEventListener('focus', focus);
             s.addEventListener('blur', blur);
             blur.call(s);
         });
