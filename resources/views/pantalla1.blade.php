@@ -81,11 +81,11 @@
             document.querySelector('#archivos').click();
         }
 
-        // function focus() {
-        //     [].forEach.call(this.options, function(o) {
-        //         o.textContent = o.getAttribute('value') + ' Segundos - ' + o.getAttribute('data-descr')
-        //     });
-        // }
+        function focus() {
+            [].forEach.call(this.options, function(o) {
+                o.textContent = o.getAttribute('value') + ' Segundos - ' + o.getAttribute('data-descr')
+            });
+        }
 
         function blur() {
             [].forEach.call(this.options, function(o) {
@@ -100,11 +100,10 @@
         }
 
         [].forEach.call(document.querySelectorAll('.shortened-select'), function(s) {
-            // s.addEventListener('focus', focus);
-            console.log(s)
+            s.addEventListener('focus', focus);
             s.addEventListener('blur', blur);
             s.addEventListener('click', click);
-            blur.call(s);
+            blur.call(click);
         });
 
         const spinner = document.getElementById("spinner");
