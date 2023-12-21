@@ -79,6 +79,7 @@
     <script>
         window.onload = function() {
             blur();
+            focus();
         };
 
         function openFiles() {
