@@ -76,7 +76,7 @@ class ScreenController extends Controller
         if (isset(auth()->user()->discounts) && auth()->user()->discounts > 0) {
             $descuento = auth()->user()->discounts;
             foreach ($prices as $key => $value) {
-                $prices[$key]['amount'] = $value['amount'] * ($descuento / 100);
+                $prices[$key]['amount'] = $value['amount'] - ($value['amount'] * ($descuento / 100));
             }
         }
 
@@ -96,7 +96,7 @@ class ScreenController extends Controller
         if (isset(auth()->user()->discounts) && auth()->user()->discounts > 0) {
             $descuento = auth()->user()->discounts;
             foreach ($prices as $key => $value) {
-                $prices[$key]['amount'] = $value['amount'] * ($descuento / 100);
+                $prices[$key]['amount'] = $value['amount'] - ($value['amount'] * ($descuento / 100));
             }
         }
 

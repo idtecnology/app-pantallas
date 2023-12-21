@@ -214,7 +214,7 @@ class MediaController extends Controller
 
     public function searchProgramation(Request $request)
     {
-        $itemsPerPage = $request->input('itemsPerPage', 10);
+        $itemsPerPage = $request->input('itemsPerPage');
 
 
         $data = Media::select('media._id as media_id', 'media.client_id as media_client_id', 'media.reproducido as media_reproducido', 'media.time as media_time', 'media.date as media_date', 'media.duration as media_duration', 'media.files_name as media_files_name', 'media.isActive as media_isActive', 'users.email', 'campanias.name as campania_name', 'screens.nombre as screen_name')

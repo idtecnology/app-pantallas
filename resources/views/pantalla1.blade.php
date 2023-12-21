@@ -16,9 +16,7 @@
                 border-radius: 0 0 2rem 2rem;
             }
         </style>
-        <div class="imagen-con-degradado">
-
-        </div>
+        <div class="imagen-con-degradado"></div>
         <h1 class="mt-2 text-1">{{ $screen->nombre }}</h1>
         <span class="text-2">{{ $screen->direccion }}</span>
         <div class="row selects-price mx-0">

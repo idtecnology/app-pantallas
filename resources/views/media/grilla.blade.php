@@ -134,13 +134,14 @@
                 var fecha = document.querySelector('#fecha_programacion')
                 var pos = document.querySelector('#screen_id')
                 // var page = page
-                var itemsPerPage = 10;
+                var itemsPerPage = 50;
 
                 fetch("{{ route('search-programation') }}?page=" + page + "&itemsPerPage=" + itemsPerPage, {
                         method: 'POST',
                         body: JSON.stringify({
                             fecha: fecha.value,
-                            screen_id: pos.value
+                            screen_id: pos.value,
+                            itemsPerPage: itemsPerPage
                         }),
                         headers: {
                             'Content-Type': 'application/json',
