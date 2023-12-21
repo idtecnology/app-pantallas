@@ -77,30 +77,25 @@
 
 @section('js')
     <script>
-        window.onload = function() {
-            blur();
-            focus();
-        };
-
         function openFiles() {
             document.querySelector('#archivos').click();
         }
 
         function focus() {
             [].forEach.call(this.options, function(o) {
-                o.textContent = o.getAttribute('value') + ' Segundos';
+                o.textContent = o.getAttribute('value') + ' Segundos - $' + o.getAttribute('data-descr');
             });
         }
 
         function blur() {
             [].forEach.call(this.options, function(o) {
-                o.textContent = o.getAttribute('value') + ' Segundos - $' + o.getAttribute('data-descr');
+                o.textContent = o.getAttribute('value') + ' Segundos';
             });
         }
         [].forEach.call(document.querySelectorAll('.shortened-select'), function(s) {
             s.addEventListener('focus', focus);
             s.addEventListener('blur', blur);
-            focus.focus(s);
+            blur.call(s);
         });
 
         const spinner = document.getElementById("spinner");
