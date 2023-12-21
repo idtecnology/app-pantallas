@@ -43,10 +43,15 @@ class LoginController extends Controller
 
     public function showLoginForm()
     {
+        $data_gen = [
+            'prev_url' => "/",
+            'title' => 'Sube tu fotos o videos y publica con nosotros.'
+
+        ];
         // Almacenar la URL anterior en la sesión
         Session::put('previousUrl', url()->previous());
 
-        return view('auth.login');
+        return view('auth.login', compact('data_gen'));
     }
 
     public function login(Request $request)
@@ -83,5 +88,10 @@ class LoginController extends Controller
         $this->incrementLoginAttempts($request);
 
         return $this->sendFailedLoginResponse($request);
+    }
+
+    protected function authenticated(Request $request, $user)
+    {
+        return redirect('/'); // Personaliza la ruta de redirección después del inicio de sesión
     }
 }

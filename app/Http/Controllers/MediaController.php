@@ -29,6 +29,11 @@ class MediaController extends Controller
     }
     public function index()
     {
+        $data_gen = [
+            'prev_url' => "/home",
+            'title' => 'Sube tu fotos o videos y publica con nosotros.'
+
+        ];
         $user = auth()->user();
         if ($user->can('admin-list')) {
             $data = Media::select('media.*', 'users.email')
@@ -41,13 +46,18 @@ class MediaController extends Controller
         } else {
             $data = Media::where('client_id', '=', $user->id)->where('isPaid', '=', 1)->orderBy('_id', 'ASC')->paginate(20);
         }
-        return view('media.index', compact('data'));
+        return view('media.index', compact('data', 'data_gen'));
     }
 
     public function create()
     {
+        $data_gen = [
+            'prev_url' => "/sale",
+            'title' => 'Sube tu fotos o videos y publica con nosotros.'
+
+        ];
         $pos = Screen::all();
-        return view('media.create', compact('pos'));
+        return view('media.create', compact('pos', 'data_gen'));
     }
 
 
@@ -186,6 +196,11 @@ class MediaController extends Controller
     public function show($id)
     {
         $data = Media::find($id);
+        $data_gen = [
+            'prev_url' => "/sale",
+            'title' => 'Sube tu fotos o videos y publica con nosotros.'
+
+        ];
 
         $arr = [];
         if (is_array(json_decode($data['files_name'], true))) {
@@ -197,7 +212,7 @@ class MediaController extends Controller
             }
             // return json_decode($data['files_name']);
             $data['files_name'] = json_decode($data['files_name'], true);
-            return view('media.show', compact('data', 'arr'));
+            return view('media.show', compact('data', 'arr', 'data_gen'));
         } else {
 
             $url = pathinfo($data->files_name);
@@ -207,7 +222,7 @@ class MediaController extends Controller
             $data->files_name = Storage::disk('s3')->temporaryUrl($data->screen_id . '/' . date('Ymd', strtotime($data->date)) . '/' . $base . '.' . $extension, now()->addMinutes(1440));
             $data->save();
             $data['ext'] = $extension;
-            return view('media.show', compact('data'));
+            return view('media.show', compact('data', 'data_gen'));
         }
     }
 
@@ -244,9 +259,13 @@ class MediaController extends Controller
 
     public function grilla(Request $request)
     {
+        $data_gen = [
+            'prev_url' => "/home",
+            'title' => 'Sube tu fotos o videos y publica con nosotros.'
 
+        ];
         $pos = Screen::all();
-        return view('media.grilla', compact('pos'));
+        return view('media.grilla', compact('pos', 'data_gen'));
     }
 
 
@@ -335,8 +354,6 @@ class MediaController extends Controller
         $intervaloHoras = $horaInicio->diff($horaFin);
         $diferenciaEnHoras = $intervaloHoras->h;
         $fechaActual = $request->fecha_inicio;
-        $extensionesPermitidasVideo = ['mp4', 'mov', 'avi'];
-        $extensionesPermitidas = ['jpeg', 'png', 'jpg', 'webp'];
         $archivos = $request->file('files');
         $durationInSeconds = [];
 

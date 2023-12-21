@@ -18,14 +18,25 @@ class PagosController extends Controller
     public function index()
     {
 
+        $data_gen = [
+            'prev_url' => "/home",
+            'title' => 'Sube tu fotos o videos y publica con nosotros.'
+
+        ];
+
         $data = Pagos::select('pagos.*', 'users.name', 'users.last_name', 'users.email')
             ->join('users', 'users.id', '=', 'pagos.client_id')->get();
 
-        return view('pagos.index', compact('data'));
+        return view('pagos.index', compact('data', 'data_gen'));
     }
 
     public function show($id)
     {
+        $data_gen = [
+            'prev_url' => "/pagos",
+            'title' => 'Sube tu fotos o videos y publica con nosotros.'
+
+        ];
 
         $datos = Pagos::find($id);
 
@@ -50,7 +61,7 @@ class PagosController extends Controller
 
 
 
-            return view('pagos.show', compact('data', 'statusCode'));
+            return view('pagos.show', compact('data', 'statusCode', compact('data_gen')));
         } catch (\Exception $e) {
             // Manejar errores
             return response()->json(['error' => $e->getMessage()], 500);
@@ -73,6 +84,11 @@ class PagosController extends Controller
 
     public function failure(Request $request)
     {
+        $data_gen = [
+            'prev_url' => "/",
+            'title' => 'Sube tu fotos o videos y publica con nosotros.'
+
+        ];
         // return $request;
         $media_data = Media::where('preference_id', '=', $request->preference_id)->get()[0];
 
@@ -92,7 +108,7 @@ class PagosController extends Controller
             $media->isPaid = 0;
             $media->isActive = 0;
             $media->save();
-            return view('pagos.failure');
+            return view('pagos.failure', compact('data_gen'));
         }
     }
 
@@ -100,7 +116,11 @@ class PagosController extends Controller
 
     public function success(Request $request)
     {
+        $data_gen = [
+            'prev_url' => "/",
+            'title' => 'Sube tu fotos o videos y publica con nosotros.'
 
+        ];
 
         $media_data = Media::where('preference_id', '=', $request->preference_id)->get()[0];
 
@@ -145,7 +165,7 @@ class PagosController extends Controller
                 $message->from('no-responder@adsupp.com', 'AdsUpp');
             });
 
-            return view('pagos.success');
+            return view('pagos.success', compact('data_gen'));
         }
     }
 

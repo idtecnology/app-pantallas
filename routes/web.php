@@ -26,6 +26,7 @@ Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $r) {
     $r->fulfill();
     return redirect('/');
 })->middleware(['auth', 'signed'])->name('verification.verify');
+Route::get('/p1/{id}', [ScreenController::class, 'screenUno'])->name('pantalla1');
 
 
 Route::get('/', function () {

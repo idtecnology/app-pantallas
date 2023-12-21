@@ -69,6 +69,11 @@ class ScreenController extends Controller
     public function screenUno($id)
     {
         $screen = Screen::find($id);
+        $data_gen = [
+            'prev_url' => '/',
+            'title' => 'Sube tu fotos o videos y publica con nosotros.'
+
+        ];
 
 
         $prices = config('price-list.PRICE_LIST');
@@ -82,13 +87,19 @@ class ScreenController extends Controller
 
 
 
-        return view('pantalla1', compact('id', 'screen', 'prices'));
+        return view('pantalla1', compact('id', 'screen', 'prices', 'data_gen'));
     }
 
     public function screenDos($id, $time, $media_id, $preference_id)
     {
         $data = new MediaController();
         $datas = $data::getDataMedia($media_id);
+
+        $data_gen = [
+            'prev_url' => "/p1/$id",
+            'title' => 'Sube tu fotos o videos y publica con nosotros.'
+
+        ];
 
 
         $prices = config('price-list.PRICE_LIST');
@@ -119,6 +130,6 @@ class ScreenController extends Controller
         }
 
 
-        return view('pantalla2', compact('id', 'time', 'rutaLocal', 'media_id', 'arr', 'preference_id', 'datas'));
+        return view('pantalla2', compact('id', 'time', 'rutaLocal', 'media_id', 'arr', 'preference_id', 'datas', 'data_gen'));
     }
 }

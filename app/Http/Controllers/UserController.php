@@ -23,7 +23,13 @@ class UserController extends Controller
     {
         $data = User::where('isUser', '=', 1)->paginate(5);
 
-        return view('users.index', compact('data'))
+        $data_gen = [
+            'prev_url' => "/home",
+            'title' => 'Sube tu fotos o videos y publica con nosotros.'
+
+        ];
+
+        return view('users.index', compact('data', 'data_gen'))
             ->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
@@ -34,8 +40,13 @@ class UserController extends Controller
      */
     public function create(): View
     {
+        $data_gen = [
+            'prev_url' => "/mantenice/users",
+            'title' => 'Sube tu fotos o videos y publica con nosotros.'
+
+        ];
         $roles = Role::pluck('name', 'name')->all();
-        return view('users.create', compact('roles'));
+        return view('users.create', compact('roles', 'data_gen'));
     }
 
     /**
@@ -73,8 +84,13 @@ class UserController extends Controller
      */
     public function show($id): View
     {
+        $data_gen = [
+            'prev_url' => "/mantenice/users",
+            'title' => 'Sube tu fotos o videos y publica con nosotros.'
+
+        ];
         $user = User::find($id);
-        return view('users.show', compact('user'));
+        return view('users.show', compact('user', 'data_gen'));
     }
 
     /**
@@ -85,11 +101,16 @@ class UserController extends Controller
      */
     public function edit($id): View
     {
+        $data_gen = [
+            'prev_url' => "/mantenice/users",
+            'title' => 'Sube tu fotos o videos y publica con nosotros.'
+
+        ];
         $user = User::find($id);
         $roles = Role::pluck('name', 'name')->all();
         $userRole = $user->roles->pluck('name', 'name')->all();
 
-        return view('users.edit', compact('user', 'roles', 'userRole'));
+        return view('users.edit', compact('user', 'roles', 'userRole', 'data_gen'));
     }
 
     /**
@@ -143,8 +164,12 @@ class UserController extends Controller
     {
         $user = User::find($id);
 
-        // return $user;
+        $data_gen = [
+            'prev_url' => "/home",
+            'title' => 'Sube tu fotos o videos y publica con nosotros.'
 
-        return view('users.profile', compact('user'));
+        ];
+
+        return view('users.profile', compact('user', 'data_gen'));
     }
 }

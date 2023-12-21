@@ -54,10 +54,10 @@
 <body>
     <div id="app">
         <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm sticky-top">
-
             <div class="container">
                 @if (request()->route()->uri !== '/')
-                    <a href="{{ url()->previous() }}" class="" type="button">
+                    <a href="{{ !isset($data_gen['prev_url']) ? './../' : $data_gen['prev_url'] }}" class=""
+                        type="button">
                         <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
                             <path d="M400-80 0-480l400-400 71 71-329 329 329 329-71 71Z" />
                         </svg>

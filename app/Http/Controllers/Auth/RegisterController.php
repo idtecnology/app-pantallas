@@ -29,7 +29,7 @@ class RegisterController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = RouteServiceProvider::HOME;
+    protected $redirectTo = '/';
 
     /**
      * Create a new controller instance.
@@ -75,5 +75,21 @@ class RegisterController extends Controller
         ]);
         $user->assignRole('client');
         return $user;
+    }
+
+
+    public function showRegistrationForm()
+    {
+        $data_gen = [
+            'prev_url' => "/",
+            'title' => 'Sube tu fotos o videos y publica con nosotros.'
+
+        ];
+        return view('auth.register', compact('data_gen'));
+    }
+
+    protected function registered(RegistersUsers $request, $user)
+    {
+        return redirect('/'); // Personaliza la ruta de redirección después del registro
     }
 }

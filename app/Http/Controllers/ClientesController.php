@@ -23,7 +23,13 @@ class ClientesController extends Controller
     {
         $data = User::where('isUser', '=', 0)->paginate(5);
 
-        return view('clients.index', compact('data'))
+        $data_gen = [
+            'prev_url' => "/home",
+            'title' => 'Sube tu fotos o videos y publica con nosotros.'
+
+        ];
+
+        return view('clients.index', compact('data', 'data_gen'))
             ->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
@@ -34,7 +40,12 @@ class ClientesController extends Controller
      */
     public function create(): View
     {
-        return view('clients.create');
+        $data_gen = [
+            'prev_url' => "/mantenice/clients",
+            'title' => 'Sube tu fotos o videos y publica con nosotros.'
+
+        ];
+        return view('clients.create', 'data_gen');
     }
 
     /**
@@ -76,8 +87,13 @@ class ClientesController extends Controller
      */
     public function show($id): View
     {
+        $data_gen = [
+            'prev_url' => "/mantenice/clients",
+            'title' => 'Sube tu fotos o videos y publica con nosotros.'
+
+        ];
         $user = User::find($id);
-        return view('clients.show', compact('user'));
+        return view('clients.show', compact('user', 'data_gen'));
     }
 
     /**
@@ -89,8 +105,13 @@ class ClientesController extends Controller
     public function edit($id): View
     {
         $user = User::find($id);
+        $data_gen = [
+            'prev_url' => "/mantenice/clients",
+            'title' => 'Sube tu fotos o videos y publica con nosotros.'
 
-        return view('clients.edit', compact('user'));
+        ];
+
+        return view('clients.edit', compact('user', 'data_gen'));
     }
 
     /**
