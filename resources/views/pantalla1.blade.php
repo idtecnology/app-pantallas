@@ -100,6 +100,10 @@
                 updateOptionTexts(select, true);
             });
 
+            select.addEventListener('click', function() {
+                updateOptionTexts(select, true);
+            });
+
             select.addEventListener('blur', function() {
                 setTimeout(function() {
                     updateOptionTexts(select, false);
