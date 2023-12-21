@@ -63,7 +63,8 @@
             <div class="col-12 mb-3">
                 <div class="form-group">
                     <strong>Multimedia:</strong>
-                    <input type="file" required id="files" name='files[]' multiple class="form-control">
+                    <input type="file" required id="files" name='files[]' accept="image/*,video/*"
+                        class="form-control">
 
                 </div>
             </div>
@@ -78,7 +79,6 @@
 
 @section('js')
     <script>
-        const csrfToken = "{{ csrf_token() }}";
         document.getElementById('miFormulario').addEventListener('submit', function(event) {
             event.preventDefault();
             // Realiza la validación aquí
@@ -135,7 +135,17 @@
 
             const formData = new FormData(this);
 
-            Swal.showLoading();
+            // Swal.showLoading();
+
+            Swal.fire({
+                title: 'Carga Masiva',
+                html: 'Se esta cargando su data por favor espere.', // add html attribute if you want or remove
+                showLoaderOnConfirm: false,
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading()
+                },
+            });
 
             fetch("{{ route('sale.store-massive') }}", {
                     method: 'POST',

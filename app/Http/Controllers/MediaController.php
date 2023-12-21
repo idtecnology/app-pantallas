@@ -29,6 +29,7 @@ class MediaController extends Controller
     }
     public function index()
     {
+
         $data_gen = [
             'prev_url' => "/home",
             'title' => 'Sube tu fotos o videos y publica con nosotros.'
@@ -114,7 +115,11 @@ class MediaController extends Controller
                     }
                 }
                 Media::where('_id', '=', $request->media_id)->update(['files_name' => json_encode($validatedMedia['files_names'])]);
-                return response()->json(['mensaje' => 'éxito']);
+                if (isset($request->momentun)) {
+                    return response()->json(['mensaje' => 'exito', 'files' => $validatedMedia['files_names'], 'path' => storage_path('app/public/uploads/tmp/'), 'status' => 1]);
+                } else {
+                    return response()->json(['mensaje' => 'exito', 'status' => 1]);
+                }
             } else {
                 //insertamos nuevos. 
                 $media = new Media();
@@ -140,7 +145,7 @@ class MediaController extends Controller
                 $upd_me->preference_id = $preference->id;
                 $upd_me->save();
 
-                return response()->json(['mensaje' => 'Archivos guardados con éxito', 'media_id' => $media->_id, 'preference_id' => $preference->id]);
+                return response()->json(['mensaje' => 'Archivos guardados con éxito', 'media_id' => $media->_id]);
             }
         } else {
             return response()->json(['mensaje' => $validatedMedia['message'], 'status' => 0]);
@@ -329,7 +334,7 @@ class MediaController extends Controller
     public function storeMassive(Request $request)
     {
 
-        // return $request;
+        return $request;
 
         $campania = new Campania();
 

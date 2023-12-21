@@ -13,8 +13,7 @@
 
     {{-- <meta http-equiv="Content-Security-Policy" content="script-src 'none'"> --}}
 
-    <!-- CSRF Token -->
-
+    <meta name="auth-check" content="{{ auth()->check() }}">
 
     <title>{{ config('app.name', 'AdsUpp') }}</title>
 
@@ -27,6 +26,7 @@
 
     <link rel="preload" href="/images/logo2.jpg" as="image">
     <link rel="prefetch" href="https://sdk.mercadopago.com/js/v2" />
+    <link rel="prefetch" href="{{ asset('/js/functions.js') }}" />
 
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.bunny.net">
@@ -39,6 +39,8 @@
     <!-- Scripts -->
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
     <script src="https://sdk.mercadopago.com/js/v2"></script>
+    <script src="{{ asset('/js/functions.js') }}"></script>
+
 
     <style>
         .material-symbols-outlined {
@@ -245,9 +247,6 @@
     <!-- end sidebar -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     @yield('js')
-
-    <!-- Nav tabs -->
-
 </body>
 
 </html>

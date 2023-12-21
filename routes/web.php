@@ -26,7 +26,6 @@ Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $r) {
     $r->fulfill();
     return redirect('/');
 })->middleware(['auth', 'signed'])->name('verification.verify');
-Route::get('/p1/{id}', [ScreenController::class, 'screenUno'])->name('pantalla1');
 
 
 Route::get('/', function () {
@@ -48,7 +47,7 @@ Route::get('/p1/{id}', [ScreenController::class, 'screenUno'])->name('pantalla1'
 Route::group(['middleware' => ['auth']], function () {
 
     Route::get('/email/verify', [VerificationController::class, 'show'])->name('verification.notice');
-    Route::get('/p2/{id}/{time}/{media_id}/{preference_id}', [ScreenController::class, 'screenDos'])->name('pantalla2');
+    Route::post('/p2', [ScreenController::class, 'screenDos']);
 
     Route::resource('/tramo', TramoController::class);
 

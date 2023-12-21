@@ -41,7 +41,7 @@
                         </div>
 
                     </a>
-                    <input style="display: none" type="file" id="archivos" multiple>
+                    <input style="display: none" type="file" id="archivos" accept="image/*,video/*" multiple>
                 </div>
             @endcan
         </div>
@@ -71,16 +71,10 @@
                 publicación</p>
         </div>
     </div>
-
-    <input id="checkSess" type="hidden" value="{{ auth()->check() }}">
 @endsection
 
 @section('js')
     <script>
-        function openFiles() {
-            document.querySelector('#archivos').click();
-        }
-
         function updateOptionTexts(select, showPrice) {
             [].forEach.call(select.options, function(o) {
                 if (showPrice) {
@@ -113,8 +107,7 @@
             updateOptionTexts(select, false);
         });
 
-        const spinner = document.getElementById("spinner");
-        var checkSess = document.getElementById('checkSess').value;
+
 
         document.getElementById('archivos').addEventListener('click', function(event) {
             if (checkSess != 1) {
@@ -124,7 +117,7 @@
         });
 
 
-        const csrfToken = "{{ csrf_token() }}";
+
         document.getElementById('archivos').addEventListener('change', function() {
 
             var inputArchivos = document.getElementById('archivos');
@@ -139,9 +132,13 @@
             formData.append('screen_id', {{ $id }});
             formData.append('tiempo', tiempo);
             formData.append('client_id', {{ auth()->id() }});
-            Swal.showLoading();
 
-            // spinner.removeAttribute('hidden');
+            notifySpinner({
+                title: 'Cargando datos!',
+                html: 'Se estan comprobando tus archivos',
+                allowOutsideClick: false,
+                showLoaderOnConfirm: false,
+            });
 
             fetch("/api/guardarData", {
                     method: 'POST',
@@ -153,22 +150,48 @@
                 .then(response => response.json())
                 .then(data => {
                     Swal.hideLoading()
-                    // console.log(data)
-                    // return;
-
                     if (data.status == 0) {
                         Swal.hideLoading()
-                        Swal.fire({
+
+                        notifyGeneral({
                             title: 'Cargando datos!',
                             text: data.mensaje,
-                            icon: 'error',
+                            icon: 'error'
                         })
+
                         document.getElementById('archivos').value = ''
                     } else {
-                        Swal.hideLoading(Swal.disableButtons())
-                        var urlConParametro =
-                            `/p2/{{ $id }}/${tiempo}/${data.media_id}/${data.preference_id}`
-                        window.location.href = urlConParametro;
+                        var form = document.createElement('form');
+                        form.method = 'POST';
+                        form.action = '/p2';
+
+                        var csrfInput = document.createElement('input');
+                        csrfInput.type = 'hidden';
+                        csrfInput.name = '_token';
+                        csrfInput.value = csrfToken;
+
+                        var screenIdInput = document.createElement('input');
+                        screenIdInput.type = 'hidden';
+                        screenIdInput.name = 'screen_id';
+                        screenIdInput.value = {{ $id }};
+
+                        var tiempoInput = document.createElement('input');
+                        tiempoInput.type = 'hidden';
+                        tiempoInput.name = 'tiempo';
+                        tiempoInput.value = tiempo;
+
+                        var mediaIdInput = document.createElement('input');
+                        mediaIdInput.type = 'hidden';
+                        mediaIdInput.name = 'media_id';
+                        mediaIdInput.value = data.media_id;
+
+                        form.appendChild(csrfInput);
+                        form.appendChild(screenIdInput);
+                        form.appendChild(tiempoInput);
+                        form.appendChild(mediaIdInput);
+
+                        document.body.appendChild(form);
+                        form.submit();
                     }
 
                 })

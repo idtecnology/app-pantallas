@@ -57,6 +57,11 @@ class LoginController extends Controller
     public function login(Request $request)
     {
 
+        $data_gen = [
+            'prev_url' => "/",
+            'title' => 'Sube tu fotos o videos y publica con nosotros.'
+
+        ];
 
         $this->validateLogin($request);
 
@@ -78,7 +83,7 @@ class LoginController extends Controller
             if (Auth::user()->hasVerifiedEmail()) {
                 return $this->sendLoginResponse($request);
             } else {
-                return view('auth.verify');
+                return view('auth.verify', compact('data_gen'));
             }
         }
 

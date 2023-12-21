@@ -52,7 +52,6 @@
 
 @section('js')
     <script>
-        const csrfToken = "{{ csrf_token() }}";
         var prevButton = document.getElementById('prevButton');
         var nextButton = document.getElementById('nextButton');
         var fecha_programacion = document.querySelector('#fecha_programacion')
