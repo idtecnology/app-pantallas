@@ -30,20 +30,18 @@
                     @endforeach
                 </select>
             </div>
-            @can('admin-list')
-                <div class="w-50">
-                    <a onclick="openFiles()" id="mienlace" class="btn btn-primary w-100 rounded-pill text-center">
-                        <div class="d-flex align-middle justify-content-center align-items-center">
-                            <span class="material-symbols-outlined md-18 ">
-                                photo_camera
-                            </span>
-                            <span class="ml-4p">Agrega contenido</span>
-                        </div>
+            <div class="w-50">
+                <a onclick="openFiles()" id="mienlace" class="btn btn-primary w-100 rounded-pill text-center">
+                    <div class="d-flex align-middle justify-content-center align-items-center">
+                        <span class="material-symbols-outlined md-18 ">
+                            photo_camera
+                        </span>
+                        <span class="ml-4p">Agrega contenido</span>
+                    </div>
 
-                    </a>
-                    <input style="display: none" type="file" id="archivos" accept="image/*,video/*" multiple>
-                </div>
-            @endcan
+                </a>
+                <input style="display: none" type="file" id="archivos" accept="image/*,video/*" multiple>
+            </div>
         </div>
     </div>
     <div class="d-flex flex-column">
