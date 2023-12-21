@@ -81,22 +81,22 @@
             document.querySelector('#archivos').click();
         }
 
-        function focus() {
-            [].forEach.call(this.options, function(o) {
-                o.textContent = o.getAttribute('value') + ' - ' + o.getAttribute('data-descr');
-            });
-        }
+        // function focus() {
+        //     [].forEach.call(this.options, function(o) {
+        //         o.textContent = o.getAttribute('value') + ' - ' + o.getAttribute('data-descr');
+        //     });
+        // }
 
-        function blur() {
-            [].forEach.call(this.options, function(o) {
-                o.textContent = o.getAttribute('value') + ' Segundos';
-            });
-        }
-        [].forEach.call(document.querySelectorAll('.shortened-select'), function(s) {
-            // s.addEventListener('focus', focus);
-            s.addEventListener('blur', blur);
-            blur.call(s);
-        });
+        // function blur() {
+        //     [].forEach.call(this.options, function(o) {
+        //         o.textContent = o.getAttribute('value') + ' Segundos';
+        //     });
+        // }
+        // [].forEach.call(document.querySelectorAll('.shortened-select'), function(s) {
+        //     // s.addEventListener('focus', focus);
+        //     s.addEventListener('blur', blur);
+        //     blur.call(s);
+        // });
 
         const spinner = document.getElementById("spinner");
         var checkSess = document.getElementById('checkSess').value;
