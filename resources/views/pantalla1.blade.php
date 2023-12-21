@@ -83,7 +83,7 @@
 
         function focus() {
             [].forEach.call(this.options, function(o) {
-                o.textContent = o.getAttribute('value') + o.getAttribute('data-descr');
+                o.textContent = o.getAttribute('value') + ' Segundos';
             });
         }
 
