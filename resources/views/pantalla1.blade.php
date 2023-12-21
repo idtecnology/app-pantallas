@@ -24,7 +24,7 @@
                 <select class="form-select rounded-pill bg-primario text-white shortened-select" name="" id="tiempo">
                     @foreach ($prices as $price)
                         <option value="{{ $price['seconds'] }}" data-descr="${{ $price['amount'] }}">
-                            {{ $price['seconds'] }} - ${{ $price['amount'] }}
+                            {{ $price['seconds'] }}
 
                         </option>
                     @endforeach
