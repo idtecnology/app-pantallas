@@ -81,21 +81,32 @@
             document.querySelector('#archivos').click();
         }
 
-        function focus() {
-            [].forEach.call(this.options, function(o) {
-                o.textContent = o.getAttribute('value') + ' Segundos'
+        function updateOptionTexts(select, showPrice) {
+            [].forEach.call(select.options, function(o) {
+                if (showPrice) {
+                    o.textContent = o.getAttribute('value') + ' Segundos - $' + o.getAttribute('data-descr');
+                } else {
+                    o.textContent = o.getAttribute('value') + ' Segundos';
+                }
             });
         }
 
-        function blur() {
-            [].forEach.call(this.options, function(o) {
-                o.textContent = o.getAttribute('value') + ' Segundos - $' + o.getAttribute('data-descr');
+        document.querySelectorAll('.shortened-select').forEach(function(select) {
+            select.addEventListener('change', function() {
+                updateOptionTexts(select, false);
             });
-        }
-        [].forEach.call(document.querySelectorAll('.shortened-select'), function(s) {
-            s.addEventListener('focus', focus);
-            s.addEventListener('blur', blur);
-            blur.call(s);
+
+            select.addEventListener('touchstart', function() {
+                updateOptionTexts(select, true);
+            });
+
+            select.addEventListener('blur', function() {
+                setTimeout(function() {
+                    updateOptionTexts(select, false);
+                }, 0);
+            });
+
+            updateOptionTexts(select, false);
         });
 
         const spinner = document.getElementById("spinner");
