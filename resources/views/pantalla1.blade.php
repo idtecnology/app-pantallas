@@ -89,7 +89,7 @@
 
         function blur() {
             [].forEach.call(this.options, function(o) {
-                o.textContent = o.getAttribute('value') + ' Segundos' + o.getAttribute('data-descr');
+                o.textContent = o.getAttribute('value') + ' Segundos $' + o.getAttribute('data-descr');
             });
         }
         [].forEach.call(document.querySelectorAll('.shortened-select'), function(s) {
