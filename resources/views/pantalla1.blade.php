@@ -24,7 +24,7 @@
                 <select class="form-select rounded-pill bg-primario text-white shortened-select" name="" id="tiempo">
                     @foreach ($prices as $price)
                         <option value="{{ $price['seconds'] }}" data-descr="${{ $price['amount'] }}">
-                            {{ $price['seconds'] }}
+                            {{ $price['seconds'] }} Segundos
 
                         </option>
                     @endforeach
@@ -93,17 +93,13 @@
             });
         }
 
-        function click() {
-            [].forEach.call(this.options, function(o) {
-                o.textContent = o.getAttribute('value') + ' Segundos - ' + o.getAttribute('data-descr')
-            });
-        }
+
 
         [].forEach.call(document.querySelectorAll('.shortened-select'), function(s) {
             s.addEventListener('focus', focus);
             s.addEventListener('blur', blur);
-            s.addEventListener('click', click);
-            blur.call(click);
+
+            blur.call(focus);
         });
 
         const spinner = document.getElementById("spinner");
