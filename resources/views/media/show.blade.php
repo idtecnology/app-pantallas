@@ -75,11 +75,13 @@
         <div class="col-sm-8 col-xs-12 mt-4">
 
             @foreach ($data->files_name as $k => $valor)
-                @if ($arr[$k] === 'mp4')
-                    <div class="col-3"><video width="600px" height="400px" controls>
-                            <source src="{{ $valor['file_name'] }}" type="video/mp4">
+                @if (in_array($arr[$k], config('ext_aviable.EXTENSIONES_PERMITIDAS_VIDEO')))
+                    <div class="col-3">
+                        <video width="600px" height="400px" controls src="{{ $valor['file_name'] }}">
+                            {{-- <source src="{{ $valor['file_name'] }}" type="video/{{ $arr[$k] }}" /> --}}
                             Your browser does not support the video tag.
-                        </video></div>
+                        </video>
+                    </div>
                 @else
                     <div class=" text-center">
                         <img width="600px" height="400px" src="{{ $valor['file_name'] }}" alt=""

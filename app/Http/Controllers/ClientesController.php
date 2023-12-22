@@ -45,7 +45,7 @@ class ClientesController extends Controller
             'title' => 'Sube tu fotos o videos y publica con nosotros.'
 
         ];
-        return view('clients.create', 'data_gen');
+        return view('clients.create', compact('data_gen'));
     }
 
     /**
@@ -147,16 +147,10 @@ class ClientesController extends Controller
             ->with('success', 'User updated successfully');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id): RedirectResponse
+
+    public function destroy($id)
     {
         User::find($id)->delete();
-        return redirect()->route('clients.index')
-            ->with('success', 'User deleted successfully');
+        return response()->json(['status' => 1, 'message' => 'exito'], 200);
     }
 }

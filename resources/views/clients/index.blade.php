@@ -53,6 +53,14 @@
                             class="material-symbols-outlined" style="vertical-align: middle;">
                             edit
                         </span></a>
+
+
+                    <a class="btn btn-danger" onclick="deletClient({{ $user->id }});">
+                        <span class="material-symbols-outlined" style="vertical-align: middle;">
+                            delete
+                        </span></a>
+
+
                 </td>
             </tr>
         @endforeach
@@ -60,4 +68,52 @@
 
 
     {!! $data->render() !!}
+@endsection
+
+
+@section('js')
+    <script>
+        function deletClient(id) {
+            const url2 = `/mantenice/clients/${id}`;
+            Swal.fire({
+                title: "Estas seguro de eliminar al usuario? ",
+                text: "Estos cambios son irreversibles",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Si, deseo Eliminar"
+            }).then((result) => {
+
+
+
+
+                fetch(url2, {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': csrfToken
+                        },
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! Status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        Swal.fire({
+                            title: "Eliminado!",
+                            text: "El usuario ha sido eliminado con exito",
+                            icon: "success"
+                        });
+                        window.location.href = '/mantenice/clients';
+                    })
+                    .catch(error => {
+                        // Aquí manejas el error
+                        console.error('Error al intentar eliminar:', error);
+                    });
+            });
+        }
+    </script>
 @endsection

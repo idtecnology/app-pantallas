@@ -26,7 +26,7 @@ class Tramo extends Model
             ->where('duracion', '>=', $duration)
             ->where('screen_id', '=', $screen_id)
             ->whereRaw("TIMEDIFF(CONCAT(fecha, ' ', tramos), NOW()) > '00:10:00'")
-            ->whereRaw("NOT tramos BETWEEN '02:00' and '06:50'")
+            ->whereRaw("NOT tramos BETWEEN '02:00' and '09:50'")
             ->get();
     }
 

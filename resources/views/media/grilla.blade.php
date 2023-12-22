@@ -28,7 +28,7 @@
         </div>
     </div>
     <div class="col-xs-12 text-center">
-        <div style="display: none;" id="programacion">
+        <div style="display: none;" id="programacion" class="overflow-scroll">
             <table class="table table-sm mb-0 mt-3  table-bordered">
                 <thead>
                     <tr>
@@ -43,9 +43,12 @@
             </table>
 
         </div>
-        <div style="display: none;" class="mt-3" id="pag">
-            <button class="btn btn-sm btn-primary" id="prevButton"> Siguiente </button>
-            <button class="btn btn-sm btn-primary" id="nextButton"> Anterior </button>
+
+    </div>
+    <div style="display: none;" class="col-12 text-center" id="pag">
+        <div class="mt-3 d-flex justify-content-evenly">
+            <button class="btn btn-sm btn-primary" id="prevButton"> Anterior </button>
+            <button class="btn btn-sm btn-primary" id="nextButton"> Siguiente </button>
         </div>
     </div>
 @endsection
@@ -133,7 +136,7 @@
                 var fecha = document.querySelector('#fecha_programacion')
                 var pos = document.querySelector('#screen_id')
                 // var page = page
-                var itemsPerPage = 50;
+                var itemsPerPage = 5;
 
                 fetch("{{ route('search-programation') }}?page=" + page + "&itemsPerPage=" + itemsPerPage, {
                         method: 'POST',
@@ -187,15 +190,17 @@
                     const row = document.createElement('tr');
                     const campaniaEmailCell = document.createElement('td');
                     campaniaEmailCell.textContent = dato.campania_name ? dato.campania_name : dato.email;
+                    campaniaEmailCell.classList = 'align-middle'
                     row.appendChild(campaniaEmailCell);
                     const reproducidoCell = document.createElement('td');
-                    reproducidoCell.textContent = dato.media_duration === null ? '15 segundos' : `${dato
-                        .media_duration} segundos`;
+                    reproducidoCell.textContent = dato.media_duration === null ? '15 Segundos' : `${dato
+                        .media_duration} Segundos`;
                     row.appendChild(reproducidoCell);
                     const repro = document.createElement('td');
                     repro.textContent = dato.media_reproducido === 1 ? 'Reproducido' : '';
                     row.appendChild(repro);
                     const estadoCell = document.createElement('td');
+                    estadoCell.classList = 'align-middle'
                     const switchDiv = document.createElement('div');
                     switchDiv.classList.add('form-check', 'form-switch');
                     const switchInput = document.createElement('input');

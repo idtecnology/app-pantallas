@@ -26,9 +26,9 @@
 
             @foreach ($arr as $llave => $ext)
                 <div class="col-md-4 col-xs-12 col-sm-6">
-                    @if ($ext == 'mp4' || $ext == 'mov')
-                        <video class="img-fluid img-thumbnail" width="320" height="240" controls>
-                            <source src="{{ asset($rutaLocal[$llave]) }}" type="video/{{ $ext }}">
+                    @if (in_array($ext, config('ext_aviable.EXTENSIONES_PERMITIDAS_VIDEO')))
+                        <video class="img-fluid img-thumbnail" width="320" height="240" controls
+                            src="{{ asset($rutaLocal[$llave]) }}">
                             Your browser does not support the video tag.
                         </video>
                     @else
@@ -201,8 +201,7 @@
                                     `<img class="img-fluid img-thumbnail" width="200px" height="200px" src="${url}${data.files[i].file_name}" alt="">`
 
                             } else if (extensionesVideo.includes(fileExtension.toLowerCase())) {
-                                add += `<video class="img-fluid img-thumbnail" width="320" height="240" controls>
-                            <source src="${url}${data.files[i].file_name}" type="video/${fileExtension == 'mov' ? 'quicktime': fileExtension}">
+                                add += `<video class="img-fluid img-thumbnail" width="320" height="240" src="${url}${data.files[i].file_name}" controls>
                             Your browser does not support the video tag.
                         </video>`
                             } else {

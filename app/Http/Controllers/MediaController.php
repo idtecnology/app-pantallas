@@ -334,7 +334,7 @@ class MediaController extends Controller
     public function storeMassive(Request $request)
     {
 
-        return $request;
+        // return $request;
 
         $campania = new Campania();
 

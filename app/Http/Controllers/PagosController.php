@@ -24,7 +24,8 @@ class PagosController extends Controller
 
         ];
 
-        $data = Pagos::select('pagos.*', 'users.name', 'users.last_name', 'users.email')
+        $data = Pagos::select('pagos.*', 'users.name', 'users.last_name', 'users.email', 'media.reproducido')
+            ->join('media', 'media.preference_id', '=', 'pagos.preference_id')
             ->join('users', 'users.id', '=', 'pagos.client_id')->get();
 
         return view('pagos.index', compact('data', 'data_gen'));
@@ -61,7 +62,7 @@ class PagosController extends Controller
 
 
 
-            return view('pagos.show', compact('data', 'statusCode', compact('data_gen')));
+            return view('pagos.show', compact('data', 'statusCode', 'data_gen'));
         } catch (\Exception $e) {
             // Manejar errores
             return response()->json(['error' => $e->getMessage()], 500);
