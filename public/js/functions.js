@@ -9,8 +9,42 @@ const checkSess = document
 //mostrar imgs
 const url = "http://localhost:8000/storage/uploads/tmp/";
 
-const extensionesImagen = ["jpg", "jpeg", "png", "gif", "bmp"];
-const extensionesVideo = ["mp4", "avi", "mkv", "mov", "wmv"];
+const extensionesImagen = [
+    "bmp",
+    "gif",
+    "jpg",
+    "jpeg",
+    "png",
+    "svg",
+    "webp",
+    "BMP",
+    "GIF",
+    "JPG",
+    "JPEG",
+    "PNG",
+    "SVG",
+    "WEBP",
+];
+const extensionesVideo = [
+    "avi",
+    "m4v",
+    "mov",
+    "mp4",
+    "mpeg",
+    "ogv",
+    "qt",
+    "webm",
+    "wmv",
+    "AVI",
+    "M4V",
+    "MOV",
+    "MP4",
+    "MPEG",
+    "OGV",
+    "QT",
+    "WEBM",
+    "VWM",
+];
 
 function formatearFecha(fechaOriginal) {
     var fecha = new Date(fechaOriginal + "T00:00:00-04:00");

@@ -12,7 +12,8 @@ class ScreenController extends Controller
 
     {
         $this->middleware('verified');
-        $this->middleware('permission:admin-list|admin-create|admin-edit|admin-delete', ['only' => ['index', 'show', 'screenDos']]);
+        $this->middleware('permission:client-list', ['only' => ['screenUno', 'screenDos']]);
+        $this->middleware('permission:admin-list|admin-create|admin-edit|admin-delete', ['only' => ['index', 'show']]);
         $this->middleware('permission:admin-create', ['only' => ['create', 'store']]);
         $this->middleware('permission:admin-edit', ['only' => ['edit', 'update']]);
         $this->middleware('permission:admin-delete', ['only' => ['destroy']]);

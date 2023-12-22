@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
 use App\Models\User;
 use Illuminate\Foundation\Auth\RegistersUsers;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
@@ -88,7 +89,7 @@ class RegisterController extends Controller
         return view('auth.register', compact('data_gen'));
     }
 
-    protected function registered(RegistersUsers $request, $user)
+    protected function registered(Request $request, $user)
     {
         return redirect('/'); // Personaliza la ruta de redirección después del registro
     }
