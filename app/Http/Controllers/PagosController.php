@@ -26,7 +26,9 @@ class PagosController extends Controller
 
         $data = Pagos::select('pagos.*', 'users.name', 'users.last_name', 'users.email', 'media.reproducido')
             ->join('media', 'media.preference_id', '=', 'pagos.preference_id')
-            ->join('users', 'users.id', '=', 'pagos.client_id')->get();
+            ->join('users', 'users.id', '=', 'pagos.client_id')
+            ->orderBy('pagos._id', 'DESC')
+            ->get();
 
         return view('pagos.index', compact('data', 'data_gen'));
     }
