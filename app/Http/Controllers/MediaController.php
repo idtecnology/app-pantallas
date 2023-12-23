@@ -29,6 +29,12 @@ class MediaController extends Controller
     }
     public function index()
     {
+
+        $data_gen = [
+            'prev_url' => "/home",
+            'title' => 'Sube tu fotos o videos y publica con nosotros.'
+
+        ];
         $user = auth()->user();
         if ($user->can('admin-list')) {
             $data = Media::select('media.*', 'users.email')
@@ -41,13 +47,18 @@ class MediaController extends Controller
         } else {
             $data = Media::where('client_id', '=', $user->id)->where('isPaid', '=', 1)->orderBy('_id', 'ASC')->paginate(20);
         }
-        return view('media.index', compact('data'));
+        return view('media.index', compact('data', 'data_gen'));
     }
 
     public function create()
     {
+        $data_gen = [
+            'prev_url' => "/sale",
+            'title' => 'Sube tu fotos o videos y publica con nosotros.'
+
+        ];
         $pos = Screen::all();
-        return view('media.create', compact('pos'));
+        return view('media.create', compact('pos', 'data_gen'));
     }
 
 
@@ -104,7 +115,11 @@ class MediaController extends Controller
                     }
                 }
                 Media::where('_id', '=', $request->media_id)->update(['files_name' => json_encode($validatedMedia['files_names'])]);
-                return response()->json(['mensaje' => 'éxito']);
+                if (isset($request->momentun)) {
+                    return response()->json(['mensaje' => 'exito', 'files' => $validatedMedia['files_names'], 'path' => storage_path('app/public/uploads/tmp/'), 'status' => 1]);
+                } else {
+                    return response()->json(['mensaje' => 'exito', 'status' => 1]);
+                }
             } else {
                 //insertamos nuevos. 
                 $media = new Media();
@@ -130,7 +145,7 @@ class MediaController extends Controller
                 $upd_me->preference_id = $preference->id;
                 $upd_me->save();
 
-                return response()->json(['mensaje' => 'Archivos guardados con éxito', 'media_id' => $media->_id, 'preference_id' => $preference->id]);
+                return response()->json(['mensaje' => 'Archivos guardados con éxito', 'media_id' => $media->_id]);
             }
         } else {
             return response()->json(['mensaje' => $validatedMedia['message'], 'status' => 0]);
@@ -186,6 +201,11 @@ class MediaController extends Controller
     public function show($id)
     {
         $data = Media::find($id);
+        $data_gen = [
+            'prev_url' => "/sale",
+            'title' => 'Sube tu fotos o videos y publica con nosotros.'
+
+        ];
 
         $arr = [];
         if (is_array(json_decode($data['files_name'], true))) {
@@ -197,7 +217,7 @@ class MediaController extends Controller
             }
             // return json_decode($data['files_name']);
             $data['files_name'] = json_decode($data['files_name'], true);
-            return view('media.show', compact('data', 'arr'));
+            return view('media.show', compact('data', 'arr', 'data_gen'));
         } else {
 
             $url = pathinfo($data->files_name);
@@ -207,7 +227,7 @@ class MediaController extends Controller
             $data->files_name = Storage::disk('s3')->temporaryUrl($data->screen_id . '/' . date('Ymd', strtotime($data->date)) . '/' . $base . '.' . $extension, now()->addMinutes(1440));
             $data->save();
             $data['ext'] = $extension;
-            return view('media.show', compact('data'));
+            return view('media.show', compact('data', 'data_gen'));
         }
     }
 
@@ -244,9 +264,13 @@ class MediaController extends Controller
 
     public function grilla(Request $request)
     {
+        $data_gen = [
+            'prev_url' => "/home",
+            'title' => 'Sube tu fotos o videos y publica con nosotros.'
 
+        ];
         $pos = Screen::all();
-        return view('media.grilla', compact('pos'));
+        return view('media.grilla', compact('pos', 'data_gen'));
     }
 
 
@@ -335,13 +359,11 @@ class MediaController extends Controller
         $intervaloHoras = $horaInicio->diff($horaFin);
         $diferenciaEnHoras = $intervaloHoras->h;
         $fechaActual = $request->fecha_inicio;
-        $extensionesPermitidasVideo = ['mp4', 'mov', 'avi'];
-        $extensionesPermitidas = ['jpeg', 'png', 'jpg', 'webp'];
         $archivos = $request->file('files');
         $durationInSeconds = [];
 
         // Validamos los formatos de la multimedia.
-        $validarArchivos = $this->validaFormatomultimedia($archivos);
+        $validarArchivos = $this->validaFormatomultimedia($archivos, $request->time);
 
 
         $fecha_anterior = $fechaActual;
@@ -403,7 +425,7 @@ class MediaController extends Controller
                                     'screen_id' => $request->screen_id,
                                     'time' => $tramos[$p]->tramos,
                                     'date' => $tramos[$p]->fecha,
-                                    'duration' => 15,
+                                    'duration' => $request->time,
                                     'approved' => 1,
                                     'files_name' => json_encode($validarArchivos['files_names'][0]),
                                     'approved' => 1,
@@ -437,7 +459,7 @@ class MediaController extends Controller
 
             $keys = array_keys($discount);
             for ($k = 0; $k < count($discount); $k++) {
-                $calculoResto = $discount[$keys[$k]]['duracion'] - (count($discount[$keys[$k]]['ids']) * 15);
+                $calculoResto = $discount[$keys[$k]]['duracion'] - (count($discount[$keys[$k]]['ids']) * $request->time);
                 Tramo::where('_id', '=', $keys[$k])->update(['duracion' => $calculoResto]);
             }
             $this->eliminaTemp($validarArchivos['rutasLocales']);
@@ -449,7 +471,7 @@ class MediaController extends Controller
 
 
 
-    protected function validaFormatomultimedia($archivos)
+    protected function validaFormatomultimedia($archivos, $time)
     {
         foreach ($archivos as $ll => $archivo) {
             $nombreArchivo = uniqid() . '.' . $archivo->getClientOriginalExtension();
@@ -459,7 +481,7 @@ class MediaController extends Controller
                 $ffmpeg = FFMpeg::fromDisk('public')->open('/uploads/tmp/' . $nombreArchivo);
                 $durationInSeconds[] = $ffmpeg->getDurationInSeconds();
             } else if (in_array($archivo->getClientOriginalExtension(), config('ext_aviable.EXTENSIONES_PERMITIDAS_IMAGEN'))) {
-                $durationInSeconds[] = 2;
+                $durationInSeconds[] = $time;
             } else {
                 unlink($rutaLocal);
                 return false;
