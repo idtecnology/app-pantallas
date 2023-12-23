@@ -363,7 +363,7 @@ class MediaController extends Controller
         $durationInSeconds = [];
 
         // Validamos los formatos de la multimedia.
-        $validarArchivos = $this->validaFormatomultimedia($archivos);
+        $validarArchivos = $this->validaFormatomultimedia($archivos, $request->time);
 
 
         $fecha_anterior = $fechaActual;
@@ -425,7 +425,7 @@ class MediaController extends Controller
                                     'screen_id' => $request->screen_id,
                                     'time' => $tramos[$p]->tramos,
                                     'date' => $tramos[$p]->fecha,
-                                    'duration' => 15,
+                                    'duration' => $request->time,
                                     'approved' => 1,
                                     'files_name' => json_encode($validarArchivos['files_names'][0]),
                                     'approved' => 1,
@@ -459,7 +459,7 @@ class MediaController extends Controller
 
             $keys = array_keys($discount);
             for ($k = 0; $k < count($discount); $k++) {
-                $calculoResto = $discount[$keys[$k]]['duracion'] - (count($discount[$keys[$k]]['ids']) * 15);
+                $calculoResto = $discount[$keys[$k]]['duracion'] - (count($discount[$keys[$k]]['ids']) * $request->time);
                 Tramo::where('_id', '=', $keys[$k])->update(['duracion' => $calculoResto]);
             }
             $this->eliminaTemp($validarArchivos['rutasLocales']);
@@ -471,7 +471,7 @@ class MediaController extends Controller
 
 
 
-    protected function validaFormatomultimedia($archivos)
+    protected function validaFormatomultimedia($archivos, $time)
     {
         foreach ($archivos as $ll => $archivo) {
             $nombreArchivo = uniqid() . '.' . $archivo->getClientOriginalExtension();
@@ -481,7 +481,7 @@ class MediaController extends Controller
                 $ffmpeg = FFMpeg::fromDisk('public')->open('/uploads/tmp/' . $nombreArchivo);
                 $durationInSeconds[] = $ffmpeg->getDurationInSeconds();
             } else if (in_array($archivo->getClientOriginalExtension(), config('ext_aviable.EXTENSIONES_PERMITIDAS_IMAGEN'))) {
-                $durationInSeconds[] = 2;
+                $durationInSeconds[] = $time;
             } else {
                 unlink($rutaLocal);
                 return false;
