@@ -40,24 +40,33 @@
                 </div>
             </div>
             <div class="clearfix"></div>
-            <div class="col-6 col-md-4 mb-3">
+            <div class="col-6 col-md-6 mb-3">
                 <div class="form-group">
                     <strong>Hora inicio:</strong>
                     <input type="time" name='hora_inicio' id="hora_inicio" class="form-control">
                 </div>
             </div>
-            <div class="col-6 col-md-4 mb-3">
+            <div class="col-6 col-md-6 mb-3">
                 <div class="form-group">
                     <strong>Hora fin:</strong>
                     <input type="time" name='hora_fin' id="hora_fin" class="form-control">
                 </div>
             </div>
 
-
-            <div class="col-12 col-md-4 mb-3">
+            <div class="clearfix"></div>
+            <div class="col-6 col-md-6 mb-3">
                 <div class="form-group">
                     <strong>Cantidad por hora:</strong>
                     <input type="number" maxlength="3" class="form-control" name="cant" id="cant" max="240">
+                </div>
+            </div>
+            <div class="col-6 col-md-6 mb-3">
+                <div class="form-group">
+                    <strong>Tiempo</strong>
+                    <select class="form-select" name="time" id="">
+                        <option value="15">15 Segundos</option>
+                        <option value="30">30 Segundos</option>
+                    </select>
                 </div>
             </div>
             <div class="col-12 mb-3">

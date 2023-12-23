@@ -34,7 +34,7 @@ class AuthServiceProvider extends ServiceProvider
 
         ResetPassword::toMailUsing(function (User $user,  string $token) {
             $email_endoce = urlencode($user->email);
-            $url = env('APP_URL') . ':8000' . "/password/reset/$token?email=" . $email_endoce;
+            $url = env('APP_URL') . "/password/reset/$token?email=" . $email_endoce;
 
             return (new MailMessage)
                 ->subject('Recupera tu contraseña')
