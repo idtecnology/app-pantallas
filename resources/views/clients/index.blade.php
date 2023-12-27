@@ -84,35 +84,33 @@
                 cancelButtonColor: "#d33",
                 confirmButtonText: "Si, deseo Eliminar"
             }).then((result) => {
-
-
-
-
-                fetch(url2, {
-                        method: 'DELETE',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': csrfToken
-                        },
-                    })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error(`HTTP error! Status: ${response.status}`);
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        Swal.fire({
-                            title: "Eliminado!",
-                            text: "El usuario ha sido eliminado con exito",
-                            icon: "success"
+                if (result.isConfirmed) {
+                    fetch(url2, {
+                            method: 'DELETE',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': csrfToken
+                            },
+                        })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error(`HTTP error! Status: ${response.status}`);
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            Swal.fire({
+                                title: "Eliminado!",
+                                text: "El usuario ha sido eliminado con exito",
+                                icon: "success"
+                            });
+                            window.location.href = '/mantenice/clients';
+                        })
+                        .catch(error => {
+                            // Aquí manejas el error
+                            console.error('Error al intentar eliminar:', error);
                         });
-                        window.location.href = '/mantenice/clients';
-                    })
-                    .catch(error => {
-                        // Aquí manejas el error
-                        console.error('Error al intentar eliminar:', error);
-                    });
+                }
             });
         }
     </script>
