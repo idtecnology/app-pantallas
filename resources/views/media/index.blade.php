@@ -66,3 +66,12 @@
         </div>
     </div>
 @endsection
+@section('js')
+    <script>
+        function recargarPagina() {
+            location.reload();
+        }
+
+        setTimeout(recargarPagina, 60000);
+    </script>
+@endsection

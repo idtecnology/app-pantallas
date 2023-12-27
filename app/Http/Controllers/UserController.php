@@ -5,11 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use Carbon\Carbon;
 use Spatie\Permission\Models\Role;
 use DB;
 use Hash;
-use Illuminate\Support\Arr;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 
@@ -58,14 +56,22 @@ class UserController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-
+        $messages = [
+            'name.required' => 'El campo nombre es obligatorio.',
+            'email.required' => 'El campo correo electrónico es obligatorio.',
+            'email.email' => 'El correo electrónico debe ser una dirección de correo electrónico válida.',
+            'email.unique' => 'El correo electrónico ya está en uso.',
+            'password.same' => 'La contraseña y la confirmación de la contraseña deben coincidir.',
+            'password.min' => 'La contraseña y la confirmación de la contraseña deben tener minimo 8 caracteres.',
+            'password.required' => 'Debe seleccionar al menos un rol',
+        ];
 
         $this->validate($request, [
             'name' => 'required',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|same:confirm-password',
             'roles' => 'required'
-        ]);
+        ], $messages);
 
         $input = $request->all();
         $input['password'] = Hash::make($input['password']);
@@ -125,28 +131,30 @@ class UserController extends Controller
      */
     public function update(Request $request, $id): RedirectResponse
     {
-        if ($request->birth) {
-            $user = User::find($id);
-            $input = $request->all();
-            $user->update($input);
-            return redirect()->route('users.profile', $id)
-                ->with('success', 'User updated successfully');
-        } else {
-            $input = $request->all();
-            if (!empty($input['password'])) {
-                $input['password'] = Hash::make($input['password']);
-            } else {
-                $input = Arr::except($input, array('password'));
-            }
 
-            $user = User::find($id);
-            $user->update($input);
-            DB::table('model_has_roles')->where('model_id', $id)->delete();
+        $messages = [
+            'name.required' => 'El campo nombre es obligatorio.',
+            'email.required' => 'El campo correo electrónico es obligatorio.',
+            'email.email' => 'El correo electrónico debe ser una dirección de correo electrónico válida.',
+            'email.unique' => 'El correo electrónico ya está en uso.',
+            'password.same' => 'La contraseña y la confirmación de la contraseña deben coincidir.',
+            'password.min' => 'La contraseña y la confirmación de la contraseña deben tener minimo 8 caracteres.',
+            'password.required' => 'La contraseña es requerido'
+        ];
 
-            $user->assignRole($request->input('roles'));
-            return redirect()->route('users.index')
-                ->with('success', 'User updated successfully');
-        }
+        $this->validate($request, [
+            'name' => 'required',
+            'email' => 'required|email|unique:users,email,' . $id,
+            'password' => 'required|same:confirm-password|min:8',
+        ], $messages);
+        $input = $request->all();
+        $user = User::find($id);
+        $user->update($input);
+        DB::table('model_has_roles')->where('model_id', $id)->delete();
+
+        $user->assignRole($request->input('roles'));
+        return redirect()->route('users.index')
+            ->with('success', 'User updated successfully');
     }
 
     /**
@@ -175,4 +183,14 @@ class UserController extends Controller
 
         return view('users.profile', compact('user', 'data_gen'));
     }
+
+    //actualizar profile
+
+    /**
+     * $user = User::find($id);
+     *$input = $request->all();
+     *$user->update($input);
+     *return redirect()->route('users.profile', $id)
+     *   ->with('success', 'Usuario actualizado con exito');
+     */
 }

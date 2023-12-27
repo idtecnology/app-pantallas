@@ -25,15 +25,19 @@
         <div class="row text-center row-gap-3" id="media_container">
 
             @foreach ($arr as $llave => $ext)
-                <div class="col-md-4 col-xs-12 col-sm-6">
+                <div class="col-3">
                     @if (in_array($ext, config('ext_aviable.EXTENSIONES_PERMITIDAS_VIDEO')))
-                        <video class="img-fluid img-thumbnail" width="320" height="240" controls
-                            src="{{ asset($rutaLocal[$llave]) }}">
-                            Your browser does not support the video tag.
-                        </video>
+                        <a data-fslightbox href="{{ asset($rutaLocal[$llave]) }}">
+                            <video class="img-fluid" width="320" height="240" controls
+                                src="{{ asset($rutaLocal[$llave]) }}">
+                                Your browser does not support the video tag.
+                            </video>
+                        </a>
                     @else
-                        <img class="img-fluid img-thumbnail" width="200px" height="200px"
-                            src="{{ asset($rutaLocal[$llave]) }}" alt="">
+                        <a data-fslightbox href="{{ asset($rutaLocal[$llave]) }}">
+                            <img class="img-fluid img-thumbnail" width="200px" height="200px"
+                                src="{{ asset($rutaLocal[$llave]) }}" alt="">
+                        </a>
                     @endif
                 </div>
             @endforeach
@@ -195,15 +199,17 @@
                             var fileExtension = fileName.split('.').pop();
 
 
-                            add += ` <div class="col-md-4 col-xs-12 col-sm-6">`
+                            add += ` <div class="col-3">`
                             if (extensionesImagen.includes(fileExtension.toLowerCase())) {
                                 add +=
-                                    `<img class="img-fluid img-thumbnail" width="200px" height="200px" src="${url}${data.files[i].file_name}" alt="">`
+
+                                    `<a data-fslightbox href="${url}${data.files[i].file_name}">
+                                    <img class="img-fluid img-thumbnail" width="200px" height="200px" src="${url}${data.files[i].file_name}" alt=""></a>`
 
                             } else if (extensionesVideo.includes(fileExtension.toLowerCase())) {
-                                add += `<video class="img-fluid img-thumbnail" width="320" height="240" src="${url}${data.files[i].file_name}" controls>
+                                add += `<a data-fslightbox href="${url}${data.files[i].file_name}"><video class="img-fluid img-thumbnail" width="320" height="240" src="${url}${data.files[i].file_name}" controls>
                             Your browser does not support the video tag.
-                        </video>`
+                        </video></a>`
                             } else {
                                 return;
                             }
@@ -212,6 +218,7 @@
                     }
 
                     media_container.innerHTML = add;
+                    location.reload();
 
                 })
                 .catch(error => {

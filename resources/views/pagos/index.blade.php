@@ -1,16 +1,16 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="col-12">
+    <div class="col-12 overflow-auto">
         <table class="table table-bordered table-sm mb-0 text-center">
-            <thead class="text-uppercase table-dark">
+            <thead class="text-uppercase table-dark align-middle">
                 <tr>
                     <th>ID PAGO:</th>
                     <th>Cliente:</th>
                     <th>Email:</th>
                     <th>Fecha:</th>
-                    <th>Estatus del pago:</th>
-                    <th>reproducido</th>
+                    <th>Estado/pago:</th>
+                    <th>Repro:</th>
                 </tr>
             </thead>
             <tbody>

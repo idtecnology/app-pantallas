@@ -5,9 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use Spatie\Permission\Models\Role;
-use DB;
 use Hash;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Arr;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -56,14 +55,20 @@ class ClientesController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-
+        $messages = [
+            'name.required' => 'El campo nombre es obligatorio.',
+            'email.required' => 'El campo correo electrónico es obligatorio.',
+            'email.email' => 'El correo electrónico debe ser una dirección de correo electrónico válida.',
+            'email.unique' => 'El correo electrónico ya está en uso.',
+            'password.same' => 'La contraseña y la confirmación de la contraseña deben coincidir.',
+        ];
 
 
         $this->validate($request, [
             'name' => 'required',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|same:confirm-password',
-        ]);
+        ], $messages);
 
         $input = $request->all();
         $input['password'] = Hash::make($input['password']);
@@ -74,9 +79,10 @@ class ClientesController extends Controller
 
         $user = User::create($input);
         $user->assignRole('client');
+        event(new Registered($user));
 
         return redirect()->route('clients.index')
-            ->with('success', 'Creado con exito');
+            ->with('success', 'Cliente creado con exito');
     }
 
     /**
@@ -123,11 +129,21 @@ class ClientesController extends Controller
      */
     public function update(Request $request, $id): RedirectResponse
     {
+        $messages = [
+            'name.required' => 'El campo nombre es obligatorio.',
+            'email.required' => 'El campo correo electrónico es obligatorio.',
+            'email.email' => 'El correo electrónico debe ser una dirección de correo electrónico válida.',
+            'email.unique' => 'El correo electrónico ya está en uso.',
+            'password.same' => 'La contraseña y la confirmación de la contraseña deben coincidir.',
+            'password.min' => 'La contraseña y la confirmación de la contraseña deben tener minimo 8 caracteres.',
+        ];
+
+
         $this->validate($request, [
             'name' => 'required',
             'email' => 'required|email|unique:users,email,' . $id,
-            'password' => 'same:confirm-password',
-        ]);
+            'password' => 'required|same:confirm-password|min:8',
+        ], $messages);
 
         $input = $request->all();
         if (!empty($input['password'])) {
@@ -144,7 +160,7 @@ class ClientesController extends Controller
         // $user->assignRole($request->input('roles'));
 
         return redirect()->route('clients.index')
-            ->with('success', 'User updated successfully');
+            ->with('success', 'Usuario actualizado con exito');
     }
 
 
@@ -152,5 +168,12 @@ class ClientesController extends Controller
     {
         User::find($id)->delete();
         return response()->json(['status' => 1, 'message' => 'exito'], 200);
+    }
+
+
+    public static function discount($id)
+    {
+
+        return User::find($id);
     }
 }

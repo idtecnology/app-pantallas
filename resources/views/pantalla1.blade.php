@@ -159,6 +159,7 @@
 
                         document.getElementById('archivos').value = ''
                     } else {
+
                         var form = document.createElement('form');
                         form.method = 'POST';
                         form.action = '/p2';

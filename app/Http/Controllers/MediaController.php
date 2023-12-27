@@ -40,6 +40,7 @@ class MediaController extends Controller
             $data = Media::select('media.*', 'users.email')
                 ->where('isPaid', '=', 1)
                 ->where('approved', '=', 2)
+                ->where('date', '>=', date('Y-m-d'))
                 ->whereNull('campania_id')
                 ->join('users', 'users.id', '=', 'media.client_id')
                 ->orderBy('_id', 'ASC')
@@ -65,44 +66,16 @@ class MediaController extends Controller
     public function guardarData(Request $request)
     {
         $archivos = $request->file('archivos');
-
         $validatedMedia =  $this->validaFormatomultimediaClient($archivos, $request->tiempo);
+        $prices = config('price-list.PRICE_LIST');
+
+        SDK::setAccessToken(env('MP_SECRET'));
+        // Instanciamos la preferencia: 
+        $preference = new Preference();
+        $preference->payment_methods = PagosController::paymentMethods();
+        $preference->back_urls = PagosController::backUrls();
 
         if ($validatedMedia['status'] != false) {
-            $prices = config('price-list.PRICE_LIST');
-
-            if (isset(auth()->user()->discounts) && auth()->user()->discounts > 0) {
-                $descuento = auth()->user()->discounts;
-                foreach ($prices as $key => $value) {
-                    $prices[$key]['amount'] = $value['amount'] * ($descuento / 100);
-                }
-            }
-
-            $tiempito = $request->tiempo;
-
-            $matchingPrices = array_filter($prices, function ($price) use ($tiempito) {
-                return $price['seconds'] == $tiempito;
-            });
-
-
-            $price = reset($matchingPrices);
-
-
-            SDK::setAccessToken(env('MP_SECRET'));
-
-
-
-            // Instanciamos la preferencia: 
-            $preference = new Preference();
-
-            $preference->payment_methods = PagosController::paymentMethods();
-            $preference->back_urls = PagosController::backUrls();
-
-            // Instanciamos el item
-
-            $files_names = [];
-            $archivos = $request->file('archivos');
-
             if ($request->media_id > 0) {
                 //Actualizamos los que estan
 
@@ -122,16 +95,34 @@ class MediaController extends Controller
                 }
             } else {
                 //insertamos nuevos. 
-                $media = new Media();
+                $cliente = ClientesController::discount($request->client_id);
 
-                $media->files_name = json_encode($validatedMedia['files_names']);
-                $media->screen_id = $request->screen_id;
-                $media->duration = $request->tiempo;
-                $media->client_id = $request->client_id;
-                $media->save();
+                if ($cliente->discounts > 0) {
+                    $descuento = $cliente->discounts;
+                    foreach ($prices as $key => $value) {
+                        $prices[$key]['amount'] = $value['amount'] - ($value['amount'] * ($descuento / 100));
+                    }
+                }
 
+                $tiempito = $request->tiempo;
+
+                $matchingPrices = array_filter($prices, function ($price) use ($tiempito) {
+                    return $price['seconds'] == $tiempito;
+                });
+                $price = reset($matchingPrices);
+
+
+
+                $media2 = new Media();
+                $media2->files_name = json_encode($validatedMedia['files_names']);
+                $media2->screen_id = $request->screen_id;
+                $media2->duration = $request->tiempo;
+                $media2->client_id = $request->client_id;
+                $media2->save();
+
+                // Instanciamos el item
                 $item = new Item();
-                $item->id = $media->_id;
+                $item->id = $media2->_id;
                 $item->title = 'Producto';
                 $item->description = 'Tiempo en pantalla';
                 $item->quantity = 1;
@@ -141,11 +132,11 @@ class MediaController extends Controller
                 $preference->items = [$item];
                 $preference->save();
 
-                $upd_me = Media::find($media->_id);
+                $upd_me = Media::find($media2->_id);
                 $upd_me->preference_id = $preference->id;
                 $upd_me->save();
 
-                return response()->json(['mensaje' => 'Archivos guardados con éxito', 'media_id' => $media->_id]);
+                return response()->json(['mensaje' => 'Archivos guardados con éxito', 'media_id' => $media2->_id]);
             }
         } else {
             return response()->json(['mensaje' => $validatedMedia['message'], 'status' => 0]);
@@ -155,6 +146,7 @@ class MediaController extends Controller
 
     public function store(Request $request)
     {
+        // return $request;
         $tramo = Tramo::where('fecha', '=', $request->fecha)
             ->where('screen_id', '=', $request->screen_id)
             ->where('tramos', '=', $request->tramo_select)
@@ -172,6 +164,9 @@ class MediaController extends Controller
                 $dataUpdateMedia->duration = $request->duration;
                 $dataUpdateMedia->date = $request->fecha;
                 $dataUpdateMedia->tramo_id = $tramo[0]->tramo_id;
+                $dataUpdateMedia->isPaid = $request->amount == '0' ? 1 : 0;
+                $dataUpdateMedia->isActive = $request->amount == '0' ? 1 : 0;
+
 
                 $files_names = [];
                 if (is_object(json_decode($dataUpdateMedia->files_name, true)) || is_array(json_decode($dataUpdateMedia->files_name, true))) {
@@ -187,8 +182,15 @@ class MediaController extends Controller
                 }
                 $dataUpdateMedia->files_name = json_encode($files_names);
                 $dataUpdateMedia->save();
+
                 $preference = $request->preference;
-                return redirect()->route('pagare', ['preference' => $preference]);
+
+                // return $request->amount;
+                if ($request->amount === '0') {
+                    return redirect()->route('succes');
+                } else {
+                    return redirect()->route('pagare', ['preference' => $preference]);
+                }
             } else {
                 return 'tengo que manejar el mensaje de error.';
             }

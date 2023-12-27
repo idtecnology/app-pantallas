@@ -82,7 +82,32 @@ class PagosController extends Controller
 
     public function pendiente(Request $request)
     {
-        return $request;
+        $data_gen = [
+            'prev_url' => "/",
+            'title' => 'Sube tu fotos o videos y publica con nosotros.'
+
+        ];
+        // return $request;
+        $media_data = Media::where('preference_id', '=', $request->preference_id)->get()[0];
+
+        if (!empty($media_data)) {
+            $pago = new Pagos();
+            $pago->media_id = $media_data->_id;
+            $pago->client_id = $media_data->client_id;
+            $pago->collection_id = $request->collection_id;
+            $pago->collection_status = $request->collection_status;
+            $pago->payment_id = $request->payment_id;
+            $pago->status = $request->status;
+            $pago->payment_type = $request->payment_type;
+            $pago->preference_id = $request->preference_id;
+            $pago->merchant_order_id = $request->merchant_order_id;
+            $pago->save();
+            $media = Media::find($media_data->_id);
+            $media->isPaid = 0;
+            $media->isActive = 0;
+            $media->save();
+            return view('pagos.failure', compact('data_gen'));
+        }
     }
 
     public function failure(Request $request)
@@ -115,7 +140,16 @@ class PagosController extends Controller
         }
     }
 
+    public function succes(Request $request)
+    {
+        $data_gen = [
+            'prev_url' => "/",
+            'title' => 'Sube tu fotos o videos y publica con nosotros.'
 
+        ];
+
+        return view('pagos.success', compact('data_gen'));
+    }
 
     public function success(Request $request)
     {
