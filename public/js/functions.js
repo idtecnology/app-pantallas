@@ -7,7 +7,8 @@ const checkSess = document
     .getAttribute("content");
 
 //mostrar imgs
-const url = "http://localhost:8000/storage/uploads/tmp/";
+const url =
+    "http://ec2-35-175-65-249.compute-1.amazonaws.com/storage/uploads/tmp/";
 
 const extensionesImagen = [
     "bmp",
