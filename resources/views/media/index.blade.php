@@ -3,7 +3,7 @@
 
 
 @section('content')
-    <div class="col-xs-12 overflow-scroll" width='100vw' height='98vh'>
+    <div class="col-xs-12 overflow-auto" width='100vw' height='98vh'>
         <table class="table table-bordered table-sm mb-0 text-center">
             <thead class="text-uppercase table-dark">
                 <tr>
