@@ -142,7 +142,7 @@ class ClientesController extends Controller
         $this->validate($request, [
             'name' => 'required',
             'email' => 'required|email|unique:users,email,' . $id,
-            'password' => 'required|same:confirm-password',
+            'password' => 'same:confirm-password|min:8',
         ], $messages);
 
         $input = $request->all();
