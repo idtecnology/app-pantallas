@@ -8,7 +8,7 @@ const checkSess = document
 
 //mostrar imgs
 const url =
-    "http://ec2-35-175-65-249.compute-1.amazonaws.com/storage/uploads/tmp/";
+    "http://ec2-54-226-234-49.compute-1.amazonaws.com/storage/uploads/tmp/";
 
 const extensionesImagen = [
     "bmp",

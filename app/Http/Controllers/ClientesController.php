@@ -134,8 +134,6 @@ class ClientesController extends Controller
             'email.required' => 'El campo correo electrónico es obligatorio.',
             'email.email' => 'El correo electrónico debe ser una dirección de correo electrónico válida.',
             'email.unique' => 'El correo electrónico ya está en uso.',
-            'password.same' => 'La contraseña y la confirmación de la contraseña deben coincidir.',
-            'password.min' => 'La contraseña y la confirmación de la contraseña deben tener minimo 8 caracteres.',
         ];
 
 

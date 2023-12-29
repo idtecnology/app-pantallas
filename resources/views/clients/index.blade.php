@@ -2,14 +2,13 @@
 
 
 @section('content')
-    <div class="col-12">
+    <div class="col-12 mt-4">
         <div class="d-flex justify-content-between align-items-center">
             <h2>Clientes</h2>
             <a class="btn btn-primary rounded-pill" href="{{ route('clients.create') }}">
                 Nuevo
                 usuario</a>
         </div>
-
     </div>
 
 
