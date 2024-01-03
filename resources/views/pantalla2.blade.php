@@ -194,26 +194,47 @@
                         for (var i = 0; i < data.files.length; i++) {
                             var link = document.createElement('a');
                             link.href = url + data.files[i].file_name;
+
                             var pathParts = link.pathname.split('/');
                             var fileName = pathParts[pathParts.length - 1];
                             var fileExtension = fileName.split('.').pop();
 
+                            var divContainer = document.createElement('div');
+                            divContainer.classList.add('col-3');
 
-                            add += ` <div class="col-3">`
                             if (extensionesImagen.includes(fileExtension.toLowerCase())) {
-                                add +=
+                                var img = document.createElement('img');
+                                img.classList.add('img-fluid', 'img-thumbnail');
+                                img.width = 200;
+                                img.height = 200;
+                                img.src = url + data.files[i].file_name;
 
-                                    `<a data-fslightbox href="${url}${data.files[i].file_name}">
-                                    <img class="img-fluid img-thumbnail" width="200px" height="200px" src="${url}${data.files[i].file_name}" alt=""></a>`
+                                var lightboxLink = document.createElement('a');
+                                lightboxLink.setAttribute('data-fslightbox', '');
+                                lightboxLink.href = url + data.files[i].file_name;
+                                lightboxLink.appendChild(img);
 
+                                link.appendChild(lightboxLink);
                             } else if (extensionesVideo.includes(fileExtension.toLowerCase())) {
-                                add += `<a data-fslightbox href="${url}${data.files[i].file_name}"><video class="img-fluid img-thumbnail" width="320" height="240" src="${url}${data.files[i].file_name}" controls>
-                            Your browser does not support the video tag.
-                        </video></a>`
+                                var video = document.createElement('video');
+                                video.classList.add('img-fluid', 'img-thumbnail');
+                                video.width = 320;
+                                video.height = 240;
+                                video.src = url + data.files[i].file_name;
+                                video.controls = true;
+
+                                var lightboxLink = document.createElement('a');
+                                lightboxLink.setAttribute('data-fslightbox', '');
+                                lightboxLink.href = url + data.files[i].file_name;
+                                lightboxLink.appendChild(video);
+
+                                link.appendChild(lightboxLink);
                             } else {
-                                return;
+                                return; // Otra acción en caso necesario
                             }
-                            add += `</div>`;
+
+                            divContainer.appendChild(link);
+                            media_container.appendChild(divContainer);
                         }
                     }
 
