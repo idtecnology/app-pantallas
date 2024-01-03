@@ -44,7 +44,7 @@ class UserController extends Controller
             'title' => 'Sube tu fotos o videos y publica con nosotros.'
 
         ];
-        $roles = Role::pluck('name', 'name')->all();
+        $roles = Role::where('name', 'not like', '%client%')->pluck('name', 'name');
         return view('users.create', compact('roles', 'data_gen'));
     }
 
@@ -82,7 +82,7 @@ class UserController extends Controller
         $user->assignRole($request->input('roles'));
 
         return redirect()->route('users.index')
-            ->with('success', 'User created successfully');
+            ->with('success', 'Usuario creado con exito');
     }
 
     /**
@@ -116,7 +116,7 @@ class UserController extends Controller
 
         ];
         $user = User::find($id);
-        $roles = Role::pluck('name', 'name')->all();
+        $roles = Role::where('name', 'not like', '%client%')->pluck('name', 'name');
         $userRole = $user->roles->pluck('name', 'name')->all();
 
         return view('users.edit', compact('user', 'roles', 'userRole', 'data_gen'));
@@ -137,15 +137,11 @@ class UserController extends Controller
             'email.required' => 'El campo correo electrónico es obligatorio.',
             'email.email' => 'El correo electrónico debe ser una dirección de correo electrónico válida.',
             'email.unique' => 'El correo electrónico ya está en uso.',
-            'password.same' => 'La contraseña y la confirmación de la contraseña deben coincidir.',
-            'password.min' => 'La contraseña y la confirmación de la contraseña deben tener minimo 8 caracteres.',
-            'password.required' => 'La contraseña es requerido'
         ];
 
         $this->validate($request, [
             'name' => 'required',
             'email' => 'required|email|unique:users,email,' . $id,
-            'password' => 'required|same:confirm-password|min:8',
         ], $messages);
         $input = $request->all();
         $user = User::find($id);
@@ -154,7 +150,7 @@ class UserController extends Controller
 
         $user->assignRole($request->input('roles'));
         return redirect()->route('users.index')
-            ->with('success', 'User updated successfully');
+            ->with('success', 'Usuario actualizado con exito');
     }
 
     /**
@@ -167,7 +163,7 @@ class UserController extends Controller
     {
         User::find($id)->delete();
         return redirect()->route('users.index')
-            ->with('success', 'User deleted successfully');
+            ->with('success', 'Usuario eliminado con exito');
     }
 
 
@@ -176,7 +172,7 @@ class UserController extends Controller
         $user = User::find($id);
 
         $data_gen = [
-            'prev_url' => "/home",
+            'prev_url' => "/",
             'title' => 'Sube tu fotos o videos y publica con nosotros.'
 
         ];

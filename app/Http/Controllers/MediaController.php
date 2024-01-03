@@ -12,6 +12,7 @@ use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
+use Maestroerror\HeicToJpg;
 use MercadoPago\Item;
 use MercadoPago\Preference;
 use MercadoPago\SDK;
@@ -506,6 +507,14 @@ class MediaController extends Controller
             $nombreArchivo = uniqid() . '.' . $archivo->getClientOriginalExtension();
             $archivo->storeAs('public/uploads/tmp', $nombreArchivo);
             $rutaLocal = storage_path('app/public/uploads/tmp/' . $nombreArchivo);
+
+
+
+
+            if (strtoupper($archivo->getClientOriginalExtension()) == 'HEIC') {
+                $nombreArchivo = uniqid() . '.jpg';
+                HeicToJpg::convert($rutaLocal, "", true)->saveAs(storage_path('app/public/uploads/tmp/' . $nombreArchivo));
+            }
 
 
             if (in_array($archivo->getClientOriginalExtension(), config('ext_aviable.EXTENSIONES_PERMITIDAS_VIDEO'))) {

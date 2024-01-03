@@ -10,6 +10,7 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Arr;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Password;
 
 class ClientesController extends Controller
 {
@@ -20,7 +21,7 @@ class ClientesController extends Controller
      */
     public function index(Request $request): View
     {
-        $data = User::where('isUser', '=', 0)->paginate(5);
+        $data = User::where('isUser', '=', 0)->where('isActive', '=', 1)->paginate(5);
 
         $data_gen = [
             'prev_url' => "/home",
@@ -161,7 +162,17 @@ class ClientesController extends Controller
             ->with('success', 'Usuario actualizado con exito');
     }
 
-
+    public function eliminar(Request $request)
+    {
+        $user_data = User::find($request->id);
+        if ($user_data != '') {
+            $user_data->isActive = 0;
+            $user_data->save();
+            return response()->json(['status' => 'ok', 'message' => 'eliminado con exito'], 200);
+        } else {
+            return response()->json(['status' => 'error', 'message' => 'No se puede eliminar el usuario'], 200);
+        }
+    }
     public function destroy($id)
     {
         User::find($id)->delete();
@@ -173,5 +184,28 @@ class ClientesController extends Controller
     {
 
         return User::find($id);
+    }
+
+
+
+    public function olvidoPassword(Request $request)
+    {
+
+        $data_user = User::where('email', '=', $request->email)->get()[0];
+
+
+        if (isset($data_user)) {
+            if ($data_user->isActive != 1) {
+                return redirect('login');
+            }
+
+            $status = Password::sendResetLink(
+                $request->only('email')
+            );
+
+            return $status === Password::RESET_LINK_SENT
+                ? back()->with(['status' => __($status)])
+                : back()->withErrors(['email' => __($status)]);
+        }
     }
 }

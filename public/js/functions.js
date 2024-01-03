@@ -25,6 +25,10 @@ const extensionesImagen = [
     "PNG",
     "SVG",
     "WEBP",
+    "HEIF",
+    "heif",
+    "HEIC",
+    "heic",
 ];
 const extensionesVideo = [
     "avi",
@@ -48,12 +52,12 @@ const extensionesVideo = [
 ];
 
 function formatearFecha(fechaOriginal) {
-    var fecha = new Date(fechaOriginal + "T00:00:00-04:00");
+    var fecha = new Date(fechaOriginal + "T00:00:00-03:00");
     var options = {
         day: "2-digit",
         month: "2-digit",
         year: "numeric",
-        timeZone: "America/Caracas",
+        timeZone: "America/Buenos_Aires",
     };
     var formatoFecha = new Intl.DateTimeFormat("es-ES", options);
     return formatoFecha.format(fecha);

@@ -10,9 +10,9 @@
     </div>
 
     @if ($message = Session::get('success'))
-        <div class="col-12">
-            <div class="alert alert-success">
-                <p>{{ $message }}</p>
+        <div class="col-12 mt-3">
+            <div class="alert alert-success" role="alert">
+                {{ $message }}
             </div>
         </div>
     @endif

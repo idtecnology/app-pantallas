@@ -9,7 +9,8 @@
                     <th>Cliente:</th>
                     <th>Email:</th>
                     <th>Fecha:</th>
-                    <th>Estado/pago:</th>
+                    <th>Estado/Pago:</th>
+                    <th>Estado/Media:</th>
                     <th>Repro:</th>
                 </tr>
             </thead>
@@ -17,10 +18,11 @@
                 @foreach ($data as $dato)
                     <tr class="align-middle">
                         <td><a href="{{ route('pagos.show', $dato->_id) }}">{{ $dato->payment_id }}</a></td>
-                        <td>{{ $dato->name }} {{ $dato->Danny }}</td>
+                        <td>{{ $dato->name }} {{ $dato->last_name }}</td>
                         <td>{{ $dato->email }}</td>
                         <td>{{ date('d-m-Y', strtotime($dato->updated_at)) }}</td>
                         <td>{{ $dato->status }}</td>
+                        <td>{{ $dato->approved === 1 ? 'Aprobado' : 'No aprobado' }}</td>
                         <td>{{ $dato->reproducido === 1 ? 'Si' : 'No' }}</td>
                     </tr>
                 @endforeach

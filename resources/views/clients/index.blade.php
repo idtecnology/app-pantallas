@@ -13,7 +13,7 @@
 
 
     @if ($message = Session::get('success'))
-        <div class="col-12">
+        <div class="col-12 col-12 mt-3">
             <div class="alert alert-success" role="alert">
                 {{ $message }}
             </div>
@@ -75,7 +75,7 @@
 @section('js')
     <script>
         function deletClient(id) {
-            const url2 = `/mantenice/clients/${id}`;
+            const url2 = `/mantenice/clients/eliminar`;
             Swal.fire({
                 title: "Estas seguro de eliminar al usuario? ",
                 text: "Estos cambios son irreversibles",
@@ -87,7 +87,10 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     fetch(url2, {
-                            method: 'DELETE',
+                            method: 'POST',
+                            body: JSON.stringify({
+                                id: id
+                            }),
                             headers: {
                                 'Content-Type': 'application/json',
                                 'X-CSRF-TOKEN': csrfToken

@@ -55,10 +55,16 @@
                     {!! Form::password('confirm-password', ['placeholder' => 'Confirmar contraseña', 'class' => 'form-control']) !!}
                 </div>
             </div>
-            <div class="col-xs-4 col-sm-4 col-md-4 mb-2">
+            <div class="col-xs-6 col-sm-6 col-md-6">
+                <div class="form-group">
+                    <strong>Descuento:</strong>
+                    {!! Form::number('discounts', null, ['placeholder' => 'Descuento', 'class' => 'form-control', 'max' => '100']) !!}
+                </div>
+            </div>
+            <div class="col-xs-6 col-sm-6 col-md-6 mb-2">
                 <div class="form-group">
                     <strong>Rol:</strong>
-                    {!! Form::select('roles[]', $roles, $userRole, ['class' => 'form-select', 'multiple']) !!}
+                    {!! Form::select('roles[]', $roles, $userRole, ['class' => 'form-select']) !!}
                 </div>
             </div>
             <div class="col-xs-12 col-sm-12 col-md-12 text-center mt-3">

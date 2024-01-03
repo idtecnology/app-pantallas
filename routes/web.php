@@ -13,8 +13,7 @@ use App\Models\Screen;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
-
-
+use Illuminate\Support\Facades\Auth;
 
 Route::post('/email/verification-notification', function (Request $request) {
     $request->user()->sendEmailVerificationNotification();
@@ -39,6 +38,8 @@ Route::get('/preguntas-frecuentes', function () {
 
 
 Auth::routes();
+
+Route::post('/forgot-password', [ClientesController::class, 'olvidoPassword'])->name('forgot-password');
 
 
 Route::get('/home', [HomeController::class, 'index'])->name('home');
@@ -69,6 +70,8 @@ Route::group(['middleware' => ['auth']], function () {
     Route::resource('/mantenice/users', UserController::class);
     Route::resource('/mantenice/clients', ClientesController::class);
     Route::resource('/mantenice/screen', ScreenController::class);
+
+    Route::post('/mantenice/clients/eliminar', [ClientesController::class, 'eliminar']);
 
     //Pagos
     Route::resource('/pagos', PagosController::class);

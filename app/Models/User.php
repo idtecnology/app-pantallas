@@ -28,6 +28,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'discounts',
         'isUser',
         'email_verified_at',
+        'verify_hash'
     ];
 
     /**

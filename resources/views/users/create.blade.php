@@ -41,13 +41,17 @@
         <div class="col-xs-12 col-sm-12 col-md-12 mb-2">
             <div class="form-group">
                 <strong>Correo:</strong>
-                {!! Form::text('email', null, ['placeholder' => 'Correo', 'class' => 'form-control']) !!}
+                {!! Form::text('email', null, ['placeholder' => 'Correo', 'class' => 'form-control', 'autocomplete' => 'off']) !!}
             </div>
         </div>
         <div class="col-xs-6 col-sm-6 col-md-6 mb-2 ">
             <div class="form-group ">
                 <strong>Contraseña:</strong>
-                {!! Form::password('password', ['placeholder' => 'Contraseña', 'class' => 'form-control']) !!}
+                {!! Form::password('password', [
+                    'placeholder' => 'Contraseña',
+                    'class' => 'form-control',
+                    'autocomplete' => 'off',
+                ]) !!}
             </div>
         </div>
         <div class="col-xs-6 col-sm-6 col-md-6">

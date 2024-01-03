@@ -28,7 +28,7 @@
         </div>
     </div>
     <div class="col-xs-12 text-center">
-        <div style="display: none;" id="programacion" class="overflow-scroll">
+        <div style="display: none;" id="programacion" class="">
             <table class="table table-sm mb-0 mt-3  table-bordered">
                 <thead>
                     <tr>
@@ -136,7 +136,7 @@
                 var fecha = document.querySelector('#fecha_programacion')
                 var pos = document.querySelector('#screen_id')
                 // var page = page
-                var itemsPerPage = 5;
+                var itemsPerPage = 70;
 
                 fetch("{{ route('search-programation') }}?page=" + page + "&itemsPerPage=" + itemsPerPage, {
                         method: 'POST',
@@ -211,27 +211,51 @@
                     switchInput.classList = 'form-check-input'
                     switchInput.checked = dato.media_isActive === 1;
 
+                    var fechaActual = new Date().toLocaleDateString(undefined, {
+                        month: 'short',
+                        day: 'numeric'
+                    });
+                    var fechaDesdeBD = new Date(dato.media_date + 'T00:00:00').toLocaleDateString(
+                        undefined, {
+                            month: 'short',
+                            day: 'numeric'
+                        });
 
+                    var horaActual = new Date().toLocaleTimeString('en-US', {
+                        hour: 'numeric',
+                        minute: 'numeric',
+                        hour12: false
+                    });
+                    var horaDesdeBD = new Date(`1970-01-01T${dato.media_time}`).toLocaleTimeString(
+                        'en-US', {
+                            hour: 'numeric',
+                            minute: 'numeric',
+                            hour12: false
+                        });
 
-                    if (new Date().toDateString() <= new Date(dato.media_date + 'T00:00:00')
-                        .toDateString()) {
-                        switchInput.setAttribute('disabled', true);
-                    } else {
-                        if (new Date().getHours() > parseInt(dato.media_time.split(':')[0])) {
+                    if (fechaActual >= fechaDesdeBD) {
+                        if (horaActual >= horaDesdeBD) {
                             switchInput.setAttribute('disabled', true);
-
                         }
                     }
 
+
+
                     const switchLabel = document.createElement('label');
-                    switchLabel.setAttribute('id', `label_check_${dato.media_id}`);
-                    switchLabel.classList.add('form-check-label');
-                    switchLabel.setAttribute('for', `check_${dato.media_id}`);
-                    switchLabel.textContent = dato.media_isActive === 1 ? ' Activo' : ' Inactivo';
+                    switchLabel.setAttribute(
+                        'id', `label_check_${dato.media_id}`);
+                    switchLabel.classList.add(
+                        'form-check-label');
+                    switchLabel.setAttribute('for',
+                        `check_${dato.media_id}`);
+                    switchLabel.textContent = dato.media_isActive ===
+                        1 ? ' Activo' : ' Inactivo';
                     switchDiv.appendChild(switchInput);
-                    switchDiv.appendChild(switchLabel);
+                    switchDiv
+                        .appendChild(switchLabel);
                     estadoCell.appendChild(switchDiv);
-                    row.appendChild(estadoCell);
+                    row.appendChild(
+                        estadoCell);
                     tableBody.appendChild(row);
                 });
             });

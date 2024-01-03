@@ -84,13 +84,6 @@
                     <!-- Left Side Of Navbar -->
                     @guest
                     @else
-                        <ul class="navbar-nav me-auto">
-                            @can('client-list')
-                                <li>
-                                    <a class="dropdown-item" href="{{ route('sale.index') }}">Mi publicaciones</a>
-                                </li>
-                            @endcan
-                        </ul>
                     @endguest
                     <ul class="navbar-nav ms-auto">
                         @guest
@@ -115,7 +108,8 @@
 
                                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                                         <li><a class="dropdown-item" href="{{ route('sale.index') }}">Por aprobar</a></li>
-                                        <li><a class="dropdown-item" href="{{ route('sale.create') }}">Cargar Campaña</a></li>
+                                        <li><a class="dropdown-item" href="{{ route('sale.create') }}">Publicidad
+                                                Programatica</a></li>
                                         <li><a class="dropdown-item" href="{{ route('grilla') }}">Programacion</a></li>
                                         {{-- <li><a class="dropdown-item" href="{{ route('screen.index') }}">Pantallas</a></li> --}}
                                         <li><a class="dropdown-item" href="{{ route('pagos.index') }}">Pagos</a></li>
@@ -135,6 +129,11 @@
                                 <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                                     <li><a class="dropdown-item"
                                             href="{{ route('users.profile', Auth::user()->id) }}">Perfil</a></li>
+                                    @can('client-list')
+                                        <li>
+                                            <a class="dropdown-item" href="{{ route('sale.index') }}">Mi publicaciones</a>
+                                        </li>
+                                    @endcan
                                     <li><a class="dropdown-item" href="https://adsupp.com/preguntas-frecuentes">Preguntas
                                             Frecuentes</a></li>
                                     <li>
@@ -207,13 +206,15 @@
                     </li>
                 @else
                     @can('admin-list')
-                        <li class="nav-item"><a class="nav-link" href="{{ route('sale.create') }}">Cargar Campaña</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ route('sale.create') }}">Publicidad
+                                Programatica</a></li>
                         <li class="nav-item"><a class="nav-link" href="{{ route('sale.index') }}">Por aprobar</a></li>
                         <li class="nav-item"><a class="nav-link" href="{{ route('grilla') }}">Programacion</a></li>
                         <li class="nav-item"><a class="nav-link" href="{{ route('pagos.index') }}">Pagos</a></li>
                         <li class="nav-item"><a class="nav-link" href="{{ route('users.index') }}">Usuarios</a></li>
                         <li class="nav-item"><a class="nav-link" href="{{ route('clients.index') }}">Clientes</li>
                     @endcan
+
                     @can('client-list')
                         <li class="nav-item">
                             <a class="nav-link" href="{{ route('users.profile', Auth::user()->id) }}">Perfil</a>
