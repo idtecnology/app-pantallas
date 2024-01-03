@@ -224,7 +224,7 @@
                                 video.controls = true;
 
                                 var lightboxLink = document.createElement('a');
-                                lightboxLink.setAttribute('data-fslightbox', '');
+                                lightboxLink.setAttribute('data-fslightbox');
                                 lightboxLink.href = url + data.files[i].file_name;
                                 lightboxLink.appendChild(video);
 
@@ -238,7 +238,7 @@
                         }
                     }
 
-                    media_container.innerHTML = add;
+                    // media_container.innerHTML = add;
                     // location.reload();
 
                 })
