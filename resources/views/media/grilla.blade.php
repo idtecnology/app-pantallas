@@ -28,7 +28,7 @@
         </div>
     </div>
     <div class="col-xs-12 text-center">
-        <div style="display: none;" id="programacion">
+        <div style="display: none;" id="programacion" class="">
             <table class="table table-sm mb-0 mt-3  table-bordered">
                 <thead>
                     <tr>
@@ -43,16 +43,18 @@
             </table>
 
         </div>
-        <div style="display: none;" class="mt-3" id="pag">
-            <button class="btn btn-sm btn-primary" id="prevButton"> Siguiente </button>
-            <button class="btn btn-sm btn-primary" id="nextButton"> Anterior </button>
+
+    </div>
+    <div style="display: none;" class="col-12 text-center mt-3 mb-4" id="pag">
+        <div class="my-3 d-flex justify-content-evenly">
+            <button class="btn btn-sm btn-primary" id="prevButton"> Anterior </button>
+            <button class="btn btn-sm btn-primary" id="nextButton"> Siguiente </button>
         </div>
     </div>
 @endsection
 
 @section('js')
     <script>
-        const csrfToken = "{{ csrf_token() }}";
         var prevButton = document.getElementById('prevButton');
         var nextButton = document.getElementById('nextButton');
         var fecha_programacion = document.querySelector('#fecha_programacion')
@@ -134,7 +136,7 @@
                 var fecha = document.querySelector('#fecha_programacion')
                 var pos = document.querySelector('#screen_id')
                 // var page = page
-                var itemsPerPage = 50;
+                var itemsPerPage = 100;
 
                 fetch("{{ route('search-programation') }}?page=" + page + "&itemsPerPage=" + itemsPerPage, {
                         method: 'POST',
@@ -188,15 +190,17 @@
                     const row = document.createElement('tr');
                     const campaniaEmailCell = document.createElement('td');
                     campaniaEmailCell.textContent = dato.campania_name ? dato.campania_name : dato.email;
+                    campaniaEmailCell.classList = 'align-middle'
                     row.appendChild(campaniaEmailCell);
                     const reproducidoCell = document.createElement('td');
-                    reproducidoCell.textContent = dato.media_duration === null ? '15 segundos' : `${dato
-                        .media_duration} segundos`;
+                    reproducidoCell.textContent = dato.media_duration === null ? '15 Segundos' : `${dato
+                        .media_duration} Segundos`;
                     row.appendChild(reproducidoCell);
                     const repro = document.createElement('td');
                     repro.textContent = dato.media_reproducido === 1 ? 'Reproducido' : '';
                     row.appendChild(repro);
                     const estadoCell = document.createElement('td');
+                    estadoCell.classList = 'align-middle'
                     const switchDiv = document.createElement('div');
                     switchDiv.classList.add('form-check', 'form-switch');
                     const switchInput = document.createElement('input');
@@ -207,27 +211,51 @@
                     switchInput.classList = 'form-check-input'
                     switchInput.checked = dato.media_isActive === 1;
 
+                    var fechaActual = new Date().toLocaleDateString(undefined, {
+                        month: 'short',
+                        day: 'numeric'
+                    });
+                    var fechaDesdeBD = new Date(dato.media_date + 'T00:00:00').toLocaleDateString(
+                        undefined, {
+                            month: 'short',
+                            day: 'numeric'
+                        });
 
+                    var horaActual = new Date().toLocaleTimeString('en-US', {
+                        hour: 'numeric',
+                        minute: 'numeric',
+                        hour12: false
+                    });
+                    var horaDesdeBD = new Date(`1970-01-01T${dato.media_time}`).toLocaleTimeString(
+                        'en-US', {
+                            hour: 'numeric',
+                            minute: 'numeric',
+                            hour12: false
+                        });
 
-                    if (new Date().toDateString() <= new Date(dato.media_date + 'T00:00:00')
-                        .toDateString()) {
-                        switchInput.setAttribute('disabled', true);
-                    } else {
-                        if (new Date().getHours() > parseInt(dato.media_time.split(':')[0])) {
+                    if (fechaActual >= fechaDesdeBD) {
+                        if (horaActual >= horaDesdeBD) {
                             switchInput.setAttribute('disabled', true);
-
                         }
                     }
 
+
+
                     const switchLabel = document.createElement('label');
-                    switchLabel.setAttribute('id', `label_check_${dato.media_id}`);
-                    switchLabel.classList.add('form-check-label');
-                    switchLabel.setAttribute('for', `check_${dato.media_id}`);
-                    switchLabel.textContent = dato.media_isActive === 1 ? ' Activo' : ' Inactivo';
+                    switchLabel.setAttribute(
+                        'id', `label_check_${dato.media_id}`);
+                    switchLabel.classList.add(
+                        'form-check-label');
+                    switchLabel.setAttribute('for',
+                        `check_${dato.media_id}`);
+                    switchLabel.textContent = dato.media_isActive ===
+                        1 ? ' Activo' : ' Inactivo';
                     switchDiv.appendChild(switchInput);
-                    switchDiv.appendChild(switchLabel);
+                    switchDiv
+                        .appendChild(switchLabel);
                     estadoCell.appendChild(switchDiv);
-                    row.appendChild(estadoCell);
+                    row.appendChild(
+                        estadoCell);
                     tableBody.appendChild(row);
                 });
             });

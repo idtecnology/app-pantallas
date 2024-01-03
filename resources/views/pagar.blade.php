@@ -1,6 +1,5 @@
 @extends('layouts.app')
 @section('content')
-    <div id="spinner"></div>
     <div class="d-none">
         <div class="cho-container"></div>
     </div>
@@ -11,6 +10,16 @@
         const mp = new MercadoPago('{{ env('MP_CLIENT') }}', {
             locale: 'es-AR'
         })
+
+        Swal.fire({
+            title: 'Procesando datos!',
+            html: 'Estamos generando la orden de compra, seras redirigido en un momento.',
+            allowOutsideClick: false,
+            showLoaderOnConfirm: false,
+            didOpen: () => {
+                Swal.showLoading()
+            },
+        });
 
         mp.checkout({
             preference: {
@@ -25,7 +34,6 @@
 
         window.onload = function() {
             setTimeout(function() {
-                spinner.setAttribute('hidden', '');
                 document.querySelector('.mercadopago-button').click()
             }, 3000);
         };

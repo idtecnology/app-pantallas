@@ -23,27 +23,25 @@
             <div class="w-50">
                 <select class="form-select rounded-pill bg-primario text-white shortened-select" name="" id="tiempo">
                     @foreach ($prices as $price)
-                        <option value="{{ $price['seconds'] }}" data-descr="Segundos - ${{ $price['amount'] }}">
-                            {{ $price['seconds'] }}
+                        <option value="{{ $price['seconds'] }}" data-descr="{{ $price['amount'] }}">
+                            {{ $price['seconds'] }} Segundos
 
                         </option>
                     @endforeach
                 </select>
             </div>
-            @can('admin-list')
-                <div class="w-50">
-                    <a onclick="openFiles()" id="mienlace" class="btn btn-primary w-100 rounded-pill text-center">
-                        <div class="d-flex align-middle justify-content-center align-items-center">
-                            <span class="material-symbols-outlined md-18 ">
-                                photo_camera
-                            </span>
-                            <span class="ml-4p">Agrega contenido</span>
-                        </div>
+            <div class="w-50">
+                <a onclick="openFiles()" id="mienlace" class="btn btn-primary w-100 rounded-pill text-center">
+                    <div class="d-flex align-middle justify-content-center align-items-center">
+                        <span class="material-symbols-outlined md-18 ">
+                            photo_camera
+                        </span>
+                        <span class="ml-4p">Agrega contenido</span>
+                    </div>
 
-                    </a>
-                    <input style="display: none" type="file" id="archivos" multiple>
-                </div>
-            @endcan
+                </a>
+                <input style="display: none" type="file" id="archivos" accept="image/*,video/*" multiple>
+            </div>
         </div>
     </div>
     <div class="d-flex flex-column">
@@ -71,35 +69,43 @@
                 publicación</p>
         </div>
     </div>
-
-    <input id="checkSess" type="hidden" value="{{ auth()->check() }}">
 @endsection
 
 @section('js')
     <script>
-        function openFiles() {
-            document.querySelector('#archivos').click();
-        }
-
-        function focus() {
-            [].forEach.call(this.options, function(o) {
-                o.textContent = o.getAttribute('value') + ' - ' + o.getAttribute('data-descr');
+        function updateOptionTexts(select, showPrice) {
+            [].forEach.call(select.options, function(o) {
+                if (showPrice) {
+                    o.textContent = o.getAttribute('value') + ' Segundos - $' + o.getAttribute('data-descr');
+                } else {
+                    o.textContent = o.getAttribute('value') + ' Segundos';
+                }
             });
         }
 
-        function blur() {
-            [].forEach.call(this.options, function(o) {
-                o.textContent = o.getAttribute('value') + ' Segundos';
+        document.querySelectorAll('.shortened-select').forEach(function(select) {
+            select.addEventListener('change', function() {
+                updateOptionTexts(select, false);
             });
-        }
-        [].forEach.call(document.querySelectorAll('.shortened-select'), function(s) {
-            s.addEventListener('focus', focus);
-            s.addEventListener('blur', blur);
-            blur.call(s);
+
+            select.addEventListener('touchstart', function() {
+                updateOptionTexts(select, true);
+            });
+
+            select.addEventListener('click', function() {
+                updateOptionTexts(select, true);
+            });
+
+            select.addEventListener('blur', function() {
+                setTimeout(function() {
+                    updateOptionTexts(select, false);
+                }, 0);
+            });
+
+            updateOptionTexts(select, false);
         });
 
-        const spinner = document.getElementById("spinner");
-        var checkSess = document.getElementById('checkSess').value;
+
 
         document.getElementById('archivos').addEventListener('click', function(event) {
             if (checkSess != 1) {
@@ -109,7 +115,7 @@
         });
 
 
-        const csrfToken = "{{ csrf_token() }}";
+
         document.getElementById('archivos').addEventListener('change', function() {
 
             var inputArchivos = document.getElementById('archivos');
@@ -124,9 +130,13 @@
             formData.append('screen_id', {{ $id }});
             formData.append('tiempo', tiempo);
             formData.append('client_id', {{ auth()->id() }});
-            Swal.showLoading();
 
-            // spinner.removeAttribute('hidden');
+            notifySpinner({
+                title: 'Cargando datos!',
+                html: 'Se estan comprobando tus archivos',
+                allowOutsideClick: false,
+                showLoaderOnConfirm: false,
+            });
 
             fetch("/api/guardarData", {
                     method: 'POST',
@@ -138,22 +148,49 @@
                 .then(response => response.json())
                 .then(data => {
                     Swal.hideLoading()
-                    // console.log(data)
-                    // return;
-
                     if (data.status == 0) {
                         Swal.hideLoading()
-                        Swal.fire({
+
+                        notifyGeneral({
                             title: 'Cargando datos!',
                             text: data.mensaje,
-                            icon: 'error',
+                            icon: 'error'
                         })
+
                         document.getElementById('archivos').value = ''
                     } else {
-                        Swal.hideLoading(Swal.disableButtons())
-                        var urlConParametro =
-                            `/p2/{{ $id }}/${tiempo}/${data.media_id}/${data.preference_id}`
-                        window.location.href = urlConParametro;
+
+                        var form = document.createElement('form');
+                        form.method = 'POST';
+                        form.action = '/p2';
+
+                        var csrfInput = document.createElement('input');
+                        csrfInput.type = 'hidden';
+                        csrfInput.name = '_token';
+                        csrfInput.value = csrfToken;
+
+                        var screenIdInput = document.createElement('input');
+                        screenIdInput.type = 'hidden';
+                        screenIdInput.name = 'screen_id';
+                        screenIdInput.value = {{ $id }};
+
+                        var tiempoInput = document.createElement('input');
+                        tiempoInput.type = 'hidden';
+                        tiempoInput.name = 'tiempo';
+                        tiempoInput.value = tiempo;
+
+                        var mediaIdInput = document.createElement('input');
+                        mediaIdInput.type = 'hidden';
+                        mediaIdInput.name = 'media_id';
+                        mediaIdInput.value = data.media_id;
+
+                        form.appendChild(csrfInput);
+                        form.appendChild(screenIdInput);
+                        form.appendChild(tiempoInput);
+                        form.appendChild(mediaIdInput);
+
+                        document.body.appendChild(form);
+                        form.submit();
                     }
 
                 })

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Media;
 use App\Models\Screen;
 use Illuminate\Http\Request;
 
@@ -11,6 +12,7 @@ class ScreenController extends Controller
 
     {
         $this->middleware('verified');
+        $this->middleware('permission:client-list|admin-list', ['only' => ['screenUno', 'screenDos']]);
         $this->middleware('permission:admin-list|admin-create|admin-edit|admin-delete', ['only' => ['index', 'show']]);
         $this->middleware('permission:admin-create', ['only' => ['create', 'store']]);
         $this->middleware('permission:admin-edit', ['only' => ['edit', 'update']]);
@@ -69,7 +71,10 @@ class ScreenController extends Controller
     public function screenUno($id)
     {
         $screen = Screen::find($id);
-
+        $data_gen = [
+            'prev_url' => '/',
+            'title' => 'Sube tu fotos o videos y publica con nosotros.'
+        ];
 
         $prices = config('price-list.PRICE_LIST');
 
@@ -80,17 +85,27 @@ class ScreenController extends Controller
             }
         }
 
-
-
-        return view('pantalla1', compact('id', 'screen', 'prices'));
+        return view('pantalla1', compact('id', 'screen', 'prices', 'data_gen'));
     }
 
-    public function screenDos($id, $time, $media_id, $preference_id)
+    public function screenDos(Request $request)
     {
-        $data = new MediaController();
-        $datas = $data::getDataMedia($media_id);
 
+        // return $request;
+        $rutaLocal = [];
+        $arr = [];
 
+        $data_gen = [
+            'prev_url' => route('pantalla1', $request->screen_id),
+            'title' => 'Sube tu fotos o videos y publica con nosotros.'
+
+        ];
+
+        $time = $request->tiempo;
+
+        $id = $request->screen_id;
+        $media_id = $request->media_id;
+        $datas = Media::getDataMedia($media_id);
         $prices = config('price-list.PRICE_LIST');
 
         if (isset(auth()->user()->discounts) && auth()->user()->discounts > 0) {
@@ -107,9 +122,6 @@ class ScreenController extends Controller
         $datas->prices = reset($matchingPrices);
 
 
-
-        $rutaLocal = [];
-        $arr = [];
         foreach (json_decode($datas->files_name, true) as $file_name) {
             $url = pathinfo($file_name['file_name']);
             $extension = $url['extension'];
@@ -119,6 +131,8 @@ class ScreenController extends Controller
         }
 
 
-        return view('pantalla2', compact('id', 'time', 'rutaLocal', 'media_id', 'arr', 'preference_id', 'datas'));
+
+
+        return view('pantalla2', compact('id', 'time', 'rutaLocal', 'media_id', 'arr', 'datas', 'data_gen'));
     }
 }

@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\RedirectsUsers;
 use Illuminate\Foundation\Auth\VerifiesEmails;
-
+use Illuminate\Support\Facades\Auth;
 
 class VerificationController extends Controller
 {
@@ -36,7 +37,7 @@ class VerificationController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth');
+        // $this->middleware('auth');
         $this->middleware('signed')->only('verify');
         $this->middleware('throttle:6,1')->only('verify', 'resend');
     }
@@ -55,5 +56,23 @@ class VerificationController extends Controller
             : view('verification.notice', [
                 'pageTitle' => __('Account Verification')
             ]);
+    }
+
+
+    public function verify($id, $hash)
+    {
+        // return $hash;
+        $user_data = User::find($id);
+
+        if ($user_data->verify_hash == $hash) {
+            $user_data->email_verified_at = date('Y-m-d H:i:s');
+            $user_data->save();
+            Auth::loginUsingId($id);
+            if (Auth::check() === true) {
+                return redirect('/');
+            }
+        } else {
+            return redirect('login');
+        }
     }
 }

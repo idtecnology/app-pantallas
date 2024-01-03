@@ -13,8 +13,7 @@ use App\Models\Screen;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
-
-
+use Illuminate\Support\Facades\Auth;
 
 Route::post('/email/verification-notification', function (Request $request) {
     $request->user()->sendEmailVerificationNotification();
@@ -22,10 +21,10 @@ Route::post('/email/verification-notification', function (Request $request) {
 })->middleware(['auth', 'throttle:6,1'])->name('verification.send');
 
 
-Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $r) {
-    $r->fulfill();
-    return redirect('/');
-})->middleware(['auth', 'signed'])->name('verification.verify');
+// Route::get('/email/verifi/{id}/{hash}', )
+
+
+Route::get('/email/verify/{id}/{hash}', [VerificationController::class, 'verify'])->middleware(['signed'])->name('verification.verify');
 
 
 Route::get('/', function () {
@@ -40,6 +39,8 @@ Route::get('/preguntas-frecuentes', function () {
 
 Auth::routes();
 
+Route::post('/forgot-password', [ClientesController::class, 'olvidoPassword'])->name('forgot-password');
+
 
 Route::get('/home', [HomeController::class, 'index'])->name('home');
 Route::get('/p1/{id}', [ScreenController::class, 'screenUno'])->name('pantalla1');
@@ -47,7 +48,7 @@ Route::get('/p1/{id}', [ScreenController::class, 'screenUno'])->name('pantalla1'
 Route::group(['middleware' => ['auth']], function () {
 
     Route::get('/email/verify', [VerificationController::class, 'show'])->name('verification.notice');
-    Route::get('/p2/{id}/{time}/{media_id}/{preference_id}', [ScreenController::class, 'screenDos'])->name('pantalla2');
+    Route::post('/p2', [ScreenController::class, 'screenDos']);
 
     Route::resource('/tramo', TramoController::class);
 
@@ -70,9 +71,12 @@ Route::group(['middleware' => ['auth']], function () {
     Route::resource('/mantenice/clients', ClientesController::class);
     Route::resource('/mantenice/screen', ScreenController::class);
 
+    Route::post('/mantenice/clients/eliminar', [ClientesController::class, 'eliminar']);
+
     //Pagos
     Route::resource('/pagos', PagosController::class);
     Route::get('/success', [PagosController::class, 'success'])->name('success');
+    Route::get('/succes', [PagosController::class, 'succes'])->name('succes');
     Route::get('/pendiente', [PagosController::class, 'pendiente'])->name('pendiente');
     Route::get('/failure', [PagosController::class, 'failure'])->name('failure');
     Route::get('/pagare/{preference}', [PagosController::class, 'crearPago'])->name('pagare');

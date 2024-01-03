@@ -6,8 +6,12 @@ use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
 use App\Models\User;
 use Illuminate\Foundation\Auth\RegistersUsers;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Auth\Events\Registered;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Str;
 
 class RegisterController extends Controller
 {
@@ -29,7 +33,7 @@ class RegisterController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = RouteServiceProvider::HOME;
+    protected $redirectTo = '/';
 
     /**
      * Create a new controller instance.
@@ -71,9 +75,48 @@ class RegisterController extends Controller
             'last_name' => $data['last_name'],
             'isUser' => 0,
             'password' => Hash::make($data['password']),
+            'verify_hash' => $data['verify_hash'],
 
         ]);
         $user->assignRole('client');
+
+
         return $user;
+    }
+
+    public function register(Request $request)
+    {
+
+        $request['verify_hash'] = Str::random(64);
+
+        $this->validator($request->all())->validate();
+
+        event(new Registered($user = $this->create($request->all())));
+
+        $this->guard()->login($user);
+
+        if ($response = $this->registered($request, $user)) {
+            return $response;
+        }
+
+        return $request->wantsJson()
+            ? new JsonResponse([], 201)
+            : redirect($this->redirectPath());
+    }
+
+
+    public function showRegistrationForm()
+    {
+        $data_gen = [
+            'prev_url' => "/",
+            'title' => 'Sube tu fotos o videos y publica con nosotros.'
+
+        ];
+        return view('auth.register', compact('data_gen'));
+    }
+
+    protected function registered(Request $request, $user)
+    {
+        return redirect('/'); // Personaliza la ruta de redirección después del registro
     }
 }

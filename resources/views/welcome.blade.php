@@ -9,7 +9,5 @@
             <x-card-pantalla img='{{ $screen->imagen }}' title='{{ $screen->nombre }}' address='{{ $screen->direccion }}'
                 idscreen='{{ $screen->_id }}' />
         @endforeach
-
-
     </div>
 @endsection

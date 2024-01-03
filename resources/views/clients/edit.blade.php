@@ -3,12 +3,10 @@
 
 @section('content')
     <div class="row">
-        <div class="col-lg-12 margin-tb">
-            <div class="pull-left">
-                <h2>Editar clientes</h2>
-            </div>
-            <div class="pull-right">
-                <a class="btn btn-primary" href="{{ route('clients.index') }}"> Regresar</a>
+        <div class="col-12 ">
+            <div class="d-flex justify-content-between align-items-center">
+                <h2>Editar cliente: </h2>
+                <a class="btn btn-primary rounded-pill px-4" href="{{ route('clients.index') }}"> Regresar </a>
             </div>
         </div>
     </div>
@@ -16,7 +14,6 @@
 
     @if (count($errors) > 0)
         <div class="alert alert-danger">
-            <strong>Whoops!</strong> There were some problems with your input.<br><br>
             <ul>
                 @foreach ($errors->all() as $error)
                     <li>{{ $error }}</li>
@@ -46,18 +43,7 @@
                 {!! Form::text('email', null, ['placeholder' => 'Correo', 'class' => 'form-control']) !!}
             </div>
         </div>
-        <div class="col-xs-6 col-sm-6 col-md-6 mb-2 ">
-            <div class="form-group ">
-                <strong>Contraseña:</strong>
-                {!! Form::password('password', ['placeholder' => 'Contraseña', 'class' => 'form-control']) !!}
-            </div>
-        </div>
-        <div class="col-xs-6 col-sm-6 col-md-6">
-            <div class="form-group">
-                <strong>Confirmar contraseña:</strong>
-                {!! Form::password('confirm-password', ['placeholder' => 'Confirmar contraseña', 'class' => 'form-control']) !!}
-            </div>
-        </div>
+
 
         <div class="col-xs-4 col-sm-4 col-md-4">
             <div class="form-group">

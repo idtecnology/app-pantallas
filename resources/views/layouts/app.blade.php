@@ -13,20 +13,19 @@
 
     {{-- <meta http-equiv="Content-Security-Policy" content="script-src 'none'"> --}}
 
-    <!-- CSRF Token -->
-
+    <meta name="auth-check" content="{{ auth()->check() }}">
 
     <title>{{ config('app.name', 'AdsUpp') }}</title>
 
     <link rel='manifest' href='/manifest.json'>
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <link rel="apple-touch-icon" sizes="512x512" href="/images/icons/adsupp512.png">
-    <meta name="apple-mobile-web-app-status-bar-style" content="#ffffff">
     <meta name="theme-color" content="#dd5757">
-    <meta name="apple-mobile-web-app-status-bar-style" content="Black-translucent">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
 
     <link rel="preload" href="/images/logo2.jpg" as="image">
     <link rel="prefetch" href="https://sdk.mercadopago.com/js/v2" />
+    <link rel="prefetch" href="{{ asset('/js/functions.js') }}" />
 
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.bunny.net">
@@ -39,6 +38,8 @@
     <!-- Scripts -->
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
     <script src="https://sdk.mercadopago.com/js/v2"></script>
+    <script src="{{ asset('/js/functions.js') }}"></script>
+
 
     <style>
         .material-symbols-outlined {
@@ -54,10 +55,10 @@
 <body>
     <div id="app">
         <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm sticky-top">
-
             <div class="container">
                 @if (request()->route()->uri !== '/')
-                    <a href="{{ url()->previous() }}" class="" type="button">
+                    <a href="{{ !isset($data_gen['prev_url']) ? './../' : $data_gen['prev_url'] }}" class=""
+                        type="button">
                         <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
                             <path d="M400-80 0-480l400-400 71 71-329 329 329 329-71 71Z" />
                         </svg>
@@ -83,13 +84,6 @@
                     <!-- Left Side Of Navbar -->
                     @guest
                     @else
-                        <ul class="navbar-nav me-auto">
-                            @can('client-list')
-                                <li>
-                                    <a class="dropdown-item" href="{{ route('sale.index') }}">Mi publicaciones</a>
-                                </li>
-                            @endcan
-                        </ul>
                     @endguest
                     <ul class="navbar-nav ms-auto">
                         @guest
@@ -114,7 +108,8 @@
 
                                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                                         <li><a class="dropdown-item" href="{{ route('sale.index') }}">Por aprobar</a></li>
-                                        <li><a class="dropdown-item" href="{{ route('sale.create') }}">Cargar Campaña</a></li>
+                                        <li><a class="dropdown-item" href="{{ route('sale.create') }}">Publicidad
+                                                Programatica</a></li>
                                         <li><a class="dropdown-item" href="{{ route('grilla') }}">Programacion</a></li>
                                         {{-- <li><a class="dropdown-item" href="{{ route('screen.index') }}">Pantallas</a></li> --}}
                                         <li><a class="dropdown-item" href="{{ route('pagos.index') }}">Pagos</a></li>
@@ -134,6 +129,11 @@
                                 <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                                     <li><a class="dropdown-item"
                                             href="{{ route('users.profile', Auth::user()->id) }}">Perfil</a></li>
+                                    @can('client-list')
+                                        <li>
+                                            <a class="dropdown-item" href="{{ route('sale.index') }}">Mi publicaciones</a>
+                                        </li>
+                                    @endcan
                                     <li><a class="dropdown-item" href="https://adsupp.com/preguntas-frecuentes">Preguntas
                                             Frecuentes</a></li>
                                     <li>
@@ -206,13 +206,15 @@
                     </li>
                 @else
                     @can('admin-list')
-                        <li class="nav-item"><a class="nav-link" href="{{ route('sale.create') }}">Cargar Campaña</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ route('sale.create') }}">Publicidad
+                                Programatica</a></li>
                         <li class="nav-item"><a class="nav-link" href="{{ route('sale.index') }}">Por aprobar</a></li>
                         <li class="nav-item"><a class="nav-link" href="{{ route('grilla') }}">Programacion</a></li>
                         <li class="nav-item"><a class="nav-link" href="{{ route('pagos.index') }}">Pagos</a></li>
                         <li class="nav-item"><a class="nav-link" href="{{ route('users.index') }}">Usuarios</a></li>
                         <li class="nav-item"><a class="nav-link" href="{{ route('clients.index') }}">Clientes</li>
                     @endcan
+
                     @can('client-list')
                         <li class="nav-item">
                             <a class="nav-link" href="{{ route('users.profile', Auth::user()->id) }}">Perfil</a>
@@ -244,10 +246,8 @@
     </div>
     <!-- end sidebar -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    {{-- <script src="https://cdn.jsdelivr.net/npm/bs5-lightbox@1.8.3/dist/index.bundle.min.js"></script> --}}
     @yield('js')
-
-    <!-- Nav tabs -->
-
 </body>
 
 </html>

@@ -1,81 +1,93 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# AdsUpp
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
-
-## About Laravel
-
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
-
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
-
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
-
-## Learning Laravel
-
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
-
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
-
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-## Laravel Sponsors
-
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
-
-### Premium Partners
-
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
-
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Requerimientos: 
 
 
+## Instalacion Laravel: 
+1. Instalamos laravel y sus dependencia
+```
+sudo php composer update
+```
+2. Instalamos las dependencias de vite
+```
+sudo npm i
+```
+3. Compilamos los recursos de vite
+```
+sudo npm run build
+```
+4. Copiamos el archivo de `.env`
+```
+sudo cp .env.example .env
+```
+5. Editamos los parametros necesarios
 
-# nano vendor/laravel/ui/auth-backend/RegistersUsers.php
-# nano vendor/laravel/ui/auth-backend/AuthenticatesUsers.php
+```env
+APP_DEBUG=false
+APP_URL=<host_server>
 
-$previousUrl = Session::pull('previousUrl', $this->redirectTo);
-
-        return redirect()->intended($previousUrl);
-
-        use Illuminate\Support\Facades\Session;
+DB_CONNECTION=mysql
+DB_HOST=<host_database>
+DB_PORT=3306
+DB_DATABASE=<database_name>
+DB_USERNAME=<database_user>
+DB_PASSWORD=<database_password>
+```
+6. Creamos la key
+```
+sudo php artisan key:generate
+```
+7. Migramos la base de datos
+```
+sudo php artisan migrate --seed
+```
+8. Crear el enlace simbolico para la subida de imagenes
+```
 php artisan storage:link
+```
 
         
+## CAMBIOS EN EL `php.ini`
+post_max_size = 512M
+upload_max_filesize = 500M
+max_input_time = -1
+memory_limit = 128M
+max_execution_time = 3600
+
+
+
+sudo chown -R www-data.www-data /var/www/laravel
+sudo chmod -R 755 /var/www/laravel
+sudo chmod -R 777 /var/www/laravel/storage
+
+
+```
+sudo nano /etc/apache2/sites-available/laravel.conf
+```
+
+```
+<VirtualHost *:80>
+        ServerAdmin host
+        ServerName admin@host
+        DocumentRoot /var/www/html/app-pantallas/public
+        <Directory /var/www/html/app-pantallas/public>
+                Options +FollowSymLinks
+                AllowOverride All
+                Require all granted
+        </Directory>
+
+        ErrorLog ${APACHE_LOG_DIR}/error.log
+        CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>
+```
+
+```
+sudo a2ensite laravel.conf
+sudo a2dissite 000-default.conf
+sudo a2enmod rewrite
+systemctl reload apache2
+```
+
+
+
 

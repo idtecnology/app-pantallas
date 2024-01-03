@@ -18,14 +18,29 @@ class PagosController extends Controller
     public function index()
     {
 
-        $data = Pagos::select('pagos.*', 'users.name', 'users.last_name', 'users.email')
-            ->join('users', 'users.id', '=', 'pagos.client_id')->get();
+        $data_gen = [
+            'prev_url' => "/",
+            'title' => 'Sube tu fotos o videos y publica con nosotros.'
 
-        return view('pagos.index', compact('data'));
+        ];
+
+        $data = Pagos::select('pagos.*', 'users.name', 'users.last_name', 'users.email', 'media.reproducido', 'media.approved')
+            ->join('media', 'media.preference_id', '=', 'pagos.preference_id')
+            ->join('users', 'users.id', '=', 'pagos.client_id')
+            ->orderBy('pagos._id', 'DESC')
+            ->get();
+
+
+        return view('pagos.index', compact('data', 'data_gen'));
     }
 
     public function show($id)
     {
+        $data_gen = [
+            'prev_url' => "/pagos",
+            'title' => 'Sube tu fotos o videos y publica con nosotros.'
+
+        ];
 
         $datos = Pagos::find($id);
 
@@ -50,7 +65,7 @@ class PagosController extends Controller
 
 
 
-            return view('pagos.show', compact('data', 'statusCode'));
+            return view('pagos.show', compact('data', 'statusCode', 'data_gen'));
         } catch (\Exception $e) {
             // Manejar errores
             return response()->json(['error' => $e->getMessage()], 500);
@@ -68,11 +83,11 @@ class PagosController extends Controller
 
     public function pendiente(Request $request)
     {
-        return $request;
-    }
+        $data_gen = [
+            'prev_url' => "/",
+            'title' => 'Sube tu fotos o videos y publica con nosotros.'
 
-    public function failure(Request $request)
-    {
+        ];
         // return $request;
         $media_data = Media::where('preference_id', '=', $request->preference_id)->get()[0];
 
@@ -92,15 +107,58 @@ class PagosController extends Controller
             $media->isPaid = 0;
             $media->isActive = 0;
             $media->save();
-            return view('pagos.failure');
+            return view('pagos.failure', compact('data_gen'));
         }
     }
 
+    public function failure(Request $request)
+    {
+        $data_gen = [
+            'prev_url' => "/",
+            'title' => 'Sube tu fotos o videos y publica con nosotros.'
 
+        ];
+        // return $request;
+        $media_data = Media::where('preference_id', '=', $request->preference_id)->get()[0];
+
+        if (!empty($media_data)) {
+            $pago = new Pagos();
+            $pago->media_id = $media_data->_id;
+            $pago->client_id = $media_data->client_id;
+            $pago->collection_id = $request->collection_id;
+            $pago->collection_status = $request->collection_status;
+            $pago->payment_id = $request->payment_id;
+            $pago->status = $request->status;
+            $pago->payment_type = $request->payment_type;
+            $pago->preference_id = $request->preference_id;
+            $pago->merchant_order_id = $request->merchant_order_id;
+            $pago->save();
+            $media = Media::find($media_data->_id);
+            $media->isPaid = 0;
+            $media->isActive = 0;
+            $media->save();
+            return view('pagos.failure', compact('data_gen'));
+        }
+    }
+
+    public function succes(Request $request)
+    {
+        $data_gen = [
+            'prev_url' => "/",
+            'title' => 'Sube tu fotos o videos y publica con nosotros.'
+
+        ];
+
+        return view('pagos.success', compact('data_gen'));
+    }
 
     public function success(Request $request)
     {
+        $data_gen = [
+            'prev_url' => "/",
+            'title' => 'Sube tu fotos o videos y publica con nosotros.'
 
+        ];
 
         $media_data = Media::where('preference_id', '=', $request->preference_id)->get()[0];
 
@@ -145,7 +203,7 @@ class PagosController extends Controller
                 $message->from('no-responder@adsupp.com', 'AdsUpp');
             });
 
-            return view('pagos.success');
+            return view('pagos.success', compact('data_gen'));
         }
     }
 
