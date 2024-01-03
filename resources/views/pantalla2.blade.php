@@ -218,7 +218,7 @@
                     }
 
                     media_container.innerHTML = add;
-                    location.reload();
+                    // location.reload();
 
                 })
                 .catch(error => {
