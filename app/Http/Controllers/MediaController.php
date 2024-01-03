@@ -205,7 +205,7 @@ class MediaController extends Controller
     {
         $data = Media::find($id);
         $data_gen = [
-            'prev_url' => "/sale",
+            'prev_url' => "/",
             'title' => 'Sube tu fotos o videos y publica con nosotros.'
 
         ];
@@ -268,7 +268,7 @@ class MediaController extends Controller
     public function grilla(Request $request)
     {
         $data_gen = [
-            'prev_url' => "/home",
+            'prev_url' => "/",
             'title' => 'Sube tu fotos o videos y publica con nosotros.'
 
         ];
