@@ -55,7 +55,7 @@ class MediaController extends Controller
     public function create()
     {
         $data_gen = [
-            'prev_url' => "/sale",
+            'prev_url' => "/",
             'title' => 'Sube tu fotos o videos y publica con nosotros.'
 
         ];
