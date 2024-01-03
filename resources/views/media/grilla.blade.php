@@ -45,8 +45,8 @@
         </div>
 
     </div>
-    <div style="display: none;" class="col-12 text-center" id="pag">
-        <div class="mt-3 d-flex justify-content-evenly">
+    <div style="display: none;" class="col-12 text-center mt-3 mb-4" id="pag">
+        <div class="my-3 d-flex justify-content-evenly">
             <button class="btn btn-sm btn-primary" id="prevButton"> Anterior </button>
             <button class="btn btn-sm btn-primary" id="nextButton"> Siguiente </button>
         </div>
@@ -136,7 +136,7 @@
                 var fecha = document.querySelector('#fecha_programacion')
                 var pos = document.querySelector('#screen_id')
                 // var page = page
-                var itemsPerPage = 70;
+                var itemsPerPage = 100;
 
                 fetch("{{ route('search-programation') }}?page=" + page + "&itemsPerPage=" + itemsPerPage, {
                         method: 'POST',

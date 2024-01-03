@@ -32,7 +32,7 @@ class MediaController extends Controller
     {
 
         $data_gen = [
-            'prev_url' => "/home",
+            'prev_url' => "/",
             'title' => 'Sube tu fotos o videos y publica con nosotros.'
 
         ];

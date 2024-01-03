@@ -24,7 +24,7 @@ class ClientesController extends Controller
         $data = User::where('isUser', '=', 0)->where('isActive', '=', 1)->paginate(5);
 
         $data_gen = [
-            'prev_url' => "/home",
+            'prev_url' => "/",
             'title' => 'Sube tu fotos o videos y publica con nosotros.'
 
         ];

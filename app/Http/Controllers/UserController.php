@@ -24,7 +24,7 @@ class UserController extends Controller
         $data = User::where('isUser', '=', 1)->paginate(5);
 
         $data_gen = [
-            'prev_url' => "/home",
+            'prev_url' => "/",
             'title' => 'Sube tu fotos o videos y publica con nosotros.'
 
         ];
@@ -147,6 +147,12 @@ class UserController extends Controller
         ], $messages);
         $input = $request->all();
         $user = User::find($id);
+        if (isset($input['password'])) {
+            $input['password'] = Hash::make($input['password']);
+        } else {
+            $input['password'] = $user->password;
+        }
+
         $user->update($input);
         DB::table('model_has_roles')->where('model_id', $id)->delete();
 
