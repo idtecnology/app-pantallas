@@ -10,6 +10,7 @@ use DB;
 use Hash;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Auth\Events\Registered;
 
 class UserController extends Controller
 {
@@ -76,10 +77,11 @@ class UserController extends Controller
         $input = $request->all();
         $input['password'] = Hash::make($input['password']);
         $input['isUser'] = 1;
-        $input['email_verified_at'] = date('Y-m-d H:i:s');
+        // $input['email_verified_at'] = date('Y-m-d H:i:s');
 
         $user = User::create($input);
         $user->assignRole($request->input('roles'));
+        event(new Registered($user));
 
         return redirect()->route('users.index')
             ->with('success', 'Usuario creado con exito');
