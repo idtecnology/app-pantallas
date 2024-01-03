@@ -33,18 +33,13 @@ class AuthServiceProvider extends ServiceProvider
         VerifyEmail::toMailUsing(function (object $notifiable, string $url) {
             $rdn = Str::random(64);
 
-            $user_data = User::find(auth()->user()->id);
+            // return ;
+
+            $user_data = User::find($notifiable->id);
             $user_data->verify_hash = sha1($rdn);
             $user_data->save();
 
-            $urls = URL::temporarySignedRoute(
-                'verification.verify',
-                '',
-                [
-                    'id' => $notifiable->getKey(),
-                    'hash' => sha1($rdn),
-                ]
-            );
+            $urls = URL::temporarySignedRoute('verification.verify', '', ['id' => $notifiable->getKey(), 'hash' => sha1($rdn),]);
 
             return (new MailMessage)
                 ->subject('Verifica tu email')
