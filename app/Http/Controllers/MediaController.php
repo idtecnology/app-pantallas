@@ -480,6 +480,10 @@ class MediaController extends Controller
             $nombreArchivo = uniqid() . '.' . $archivo->getClientOriginalExtension();
             $archivo->storeAs('public/uploads/tmp', $nombreArchivo);
             $rutaLocal = storage_path('app/public/uploads/tmp/' . $nombreArchivo);
+            if (strtoupper($archivo->getClientOriginalExtension()) == 'HEIC' || strtoupper($archivo->getClientOriginalExtension()) == 'HEIF') {
+                $nombreArchivo = uniqid() . '.jpg';
+                HeicToJpg::convert($rutaLocal, base_path() . "/vendor/bin/heif-converter-linux", true)->saveAs(storage_path('app/public/uploads/tmp/' . $nombreArchivo));
+            }
             if (in_array($archivo->getClientOriginalExtension(), config('ext_aviable.EXTENSIONES_PERMITIDAS_VIDEO'))) {
                 $ffmpeg = FFMpeg::fromDisk('public')->open('/uploads/tmp/' . $nombreArchivo);
                 $durationInSeconds[] = $ffmpeg->getDurationInSeconds();
@@ -507,16 +511,10 @@ class MediaController extends Controller
             $nombreArchivo = uniqid() . '.' . $archivo->getClientOriginalExtension();
             $archivo->storeAs('public/uploads/tmp', $nombreArchivo);
             $rutaLocal = storage_path('app/public/uploads/tmp/' . $nombreArchivo);
-
-
-
-
-            if (strtoupper($archivo->getClientOriginalExtension()) == 'HEIC') {
+            if (strtoupper($archivo->getClientOriginalExtension()) == 'HEIC' || strtoupper($archivo->getClientOriginalExtension()) == 'HEIF') {
                 $nombreArchivo = uniqid() . '.jpg';
                 HeicToJpg::convert($rutaLocal, base_path() . "/vendor/bin/heif-converter-linux", true)->saveAs(storage_path('app/public/uploads/tmp/' . $nombreArchivo));
             }
-
-
             if (in_array($archivo->getClientOriginalExtension(), config('ext_aviable.EXTENSIONES_PERMITIDAS_VIDEO'))) {
                 $ffmpeg = FFMpeg::fromDisk('public')->open('/uploads/tmp/' . $nombreArchivo);
                 // $durationInSeconds[] = $ffmpeg->getDurationInSeconds();
