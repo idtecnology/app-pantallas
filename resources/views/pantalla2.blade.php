@@ -218,7 +218,7 @@
                     }
 
                     media_container.innerHTML = add;
-                    // location.reload();
+                    window.location.replace(window.location.href);
 
                 })
                 .catch(error => {
