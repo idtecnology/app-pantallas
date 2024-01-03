@@ -191,33 +191,33 @@
                     }
                     if (data.status == 1) {
                         Swal.hideLoading()
-                        for (var i = 0; i < data.files.length; i++) {
-                            var link = document.createElement('a');
-                            link.href = url + data.files[i].file_name;
-                            var pathParts = link.pathname.split('/');
-                            var fileName = pathParts[pathParts.length - 1];
-                            var fileExtension = fileName.split('.').pop();
+                        // for (var i = 0; i < data.files.length; i++) {
+                        //     var link = document.createElement('a');
+                        //     link.href = url + data.files[i].file_name;
+                        //     var pathParts = link.pathname.split('/');
+                        //     var fileName = pathParts[pathParts.length - 1];
+                        //     var fileExtension = fileName.split('.').pop();
 
 
-                            add += ` <div class="col-3">`
-                            if (extensionesImagen.includes(fileExtension.toLowerCase())) {
-                                add +=
+                        //     add += ` <div class="col-3">`
+                        //     if (extensionesImagen.includes(fileExtension.toLowerCase())) {
+                        //         add +=
 
-                                    `<a data-fslightbox href="${url}${data.files[i].file_name}">
-                                    <img class="img-fluid img-thumbnail" width="200px" height="200px" src="${url}${data.files[i].file_name}" alt=""></a>`
+                        //             `<a data-fslightbox href="${url}${data.files[i].file_name}">
+                    //             <img class="img-fluid img-thumbnail" width="200px" height="200px" src="${url}${data.files[i].file_name}" alt=""></a>`
 
-                            } else if (extensionesVideo.includes(fileExtension.toLowerCase())) {
-                                add += `<a data-fslightbox href="${url}${data.files[i].file_name}"><video class="img-fluid img-thumbnail" width="320" height="240" src="${url}${data.files[i].file_name}" controls>
-                            Your browser does not support the video tag.
-                        </video></a>`
-                            } else {
-                                return;
-                            }
-                            add += `</div>`;
-                        }
+                        //     } else if (extensionesVideo.includes(fileExtension.toLowerCase())) {
+                        //         add += `<a data-fslightbox href="${url}${data.files[i].file_name}"><video class="img-fluid img-thumbnail" width="320" height="240" src="${url}${data.files[i].file_name}" controls>
+                    //     Your browser does not support the video tag.
+                    // </video></a>`
+                        //     } else {
+                        //         return;
+                        //     }
+                        //     add += `</div>`;
+                        // }
                     }
 
-                    media_container.innerHTML = add;
+                    // media_container.innerHTML = add;
                     location.reload();
 
                 })
