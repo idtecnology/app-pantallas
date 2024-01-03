@@ -21,10 +21,10 @@ Route::post('/email/verification-notification', function (Request $request) {
 })->middleware(['auth', 'throttle:6,1'])->name('verification.send');
 
 
-Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $r) {
-    $r->fulfill();
-    return redirect('/');
-})->middleware(['auth', 'signed'])->name('verification.verify');
+// Route::get('/email/verifi/{id}/{hash}', )
+
+
+Route::get('/email/verify/{id}/{hash}', [VerificationController::class, 'verify'])->middleware(['signed'])->name('verification.verify');
 
 
 Route::get('/', function () {
