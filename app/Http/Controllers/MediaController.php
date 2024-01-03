@@ -513,7 +513,7 @@ class MediaController extends Controller
 
             if (strtoupper($archivo->getClientOriginalExtension()) == 'HEIC') {
                 $nombreArchivo = uniqid() . '.jpg';
-                HeicToJpg::convert($rutaLocal, "", true)->saveAs(storage_path('app/public/uploads/tmp/' . $nombreArchivo));
+                HeicToJpg::convert($rutaLocal, base_path() . "/vendor/bin/heif-converter-linux", true)->saveAs(storage_path('app/public/uploads/tmp/' . $nombreArchivo));
             }
 
 
