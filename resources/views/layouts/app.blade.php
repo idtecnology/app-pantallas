@@ -20,7 +20,7 @@
     <link rel='manifest' href='/manifest.json'>
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <link rel="apple-touch-icon" sizes="512x512" href="/images/icons/adsupp512.png">
-    <meta name="theme-color" content="#dd5757">
+    <meta name="theme-color" content="#ffffff">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
 
     <link rel="preload" href="/images/logo2.jpg" as="image">
