@@ -76,7 +76,7 @@ class MediaController extends Controller
         $preference->payment_methods = PagosController::paymentMethods();
         $preference->back_urls = PagosController::backUrls();
 
-        if ($validatedMedia['status'] != false) {
+        if ($validatedMedia['status'] != 0) {
             if ($request->media_id > 0) {
                 //Actualizamos los que estan
 
