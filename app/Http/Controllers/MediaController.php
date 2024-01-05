@@ -76,7 +76,7 @@ class MediaController extends Controller
         $preference->payment_methods = PagosController::paymentMethods();
         $preference->back_urls = PagosController::backUrls();
 
-        if ($validatedMedia['status'] != 0) {
+        if ($validatedMedia['status'] != false) {
             if ($request->media_id > 0) {
                 //Actualizamos los que estan
 
@@ -538,15 +538,15 @@ class MediaController extends Controller
         // return $imagenesCount;
 
         if ($tiempo == 15 && $imagenesCount > 7) {
-            return ['status' => 0, 'error' => "El tiempo seleccionado es de: $tiempo segundos, y la multimedia subida tiene un tiempo de:  segundos, por favor verifique o seleccione un mayor tiempo."];
+            return ['status' => false, 'message' => "El tiempo seleccionado es de: $tiempo segundos, y la multimedia subida tiene un tiempo de:  segundos, por favor verifique o seleccione un mayor tiempo."];
         } elseif ($tiempo == 30 && $imagenesCount > 15) {
-            return ['status' => 0, 'error' => "El tiempo seleccionado es de: $tiempo segundos, y la multimedia subida tiene un tiempo de:  segundos, por favor verifique o seleccione un mayor tiempo."];
+            return ['status' => false, 'message' => "El tiempo seleccionado es de: $tiempo segundos, y la multimedia subida tiene un tiempo de:  segundos, por favor verifique o seleccione un mayor tiempo."];
         } elseif ($tiempo == 45 && $imagenesCount > 22) {
-            return ['status' => 0, 'error' => "El tiempo seleccionado es de: $tiempo segundos, y la multimedia subida tiene un tiempo de:  segundos, por favor verifique o seleccione un mayor tiempo."];
+            return ['status' => false, 'message' => "El tiempo seleccionado es de: $tiempo segundos, y la multimedia subida tiene un tiempo de:  segundos, por favor verifique o seleccione un mayor tiempo."];
         } elseif ($tiempo == 60 && $imagenesCount > 30) {
-            return ['status' => 0, 'error' => "El tiempo seleccionado es de: $tiempo segundos, y la multimedia subida tiene un tiempo de:  segundos, por favor verifique o seleccione un mayor tiempo."];
+            return ['status' => false, 'message' => "El tiempo seleccionado es de: $tiempo segundos, y la multimedia subida tiene un tiempo de:  segundos, por favor verifique o seleccione un mayor tiempo."];
         } elseif ($tiempo == 120 && $imagenesCount > 60) {
-            return ['status' => 0, 'error' => "El tiempo seleccionado es de: $tiempo segundos, y la multimedia subida tiene un tiempo de:  segundos, por favor verifique o seleccione un mayor tiempo."];
+            return ['status' => false, 'message' => "El tiempo seleccionado es de: $tiempo segundos, y la multimedia subida tiene un tiempo de:  segundos, por favor verifique o seleccione un mayor tiempo."];
         } else {
 
             $tiempoPorImagen = $imagenesCount > 0 ? floor($tiempoRestante / $imagenesCount) : 0;
