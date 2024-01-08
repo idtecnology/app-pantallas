@@ -48,7 +48,7 @@ return [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID_IDTECNOLOGY'),
             'secret' => env('AWS_SECRET_ACCESS_KEY_IDTECNOLOGY'),
-            'region' => env('AWS_DEFAULT_REGION'),
+            'region' => env('AWS_DEFAULT_REGION_IDTECNOLOGY'),
             'bucket' => env('AWS_BUCKET'),
             'url' => env('AWS_URL'),
             'endpoint' => env('AWS_ENDPOINT'),
