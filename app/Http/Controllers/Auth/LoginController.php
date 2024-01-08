@@ -58,7 +58,14 @@ class LoginController extends Controller
     public function login(Request $request)
     {
 
-        $data_user = User::where('email', '=', $request->email)->get()[0];
+        $data_user = User::where('email', '=', $request->email)->get();
+
+        if (count($data_user) > 0) {
+            $data_user = $data_user[0];
+        } else {
+            return redirect('login');
+        }
+
 
         if (isset($data_user)) {
             if ($data_user->isActive != 1) {

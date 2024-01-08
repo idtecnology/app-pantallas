@@ -538,15 +538,15 @@ class MediaController extends Controller
         // return $imagenesCount;
 
         if ($tiempo == 15 && $imagenesCount > 7) {
-            return response()->json(['status' => 0, 'error' => "El tiempo seleccionado es de: $tiempo segundos, y la multimedia subida tiene un tiempo de:  segundos, por favor verifique o seleccione un mayor tiempo."], 200);
+            return ['status' => false, 'message' => "El tiempo seleccionado es de: $tiempo segundos, y el limite de imagenes permitidas es de 7 por favor verifique o seleccione un mayor tiempo."];
         } elseif ($tiempo == 30 && $imagenesCount > 15) {
-            return response()->json(['status' => 0, 'error' => "El tiempo seleccionado es de: $tiempo segundos, y la multimedia subida tiene un tiempo de:  segundos, por favor verifique o seleccione un mayor tiempo."], 200);
+            return ['status' => false, 'message' => "El tiempo seleccionado es de: $tiempo segundos, y el limite de imagenes permitidas es de 15 por favor verifique o seleccione un mayor tiempo."];
         } elseif ($tiempo == 45 && $imagenesCount > 22) {
-            return response()->json(['status' => 0, 'error' => "El tiempo seleccionado es de: $tiempo segundos, y la multimedia subida tiene un tiempo de:  segundos, por favor verifique o seleccione un mayor tiempo."], 200);
+            return ['status' => false, 'message' => "El tiempo seleccionado es de: $tiempo segundos, y el limite de imagenes permitidas es de 22 por favor verifique o seleccione un mayor tiempo."];
         } elseif ($tiempo == 60 && $imagenesCount > 30) {
-            return response()->json(['status' => 0, 'error' => "El tiempo seleccionado es de: $tiempo segundos, y la multimedia subida tiene un tiempo de:  segundos, por favor verifique o seleccione un mayor tiempo."], 200);
+            return ['status' => false, 'message' => "El tiempo seleccionado es de: $tiempo segundos, y el limite de imagenes permitidas es de 30 por favor verifique o seleccione un mayor tiempo."];
         } elseif ($tiempo == 120 && $imagenesCount > 60) {
-            return response()->json(['status' => 0, 'error' => "El tiempo seleccionado es de: $tiempo segundos, y la multimedia subida tiene un tiempo de:  segundos, por favor verifique o seleccione un mayor tiempo."], 200);
+            return ['status' => false, 'message' => "El tiempo seleccionado es de: $tiempo segundos, y el limite de imagenes permitidas es de 60 por favor verifique o seleccione un mayor tiempo."];
         } else {
 
             $tiempoPorImagen = $imagenesCount > 0 ? floor($tiempoRestante / $imagenesCount) : 0;
