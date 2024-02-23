@@ -94,7 +94,7 @@ function notifyGeneral(obj) {
 
 async function getAvailabilityDates(time, screen_id) {
     var inputFechaModal = document.querySelector("#inputFechaModal");
-    const response = await fetch("/api/availability-dates", {
+    const response = await fetch("/api/v1/availability-dates", {
         method: "POST",
         body: JSON.stringify({
             duration: time,
@@ -118,7 +118,7 @@ async function buscarTramos(fecha, lugar, time, screen_id) {
 
         document.getElementById("date_hidden").value = fecha;
 
-        const response = await fetch("/api/tramo", {
+        const response = await fetch("/api/v1/tramo", {
             method: "POST",
             body: JSON.stringify({
                 fecha: fecha,

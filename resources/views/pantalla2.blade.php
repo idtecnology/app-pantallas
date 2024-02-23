@@ -171,7 +171,7 @@
 
 
             var add = '';
-            fetch("/guardarData", {
+            fetch("/api/v1/guardarData", {
                     method: 'POST',
                     body: formData,
                     headers: {

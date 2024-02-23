@@ -138,7 +138,7 @@
                 showLoaderOnConfirm: false,
             });
 
-            fetch("/api/guardarData", {
+            fetch("/api/v1/guardarData", {
                     method: 'POST',
                     body: formData,
                     headers: {
